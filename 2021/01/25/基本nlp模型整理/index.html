@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="NLPN-gram 贝叶斯公式：  P(A | B)&#x3D; \frac {P(B|A)P(A)}{P(B)} 马科夫假设：句子中一个词的出现概率仅仅依赖于它前面的若干个词。此假设即可在一定程度上解决维度灾难(curse of dimensionality)问题。由此引入Bi-gram与Tri-gram。  Bi-gram：只依赖它前面出现的一个词  p(S)&#x3D;p(w_1w_2w_3...w_n)&#x3D;p(">
+<meta property="og:type" content="article">
+<meta property="og:title" content="基本NLP模型整理">
+<meta property="og:url" content="http://example.com/2021/01/25/%E5%9F%BA%E6%9C%ACnlp%E6%A8%A1%E5%9E%8B%E6%95%B4%E7%90%86/index.html">
+<meta property="og:site_name" content="Olivia的博客">
+<meta property="og:description" content="NLPN-gram 贝叶斯公式：  P(A | B)&#x3D; \frac {P(B|A)P(A)}{P(B)} 马科夫假设：句子中一个词的出现概率仅仅依赖于它前面的若干个词。此假设即可在一定程度上解决维度灾难(curse of dimensionality)问题。由此引入Bi-gram与Tri-gram。  Bi-gram：只依赖它前面出现的一个词  p(S)&#x3D;p(w_1w_2w_3...w_n)&#x3D;p(">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://www.ai-start.com/dl2017/images/19cbb2d356a2a6e0f35aa2a946b23a2a.png">
+<meta property="og:image" content="http://www.ai-start.com/dl2017/images/27afdd27f45ad8ddf78677af2a3eeaf8.png">
+<meta property="og:image" content="http://www.ai-start.com/dl2017/images/rnn-f.png">
+<meta property="og:image" content="http://www.ai-start.com/dl2017/images/rnn_cell_backprop.png">
+<meta property="og:image" content="http://www.ai-start.com/dl2017/images/1daa38085604dd04e91ebc5e609d1179.png">
+<meta property="og:image" content="c:/Users/Olivia~/AppData/Roaming/Typora/typora-user-images/image-20210125201411508.png">
+<meta property="og:image" content="http://www.ai-start.com/dl2017/images/LSTM.png">
+<meta property="og:image" content="c:/Users/Olivia~/AppData/Roaming/Typora/typora-user-images/image-20210125204542244.png">
+<meta property="og:image" content="http://www.ai-start.com/dl2017/images/053831ff43d039bd5e734df96d8794cb.png">
+<meta property="og:image" content="http://www.ai-start.com/dl2017/images/455863a3c8c2dfaa0e5474bfa2c6824d.png">
+<meta property="article:published_time" content="2021-01-25T12:54:51.000Z">
+<meta property="article:modified_time" content="2021-05-01T06:44:57.438Z">
+<meta property="article:author" content="Olivia">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://www.ai-start.com/dl2017/images/19cbb2d356a2a6e0f35aa2a946b23a2a.png">
+
+<link rel="canonical" href="http://example.com/2021/01/25/%E5%9F%BA%E6%9C%ACnlp%E6%A8%A1%E5%9E%8B%E6%95%B4%E7%90%86/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>基本NLP模型整理 | Olivia的博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Olivia的博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/01/25/%E5%9F%BA%E6%9C%ACnlp%E6%A8%A1%E5%9E%8B%E6%95%B4%E7%90%86/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="Olivia">
+      <meta itemprop="description" content="May All Your Troubles Be little Ones">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Olivia的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          基本NLP模型整理
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-01-25 20:54:51" itemprop="dateCreated datePublished" datetime="2021-01-25T20:54:51+08:00">2021-01-25</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-05-01 14:44:57" itemprop="dateModified" datetime="2021-05-01T14:44:57+08:00">2021-05-01</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="NLP"><a href="#NLP" class="headerlink" title="NLP"></a>NLP</h1><h2 id="N-gram"><a href="#N-gram" class="headerlink" title="N-gram"></a>N-gram</h2><ul>
+<li><p>贝叶斯公式：</p>
+<script type="math/tex; mode=display">
+P(A | B)= \frac {P(B|A)P(A)}{P(B)}</script></li>
+<li><p>马科夫假设：句子中一个词的出现概率仅仅依赖于它前面的若干个词。此假设即可在一定程度上解决<strong>维度灾难(curse of dimensionality)</strong>问题。由此引入<strong>Bi-gram</strong>与<strong>Tri-gram</strong>。</p>
+</li>
+<li><p><strong>Bi-gram</strong>：只依赖它前面出现的一个词</p>
+<script type="math/tex; mode=display">
+p(S)=p(w_1w_2w_3...w_n)=p(w_1)p(w_2|w_1)...p(w_n|w_{n-1})</script><p><strong>Tri-gram</strong>：只依赖于它前面出现的两个词</p>
+<script type="math/tex; mode=display">
+p(S)=p(w_1w_2...w_3)=p(w_1)p(w_2|w_1)...p(w_n|w_{n-1}w_{n-2})</script></li>
+<li><p><strong>数据平滑(data Smoothing)</strong>：理论上N越大效果越好，但是N过大会出现<strong>稀疏问题（Sparsity）</strong>。故需进行数据平滑，目的有两个：使所有N-gram概率之和为1，使所有的N-gram概率都不为0。<strong>本质其实就是重新分配整个概率空间，使已经出现过的n-gram的概率降低，补充给未曾出现过的n-gram。</strong>常见平滑方法有<strong>插值平滑（Interpolation）与回溯法（backoff）</strong>，具体核心思想不再赘述。</p>
+</li>
+<li><p><strong>存在问题</strong>：不考虑超过1个或者2个单词的上下文（n），无法计算词汇间的相似度。</p>
+</li>
+</ul>
+<h2 id="NNLM"><a href="#NNLM" class="headerlink" title="NNLM"></a>NNLM</h2><ul>
+<li><p>创新：提出词向量、引入神经网络。</p>
+</li>
+<li><p>模型结构：</p>
+<ul>
+<li><p>输入层：</p>
+<p><strong>one-hot vector</strong>形式的编码，对于每个one-hot vector$(1 × |V|)$，与Embedding size为$m$的<strong>矩阵$ C (|V| × m) $相乘</strong>，得到一个<strong>distribution vector</strong>$（1 × m）$。$m$比|V|小很多，从而达到了降维的目的，同时 $ C $ 可由神经网络的Back propagation训练不断优化。</p>
+</li>
+<li><p>隐藏层：</p>
+<p>得到所有词的词向量后（即一个 $( n - 1) × m$ 的矩阵），进行处理得到一个 $(n - 1)m×1$的<strong>向量$x$</strong>。</p>
+<p>隐含层为一个简单的tanh激活层，公式为</p>
+<script type="math/tex; mode=display">
+hidden=tanh(Hx+d)</script><p>其维度信息为：</p>
+<script type="math/tex; mode=display">
+H：h×(n-1)m\\
+d:h×1\\
+x:(n-1)m×1</script></li>
+<li><p>输出层</p>
+<p><strong>利用了隐藏层的输出及原始词向量</strong>，最后还需用$softmax$，具体公式如下：</p>
+<script type="math/tex; mode=display">
+y=b+Wx+Utanh(Hx+d)</script><p>其维度信息为：</p>
+<script type="math/tex; mode=display">
+U:|V|×h\\
+W:|V|×(n-1)m\\
+b:|V|×1</script><p>若不想利用原始词向量信息则将$W$设置为零矩阵</p>
+</li>
+<li><p>损失函数为</p>
+<script type="math/tex; mode=display">
+L=\frac {1}{T}\sum_{t}log\tilde{P}(w_t|w_{t-1},...w_{t-1+n})+R(\theta)</script><p>$R(\theta)$为正则化项</p>
+<script type="math/tex; mode=display">
+\theta=(b,d,W,U,H,C)\\
+\theta\leftarrow\theta+\epsilon\frac{\partial{log\tilde{P}(w_t|w_{t-1},...,w_{t-n+1})}}{\partial\theta}</script></li>
+</ul>
+</li>
+<li><p>存在问题</p>
+<ul>
+<li>NNML只用了左边的n-1个词，不能利用更多的上下文信息（如2010年Mikolov提出RNNLM）</li>
+<li><p>NNML的输出层计算量太大，需减少计算量使得大规模语料上的训练变得可行（如Minh和Hinton提出的LBL以及后续的一系列模型）</p>
+</li>
+<li><p>优化（简要）：</p>
+<ul>
+<li>2007年Mnih和Hinton提出的<strong>LBL以及后续的一系列相关模型，省去了NNLM中的激活函数，直接把模型变成了一个线性变换</strong>，尤其是后来将Hierarchical Softmax引入到LBL后，训练效率进一步增强，但是表达能力不如NNLM这种神经网络的结构；</li>
+<li><p>2008年Collobert和Weston提出的<strong>C&amp;W模型不再利用语言模型的结构，而是将目标文本片段整体当做输入，然后预测这个片段是真实文本的概率</strong>，所以它的工作主要是改变了目标输出，由于输出只是一个概率大小，不再是词典大小，因此训练效率大大提升，但由于使用了这种比较“别致”的目标输出，使得它的词向量表征能力有限；</p>
+</li>
+<li><p>2010年Mikolov提出的<strong>RNNLM</strong>主要是为了解决长程依赖关系，时间复杂度问题依然存在。</p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="Word2vec"><a href="#Word2vec" class="headerlink" title="Word2vec"></a>Word2vec</h2><ul>
+<li><p>两种模型and两种优化算法</p>
+<ul>
+<li>$CBOW$（连续词袋模型）：利用上下文预测中心词</li>
+<li>$Skip-gram$（跳字模型）：利用中心词预测上下文</li>
+<li>$hierarchical\ softmax$（层次$softmax$）</li>
+<li>$negative\ sampling$（负采样）</li>
+</ul>
+</li>
+<li><p>与NNLM的区别</p>
+<p>​    不涉及两个优化算法的角度讲，word2vec本质上是描述从自然语言到词向量转换的技术，同时<strong>蕴含语义信息：语义相近的词映射到欧式空间后具有较高的余弦相似度</strong>。NNML是把上下文词的向量进行拼接，word2vec是进行sum，<strong>求平均值来转换成低维词向量</strong>。</p>
+<p>​    涉及的<strong>两个优化算法</strong>可在一定程度上<strong>解决</strong>NNLM模型中出现的从隐藏层到输出到$softmax$层的<strong>计算量很大的问题</strong>，因为NNLM要计算所有词的$softmax$概率，再去寻找最大值。而word2vec<strong>采用了哈夫曼树</strong>来代替从隐藏层到输出$softmax$层的映射从而避免计算所有词的$softmax$概率。在实际计算中，只需沿着哈夫曼树从根结点走到叶节点即可。<strong>时间复杂度从$O(n)$降低到$O(logN)$</strong></p>
+</li>
+<li><p>具体过程</p>
+<p>详见：<a target="_blank" rel="noopener" href="http://flyrie.top/2018/10/31/Word2vec_Hierarchical_Softmax/">http://flyrie.top/2018/10/31/Word2vec_Hierarchical_Softmax/</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/itplus/article/details/37998797">https://blog.csdn.net/itplus/article/details/37998797</a></p>
+</li>
+</ul>
+<h2 id="RNN"><a href="#RNN" class="headerlink" title="RNN"></a>RNN</h2><ul>
+<li><p>循环神经网络相较于普通神经网络，可结合上下文去训练模型。</p>
+</li>
+<li><p><strong>Forward Propagation</strong>【此部分来自吴恩达深度学习网课】</p>
+<ul>
+<li><p>循环神经网络隐藏层常用的激活函数是$tanh$，输出层的激活函数采用为$sigmoid$函数（根据实际需要）</p>
+</li>
+<li><p>公式推导详解</p>
+<p><img src="http://www.ai-start.com/dl2017/images/19cbb2d356a2a6e0f35aa2a946b23a2a.png" alt="img"></p>
+<p>在$t$时刻</p>
+</li>
+</ul>
+<script type="math/tex; mode=display">
+a^{<t>}=g_1(W_{aa}a^{<t-1>}+W_{ax}x^{<t>}+b_a)\\
+\hat y=g_2(W_{ya}a^{<t>}+b_y)</script><p>​        上标表示时间步，第一个字符表示将要求解的变量，第二个字符表示使用的变量</p>
+<ul>
+<li><p>公式简化</p>
+<p><img src="http://www.ai-start.com/dl2017/images/27afdd27f45ad8ddf78677af2a3eeaf8.png" alt="img"></p>
+<p>说明：为了简化将$W_{aa}$与$W_{ax}$水平放置组成$W_a$；将$a^{<t-1>}$与$x^{<t>}$叠在一起；</p>
+</li>
+<li><p>更形象的总体说明：</p>
+<p><img src="http://www.ai-start.com/dl2017/images/rnn-f.png" alt="nn-"></p>
+</li>
+</ul>
+</li>
+<li><p><strong>Backpropagation through time</strong></p>
+<p>交叉熵损失函数：</p>
+<script type="math/tex; mode=display">
+L^{<t>}(\hat y^{<t>},y^{<t>})=-y^{<t>}log\hat y^{<t>}-(1-y^{<t>})log(1-\hat y^{<t>})</script><p>整个序列的损失函数$L$</p>
+<script type="math/tex; mode=display">
+L(\hat y, y)=\sum_{t=1}^{T_x}L^{<t>}(\hat y^{<t>},y^{<t>})</script><ul>
+<li><p>更具体公式</p>
+<p><img src="http://www.ai-start.com/dl2017/images/rnn_cell_backprop.png" alt="nn_cell_backpro"></p>
+</li>
+</ul>
+</li>
+<li><p>分类</p>
+<p><img src="http://www.ai-start.com/dl2017/images/1daa38085604dd04e91ebc5e609d1179.png" alt="img"></p>
+</li>
+<li><p>存在问题</p>
+<ul>
+<li>梯度消失问题（Vanishing gradients with RNNs）：对于很深的神经网络后面层的输出误差很难影响到前面层的计算，故<strong>RNN不擅长处理长期依赖问题</strong></li>
+<li>梯度爆炸问题：一般可通过梯度修剪处理</li>
+</ul>
+</li>
+</ul>
+<h2 id="GRU"><a href="#GRU" class="headerlink" title="GRU"></a>GRU</h2><p>Gated Recurrent Unit（门控循环单元）</p>
+<ul>
+<li><p>增加新变量$c$，即代表记忆细胞$(cell)$</p>
+<p>$c^{<t>}=a^{<t>}$（与LSTMs的区别）</p>
+</li>
+<li><p>$c$的更新过程</p>
+<hr>
+<p>$\tilde c^{<t>} = tanh(W_c[\Gamma_r*c^{<t-1>},x^{<t>}]+b_c)$</p>
+<p>$\Gamma_u=\sigma(W_u[c^{<t-1>},x^{<t>}]+b_u)$【<strong>$sigmoid$函数，大部分情况下非常接近0或1</strong>】</p>
+<p>$\Gamma_r=\sigma(W_r[c^{<t-1>},x^{<t>}]+b_r)$</p>
+<p>$c^{<t>}=\Gamma_u<em>\tilde c^{<t>}+(1-\Gamma_u)</em>c^{<t-1>}$【为0则不更新】</p>
+<hr>
+<p>$u$：update</p>
+<p>$r$：relevance</p>
+<p>*：每个元素相乘，而非矩阵乘法</p>
+<p><strong>相关门</strong>$\Gamma_r$门表示计算出的下一个$c^{<t>}$的候选值$\tilde c^{<t>}$与$c^{<t-1>}$的相关性</p>
+<p><strong>更新门</strong>$\Gamma_u$门表示更新，并且十分容易取0值，这个更新式子就会变为$c^{<t>}=c^{<t-1>}$，<strong>有利于维持细胞的值，从而缓解梯度消失的问题，允许神经网络运行在非常庞大的依赖词上。</strong></p>
+</li>
+</ul>
+<h2 id="LSTM"><a href="#LSTM" class="headerlink" title="LSTM"></a>LSTM</h2><p>long short term memory unit（长短期记忆）</p>
+<ul>
+<li><p>$c$的更新过程</p>
+<hr>
+<p>$\tilde c^{<t>}=tanh(W_c[a^{<t-1>},x^{<t>}]+b_c)$</p>
+<p>$\Gamma_u=\sigma(W_u[a^{<t-1>},x^{<t>}]+ b_u)$</p>
+<p>$\Gamma_f=\sigma(W_f[a^{<t-1>},x^{<t>}]+ b_f)$</p>
+<p>$\Gamma_o=\sigma(W_o[a^{<t-1>},x^{<t>}]+ b_o)$</p>
+<p>$c^{<t>}=\Gamma_u<em>\tilde c^{<t>}+\Gamma_f</em>c^{<t-1>}$</p>
+<p>$a^{<t>}=\Gamma_o*tanh(c^{<t>})$</p>
+<hr>
+<p>$\Gamma u$：更新门</p>
+<p>$\Gamma_f$：遗忘门</p>
+<p>$\Gamma_o$：输出门</p>
+<p>图片表述</p>
+<p><img src="C:\Users\Olivia~\AppData\Roaming\Typora\typora-user-images\image-20210125201411508.png" alt="image-20210125201411508"></p>
+<p>​    看公式可得，各门值只取决于$a^{<t-1>}$与$x^{<t>}$，但有时也可以偷窥一下$c^{<t-1>}$的值，这叫做“窥视孔连接”$(peephole\ connection)$。故有时说$c^{<t-1>}$也能影响门值。</p>
+</li>
+<li><p>前向传递</p>
+<p><img src="http://www.ai-start.com/dl2017/images/LSTM.png" alt="ST"></p>
+</li>
+<li><p>反向传播</p>
+<p><img src="C:\Users\Olivia~\AppData\Roaming\Typora\typora-user-images\image-20210125204542244.png" alt="image-20210125204542244"></p>
+<p>具体推导过程见：<a target="_blank" rel="noopener" href="https://zybuluo.com/hanbingtao/note/581764">https://zybuluo.com/hanbingtao/note/581764</a></p>
+</li>
+</ul>
+<h2 id="Bi-directional-RNN"><a href="#Bi-directional-RNN" class="headerlink" title="Bi-directional RNN"></a>Bi-directional RNN</h2><p>双向循环神经网络，单元可使用标准的RNN或者GRU、LSTM单元都可，一个有LSTM单元的双向RNN模型是最常用的</p>
+<p><img src="http://www.ai-start.com/dl2017/images/053831ff43d039bd5e734df96d8794cb.png" alt="img"></p>
+<p>此处为标准的RNN单元$\hat y^{<t>}=g(W_g[\vec a^{<t>}, \overleftarrow a^{<t>}]+b_y)$</p>
+<p>$\overleftarrow a$只是从右到左，也是在计算激活值</p>
+<ul>
+<li>缺点为需要完整的数据序列</li>
+</ul>
+<h2 id="Deep-RNNs"><a href="#Deep-RNNs" class="headerlink" title="Deep RNNs"></a>Deep RNNs</h2><p>深层循环神经网络</p>
+<p><img src="http://www.ai-start.com/dl2017/images/455863a3c8c2dfaa0e5474bfa2c6824d.png" alt="img"></p>
+<p>计算方法：例$a^{[2]<3>}$有两个输入，下面的和右面的，故可写为下式：</p>
+<p>$a^{[2]<3>}=g(W_a^{[2]}[a^{[2]<2>}, a^{[1]<3>}]+b_a^{[2]})$</p>
+<p>一般RNN不会特别深，更多会将输出去掉而换成一些深的层，这些层并不水平相连，而只是一个深层的往来，用来预测$y$。</p>
+<h2 id="TODO"><a href="#TODO" class="headerlink" title="TODO"></a>TODO</h2><ul>
+<li><p>ELMo(Embeddings from Language Models)</p>
+<ul>
+<li>为了利用无标记数据使用了<strong>语言模型</strong></li>
+<li>双向LSTM</li>
+</ul>
+</li>
+<li><p>OpenAI GPT(<strong>Generative Pre-training Transformer</strong>)</p>
+</li>
+<li><p>BERT(<strong>Bidirectional Encoder Representations from Transformers</strong>)</p>
+</li>
+</ul>
+
+    </div>
+
+    
+	
+	
+
+	
+		<div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束 <i class="fa fa-heart"></i> 感谢阅读-------------</div>
+	
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2019/09/14/JS-jQuery-2048%E5%B0%8F%E6%B8%B8%E6%88%8F/" rel="prev" title="JS-jQuery-2048小游戏">
+      <i class="fa fa-chevron-left"></i> JS-jQuery-2048小游戏
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2021/05/01/hello-world/" rel="next" title="Hello World">
+      Hello World <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#NLP"><span class="nav-number">1.</span> <span class="nav-text">NLP</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#N-gram"><span class="nav-number">1.1.</span> <span class="nav-text">N-gram</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#NNLM"><span class="nav-number">1.2.</span> <span class="nav-text">NNLM</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Word2vec"><span class="nav-number">1.3.</span> <span class="nav-text">Word2vec</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#RNN"><span class="nav-number">1.4.</span> <span class="nav-text">RNN</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#GRU"><span class="nav-number">1.5.</span> <span class="nav-text">GRU</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#LSTM"><span class="nav-number">1.6.</span> <span class="nav-text">LSTM</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Bi-directional-RNN"><span class="nav-number">1.7.</span> <span class="nav-text">Bi-directional RNN</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Deep-RNNs"><span class="nav-number">1.8.</span> <span class="nav-text">Deep RNNs</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#TODO"><span class="nav-number">1.9.</span> <span class="nav-text">TODO</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Olivia"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Olivia</p>
+  <div class="site-description" itemprop="description">May All Your Troubles Be little Ones</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">4</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">1</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="/yajie.wang@mail.hfut.edu.cn" title="E-Mail → yajie.wang@mail.hfut.edu.cn"><i class="fa fa-envelope fa-fw"></i></a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-link fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="http://www.hfut.edu.cn/" title="http:&#x2F;&#x2F;www.hfut.edu.cn&#x2F;" rel="noopener" target="_blank">合肥工业大学</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Olivia</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script color='0,0,255' opacity='0.5' zIndex='-1' count='99' src="/lib/canvas-nest/canvas-nest-nomobile.min.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
