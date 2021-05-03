@@ -279,8 +279,8 @@ L=\frac {1}{T}\sum_{t}log\tilde{P}(w_t|w_{t-1},...w_{t-1+n})+R(\theta)</script><
 <ul>
 <li>$CBOW$（连续词袋模型）：利用上下文预测中心词</li>
 <li>$Skip-gram$（跳字模型）：利用中心词预测上下文</li>
-<li>$hierarchical softmax$（层次$softmax$）</li>
-<li>$negative sampling$（负采样）</li>
+<li>$hierarchical\ softmax$（层次$softmax$）</li>
+<li>$negative\ sampling$（负采样）</li>
 </ul>
 </li>
 <li><p>与NNLM的区别</p>
@@ -373,7 +373,7 @@ L(\hat y, y)=\sum_{t=1}^{T_x}L^{<t>}(\hat y^{<t>},y^{<t>})</script><ul>
 <p>$\Gamma_o$：输出门</p>
 <p>图片表述</p>
 <p><img src="C:\Users\Olivia~\AppData\Roaming\Typora\typora-user-images\image-20210125201411508.png" alt="image-20210125201411508"></p>
-<p>​    看公式可得，各门值只取决于$a^{<t-1>}$与$x^{<t>}$，但有时也可以偷窥一下$c^{<t-1>}$的值，这叫做“窥视孔连接”$(peephole connection)$。故有时说$c^{<t-1>}$也能影响门值。</p>
+<p>​    看公式可得，各门值只取决于$a^{<t-1>}$与$x^{<t>}$，但有时也可以偷窥一下$c^{<t-1>}$的值，这叫做“窥视孔连接”$(peephole\ connection)$。故有时说$c^{<t-1>}$也能影响门值。</p>
 </li>
 <li><p>前向传递</p>
 <p><img src="http://www.ai-start.com/dl2017/images/LSTM.png" alt="ST"></p>
