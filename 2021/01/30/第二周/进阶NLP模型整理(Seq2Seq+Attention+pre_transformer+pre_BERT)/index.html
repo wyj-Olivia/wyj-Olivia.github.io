@@ -1,0 +1,853 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="1. 句向量 2. Seq2Seq 采用Encoder和Decoder  Encoder相当于一种压缩器，将最有用的特征识别出来，用最简练的信息表达。 Decoder是解压器，将向量化表达转变为其他表现形式。  2.1 LSTM模型【SimpleRNN】（以机器翻译为例）  Encoder  用于提取特征，最后一个输出即为特征，其他隐藏层被丢弃，输出为最后一个状态h和c">
+<meta property="og:type" content="article">
+<meta property="og:title" content="进阶NLP模型整理(Seq2Seq+Attention+pre_transformer+pre_BERT)">
+<meta property="og:url" content="http://example.com/2021/01/30/%E7%AC%AC%E4%BA%8C%E5%91%A8/%E8%BF%9B%E9%98%B6NLP%E6%A8%A1%E5%9E%8B%E6%95%B4%E7%90%86(Seq2Seq+Attention+pre_transformer+pre_BERT)/index.html">
+<meta property="og:site_name" content="Olivia的博客">
+<meta property="og:description" content="1. 句向量 2. Seq2Seq 采用Encoder和Decoder  Encoder相当于一种压缩器，将最有用的特征识别出来，用最简练的信息表达。 Decoder是解压器，将向量化表达转变为其他表现形式。  2.1 LSTM模型【SimpleRNN】（以机器翻译为例）  Encoder  用于提取特征，最后一个输出即为特征，其他隐藏层被丢弃，输出为最后一个状态h和c">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://s3.ax1x.com/2021/01/30/yFOtn1.png">
+<meta property="og:image" content="https://s3.ax1x.com/2021/01/30/yFO0hD.png">
+<meta property="og:image" content="https://s3.ax1x.com/2021/01/30/ykrDvd.png">
+<meta property="og:image" content="https://s3.ax1x.com/2021/01/31/yAT5cR.png">
+<meta property="og:image" content="https://s3.ax1x.com/2021/01/31/yA7k4g.png">
+<meta property="og:image" content="https://s3.ax1x.com/2021/01/31/yEg4HJ.png">
+<meta property="og:image" content="https://s3.ax1x.com/2021/01/31/yE2eEj.png">
+<meta property="og:image" content="https://s3.ax1x.com/2021/01/31/yEzHPI.png">
+<meta property="og:image" content="https://s3.ax1x.com/2021/01/31/yV9oa4.png">
+<meta property="og:image" content="https://s3.ax1x.com/2021/01/31/yV9jsK.png">
+<meta property="og:image" content="https://s3.ax1x.com/2021/01/31/yVCffA.png">
+<meta property="og:image" content="https://s3.ax1x.com/2021/01/31/yVPktJ.png">
+<meta property="og:image" content="https://s3.ax1x.com/2021/01/31/yVA1qP.png">
+<meta property="og:image" content="https://s3.ax1x.com/2021/01/31/yVmjV1.png">
+<meta property="article:published_time" content="2021-01-29T16:00:00.000Z">
+<meta property="article:modified_time" content="2021-05-04T06:52:25.682Z">
+<meta property="article:author" content="Olivia">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://s3.ax1x.com/2021/01/30/yFOtn1.png">
+
+<link rel="canonical" href="http://example.com/2021/01/30/%E7%AC%AC%E4%BA%8C%E5%91%A8/%E8%BF%9B%E9%98%B6NLP%E6%A8%A1%E5%9E%8B%E6%95%B4%E7%90%86(Seq2Seq+Attention+pre_transformer+pre_BERT)/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+<link rel="stylesheet" href="//cdn.jsdelivr.net/gh/theme-next/theme-next-needmoreshare2@1/needsharebutton.min.css"><style>
+#needsharebutton-postbottom {
+  cursor: pointer;
+  height: 26px;
+  margin-top: 10px;
+  position: relative;
+}
+#needsharebutton-postbottom .btn {
+  border: 1px solid $btn-default-border-color;
+  border-radius: 3px;
+  display: initial;
+  padding: 1px 4px;
+}
+</style><style>
+#needsharebutton-float {
+  bottom: 88px;
+  cursor: pointer;
+  left: -8px;
+  position: fixed;
+  z-index: 9999;
+}
+#needsharebutton-float .btn {
+  border: 1px solid $btn-default-border-color;
+  border-radius: 4px;
+  padding: 0 10px 0 14px;
+}
+</style>
+  <title>进阶NLP模型整理(Seq2Seq+Attention+pre_transformer+pre_BERT) | Olivia的博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Olivia的博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/01/30/%E7%AC%AC%E4%BA%8C%E5%91%A8/%E8%BF%9B%E9%98%B6NLP%E6%A8%A1%E5%9E%8B%E6%95%B4%E7%90%86(Seq2Seq+Attention+pre_transformer+pre_BERT)/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="Olivia">
+      <meta itemprop="description" content="May All Your Troubles Be little Ones">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Olivia的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          进阶NLP模型整理(Seq2Seq+Attention+pre_transformer+pre_BERT)
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-01-30 00:00:00" itemprop="dateCreated datePublished" datetime="2021-01-30T00:00:00+08:00">2021-01-30</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-05-04 14:52:25" itemprop="dateModified" datetime="2021-05-04T14:52:25+08:00">2021-05-04</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/NLP/" itemprop="url" rel="index"><span itemprop="name">NLP</span></a>
+                </span>
+                  >
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/NLP/notes/" itemprop="url" rel="index"><span itemprop="name">notes</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>5.5k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>5 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="句向量">1. 句向量</h2>
+<h2 id="seq2seq">2. Seq2Seq</h2>
+<p>采用Encoder和Decoder</p>
+<ul>
+<li>Encoder相当于一种压缩器，将最有用的特征识别出来，用最简练的信息表达。</li>
+<li>Decoder是解压器，将向量化表达转变为其他表现形式。</li>
+</ul>
+<h3 id="lstm模型simplernn以机器翻译为例">2.1 LSTM模型【SimpleRNN】（以机器翻译为例）</h3>
+<ul>
+<li><p>Encoder</p>
+<ul>
+<li><p>用于提取特征，最后一个输出即为特征，其他隐藏层被丢弃，输出为最后一个状态h和c</p>
+<figure>
+<img src="https://s3.ax1x.com/2021/01/30/yFOtn1.png" alt="yFOtn1.png" /><figcaption aria-hidden="true">yFOtn1.png</figcaption>
+</figure></li>
+</ul></li>
+<li><p>Decoder</p>
+<ul>
+<li><p>初始状态为Encoder的最后一个状态</p></li>
+<li><p>每次接受一个输入，然后输出下一个字母的概率，第一个输入为起始符</p></li>
+<li><p>decoder输出一个概率分布，结合标签形成一个CrossEntropy函数，梯度从Decoder传回Encoder。</p>
+<figure>
+<img src="https://s3.ax1x.com/2021/01/30/yFO0hD.png" alt="yFO0hD.png" /><figcaption aria-hidden="true">yFO0hD.png</figcaption>
+</figure></li>
+</ul></li>
+<li><p>训练及预测过程</p>
+<ul>
+<li>training中，不管有没有预测错，下一步在decoder的输入都是正确的</li>
+<li>inference中，decoder下一步的预测基于decoder上一步预测，而不是true label</li>
+</ul></li>
+<li><p>提升：</p>
+<ul>
+<li>encoder用双向LSTM，decoder是单向LSTM</li>
+<li>multi-Task learning：多加入几个任务，比如让英语翻译成英语等，这样encoder可以被训练的更好</li>
+</ul></li>
+</ul>
+<h3 id="attention注意力机制simplernnattention">2.2 Attention(注意力)机制【SimpleRNN+Attention】</h3>
+<ul>
+<li><p>2015年提出，用来改进Seq2Seq模型，用来解决遗忘问题</p></li>
+<li><p>decoder每次更新状态之前，encoder会对整体信息进行softmax(打权重)，<strong>从而使decoder了解应加强注意哪些encoder的step上</strong>，在结合decoder的输入信息一起训练，这就是Attention名字的由来，同时不会忘记原始输入，<strong>但缺点是计算量很大</strong>。</p></li>
+<li><p>原理过程：</p>
+<ol type="1">
+<li><p>encoder结束后，attention和decoder同时工作</p></li>
+<li><p>decoder的初始状态<span class="math inline">\(s_0\)</span>是encoder的最后一个状态，<strong>同时encoder的所有状态都要保留</strong></p></li>
+<li><p><strong>先计算decoder的初始状态<span class="math inline">\(s_0\)</span>与encoder中每个状态<span class="math inline">\(h_i\)</span>的相关性</strong>，使用<span class="math inline">\(a_i=aligh(h_i, s_0)\)</span>来计算相关性，结果即为<span class="math inline">\(a_i\)</span>，记做<span class="math inline">\(Weight\)</span>（此<span class="math inline">\(a_i\)</span>是经softmax处理过的）。</p></li>
+<li><p><strong>计算与<span class="math inline">\(s_0\)</span>对应的<span class="math inline">\(a_i\)</span>（计算出的m个<span class="math inline">\(a\)</span>最后还需经softmax处理得到<span class="math inline">\(a_i\)</span>）：</strong></p>
+<ul>
+<li><p>第一篇attention论文提出的计算方法</p>
+<ul>
+<li><p><span class="math inline">\(aligh(h_i, s_0)=v_a^\mathrm{T}tanh(W_a[h_i;s_0])\qquad concat\)</span></p></li>
+<li><p><span class="math inline">\(v_a\)</span>与<span class="math inline">\(W_a\)</span>都是参数，需要从训练集中学习</p></li>
+</ul></li>
+<li><p><strong>更常用的一种方法</strong></p>
+<ul>
+<li>Linear maps:
+<ul>
+<li><span class="math inline">\(k_i=W_k×h_i\qquad for\ i=1\ to\ m\)</span></li>
+<li><span class="math inline">\(q_0=W_Q×s_0\)</span></li>
+</ul></li>
+<li>Inner product:
+<ul>
+<li><span class="math inline">\(\tilde a_i=k_i^\mathrm Tq_0\qquad for\ i=1\ to\ m\)</span></li>
+</ul></li>
+<li>Normalization:
+<ul>
+<li><span class="math inline">\([a_i,...,a_m]=Softmax([\tilde a_1,...,\tilde a_m])\)</span></li>
+</ul></li>
+</ul></li>
+</ul></li>
+<li><p>计算与<span class="math inline">\(s_0\)</span>对应的Context vector <span class="math inline">\(c_0\)</span>，<strong>加权平均</strong></p>
+<p>​ <span class="math inline">\(c_0=a_1h_1+...+a_mh_m\)</span></p></li>
+<li><p>更新下一个状态<span class="math inline">\(s_1\)</span>，<span class="math inline">\(x_1&#39;\)</span>为输入的数据</p>
+<ul>
+<li><p>SimpleRNN中 <span class="math display">\[
+s_1=tanh(A&#39;
+\begin{bmatrix}
+x&#39;_1\\
+s_0
+\end{bmatrix}
++b)
+\]</span> 仅仅根据上一状态，并不会看encoder状态</p></li>
+<li><p><strong>SimpleRNN+Attention中</strong> <span class="math display">\[
+s_1=tanh(A&#39;
+\begin{bmatrix}
+x&#39;_1\\
+s_0\\
+c_0
+\end{bmatrix}
++b)
+\]</span> <span class="math inline">\(c_0\)</span>是encoder中所有状态<span class="math inline">\(h_i\)</span>的加权平均，所以<span class="math inline">\(c_0\)</span>记录有<span class="math inline">\(x_1\)</span>到<span class="math inline">\(x_m\)</span>的完整信息，而decoder的更新一来于<span class="math inline">\(c\)</span>，故RNN的遗忘问题可解决。</p></li>
+</ul></li>
+<li><p>再计算<span class="math inline">\(s_1\)</span>跟之前encoder所有状态的相关性，即<span class="math inline">\(a\)</span>，再计算<span class="math inline">\(c_1\)</span>，decoder接受新的输入<span class="math inline">\(x_2&#39;\)</span>，循环计算下去直至结束。</p></li>
+</ol></li>
+<li><p>计算量：为计算<span class="math inline">\(weight\ a_i\)</span>，共需计算encoder和decoder数量的乘积次，故attention为了不遗忘，是<strong>以高数量级计算为代价</strong>。</p></li>
+<li><p>权重<span class="math inline">\(a\)</span>的实际意义：</p>
+<figure>
+<img src="https://s3.ax1x.com/2021/01/30/ykrDvd.png" alt="ykrDvd.png" /><figcaption aria-hidden="true">ykrDvd.png</figcaption>
+</figure>
+<p>线越粗，相关性越高</p></li>
+</ul>
+<h3 id="总结">2.3 总结</h3>
+<ul>
+<li>Stardard Seq2Seq model: the decoder looks at only its current state</li>
+<li>Attention: decoder additionally looks at all the states of the encoder</li>
+<li>Attention: decoder knows where to focus</li>
+<li><strong>Downside: higher time complexity</strong>
+<ul>
+<li>m: source sequence length</li>
+<li>t: target sequence length</li>
+<li>Standard Seq2Seq: <span class="math inline">\(O(m+t)\)</span> time complexity</li>
+<li>Seq2Seq+attention: <span class="math inline">\(O(mt)\)</span> time complexity</li>
+</ul></li>
+</ul>
+<h2 id="transformer">3. Transformer</h2>
+<ul>
+<li>是一个Seq2Seq模型，有一个encoder和一个decoder</li>
+<li>完全不是RNN，而是基于attention层、self-attention层、全连接层</li>
+<li>输入输出shape与RNN相同</li>
+</ul>
+<h3 id="attention-layer">3.1 Attention Layer</h3>
+<ul>
+<li><p>Encoder's inputs：<span class="math inline">\(X=[x_1,x_2,...x_m]\)</span>，每一个输入为d维</p>
+<p>Decoder's inputs：<span class="math inline">\(X&#39;=[x_1&#39;,x_2&#39;,...,x_t&#39;]\)</span>，每一个输入为d维</p>
+<p>Parameaters：<span class="math inline">\(W_Q, W_K,W_V\)</span></p>
+<p><span class="math inline">\(C=Attn(X,X&#39;)\)</span></p></li>
+<li><table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: center;">Query：<span class="math inline">\(Q=W_QX&#39;\)</span></th>
+<th style="text-align: center;">Key：<span class="math inline">\(K=W_KX\)</span></th>
+<th style="text-align: center;">Value：<span class="math inline">\(V=W_VX\)</span></th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: center;"><span class="math inline">\(W_Q:q×d\)</span><br /><span class="math inline">\(X&#39;:d×t\)</span><br /><span class="math inline">\(Q:q×t\)</span><br />【Q中每一列对应一个<span class="math inline">\(x&#39;\)</span>】</td>
+<td style="text-align: center;"><span class="math inline">\(W_K:k×d\)</span><br /><span class="math inline">\(X:d×m\)</span><br /><span class="math inline">\(K:k×m\)</span><br />【K中每一列对应一个<span class="math inline">\(x\)</span>】</td>
+<td style="text-align: center;"><span class="math inline">\(W_V:v×d\)</span><br /><span class="math inline">\(X:d×m\)</span><br /><span class="math inline">\(V:v×m\)</span><br />【V中每一列对应一个<span class="math inline">\(x\)</span>】</td>
+</tr>
+</tbody>
+</table>
+<p>Weights：<span class="math inline">\(a=Softmax(K^TQ)\)</span> 【k=q，<span class="math inline">\(a:m×t\)</span>】</p>
+<p>Context vector：<span class="math inline">\(C=Va\)</span> 【<span class="math inline">\(c:v×t\)</span>，每一列对应一个<span class="math inline">\(x&#39;\)</span>】</p></li>
+<li><p><span class="math inline">\(K\)</span>与<span class="math inline">\(V\)</span>是对应于encoder，<span class="math inline">\(Q\)</span>是对应于decoder层，最后输出为<span class="math inline">\(c\)</span></p></li>
+<li><p>Output of attention layer: <span class="math inline">\(C=[c_{:1},c_{:2},...,c_{:t}]\)</span></p>
+<p>Here, <span class="math inline">\(c_{:j}=V·Softmax(K^Tq_{:j})\)</span></p>
+<p>Thus, <span class="math inline">\(c_{:j}\)</span> is a function of <span class="math inline">\(x&#39;_j\)</span> and <span class="math inline">\([x_1,...,x_m]\)</span></p>
+<figure>
+<img src="https://s3.ax1x.com/2021/01/31/yAT5cR.png" alt="yAT5cR.png" /><figcaption aria-hidden="true">yAT5cR.png</figcaption>
+</figure></li>
+<li><p><strong>对比SimpleRNN+Attention的Seq2Seq</strong>：</p>
+<ul>
+<li>SimpleRNN：对于decoder层的每一个时间步，需先计算此状态与encoder各层的<span class="math inline">\(a\)</span>，再计算context vector <span class="math inline">\(c\)</span>，<strong>然后结合上一状态、<span class="math inline">\(c\)</span>、这一层的输入<span class="math inline">\(x\)</span>，生成下一状态，继续计算，是一步一步的</strong>。</li>
+<li>Transformer：直接将decoder层的输入进行处理生成Q，然后encoder层处理生成K、V，即可直接进行运算得到context vector <span class="math inline">\(c\)</span>，而无需再一步一步计算。</li>
+</ul></li>
+</ul>
+<h3 id="self-attention-layer">3.2 Self-Attention Layer</h3>
+<ul>
+<li><p>不仅局限于Seq2Seq，可用在所有RNN上，如果只用在一个网络则叫做Self-Attention，2016年提出。</p></li>
+<li><p>之后发现根本不需要RNN，直接用Attention反而效果更好，由此提出了Transformer模型</p></li>
+<li><p>Self-Attention Layer：<span class="math inline">\(C=Attn(X, X)\)</span></p>
+<p>inputs：<span class="math inline">\(X=[x_1,x_2,...x_m]\)</span></p>
+<p>Parameters：<span class="math inline">\(W_Q,W_K,W_V\)</span></p>
+<figure>
+<img src="https://s3.ax1x.com/2021/01/31/yA7k4g.png" alt="yA7k4g.png" /><figcaption aria-hidden="true">yA7k4g.png</figcaption>
+</figure></li>
+</ul>
+<h3 id="multi-head-self-attention">3.3 Multi-Head (Self-)Attention</h3>
+<ul>
+<li><strong>Single-Head</strong>：单头，前文讲的</li>
+<li><strong>Multi-Head (Self-)Attention</strong>
+<ul>
+<li>Using <span class="math inline">\(l\)</span> single-head (self-)attentions <strong>(which do not share parameters.)</strong>
+<ul>
+<li>A single-head self-attention has 3 parameter matrices：<span class="math inline">\(W_Q,W_K,W_V\)</span></li>
+</ul></li>
+<li>Concatenating outputs of single-head self-attentions
+<ul>
+<li>Suppose single-head self-attentions' outputs are <span class="math inline">\(d×m\)</span> matrices</li>
+<li>Multi-head's output shape: <span class="math inline">\((ld)×m\)</span></li>
+</ul></li>
+</ul></li>
+</ul>
+<h3 id="stacked-self-attention-layersencoder">3.4 Stacked Self-Attention Layers【Encoder】</h3>
+<ul>
+<li><p>构建Encoder层</p>
+<ul>
+<li><p>One Block of Encoder</p>
+<p>由两层组成，每个Dense共享一个<span class="math inline">\(W_U\)</span>，激活函数为<span class="math inline">\(ReLU\)</span>。输入与输出shape相同。每个<span class="math inline">\(u\)</span>依赖于所有<span class="math inline">\(x\)</span>。</p>
+<figure>
+<img src="https://s3.ax1x.com/2021/01/31/yEg4HJ.png" alt="yEg4HJ.png" /><figcaption aria-hidden="true">yEg4HJ.png</figcaption>
+</figure>
+<figure>
+<img src="https://s3.ax1x.com/2021/01/31/yE2eEj.png" alt="yE2eEj.png" /><figcaption aria-hidden="true">yE2eEj.png</figcaption>
+</figure></li>
+<li><p>Stack Blocks</p>
+<p>组成Encoder，共6个Block，每个Block两层，每个Block有自己的参数，Blocks之间不共享参数，输入与输出shape相同</p>
+<figure>
+<img src="https://s3.ax1x.com/2021/01/31/yEzHPI.png" alt="yEzHPI.png" /><figcaption aria-hidden="true">yEzHPI.png</figcaption>
+</figure></li>
+</ul></li>
+</ul>
+<h3 id="stacked-attention-layersdecoder">3.5 Stacked Attention Layers【Decoder】</h3>
+<ul>
+<li><p>构建Decoder层</p>
+<ul>
+<li><p>One Block</p>
+<p>由三层组成，有两个输入序列，Dense激活函数也为<span class="math inline">\(ReLU\)</span></p>
+<figure>
+<img src="https://s3.ax1x.com/2021/01/31/yV9oa4.png" alt="yV9oa4.png" /><figcaption aria-hidden="true">yV9oa4.png</figcaption>
+</figure>
+<figure>
+<img src="https://s3.ax1x.com/2021/01/31/yV9jsK.png" alt="yV9jsK.png" /><figcaption aria-hidden="true">yV9jsK.png</figcaption>
+</figure></li>
+<li><p>Transformer's Decoder: One Block【注意图中输入输出shape特点】</p>
+<figure>
+<img src="https://s3.ax1x.com/2021/01/31/yVCffA.png" alt="yVCffA.png" /><figcaption aria-hidden="true">yVCffA.png</figcaption>
+</figure></li>
+</ul></li>
+</ul>
+<h3 id="put-togethertransformer">3.6 Put together【Transformer】</h3>
+<ul>
+<li><p>左边为Encoder，右边为Decoder，组合起来就是Transformer模型。最终输出为<span class="math inline">\(512×t\ matrix\)</span></p>
+<figure>
+<img src="https://s3.ax1x.com/2021/01/31/yVPktJ.png" alt="yVPktJ.png" /><figcaption aria-hidden="true">yVPktJ.png</figcaption>
+</figure></li>
+<li><p>Comparison with RNN Seq2Seq Model</p></li>
+</ul>
+<h2 id="bertbidirectional-encoder-representations-from-transformers">4. BERT(Bidirectional Encoder Representations from Transformers)</h2>
+<ul>
+<li>18年提出，19年发表[Devlin, Chang, Lee, and Toutanova. <strong>BERT: Pre-training of deep bidirectional transformers for language understanding</strong>. In <em>ACL</em>, 2019.]</li>
+<li>目的：预训练Transformer模型的encoder网络
+<ul>
+<li><em>预训练模型：大规模深度学习模型特点是大、参数多，但是效果提升会更显著，同时不会很容易随着一点变化而完全跑偏，比小模型更容易做迁移。但是训练大模型需要花费的时间很长，所以一个预训练模型很重要，基于预训练模型，我们手头只有小数据集也能得到一个好模型，同时训练速度大大提高，不是从零开始。</em></li>
+<li><em>预训练模型：ELMo、GPT、BERT</em></li>
+</ul></li>
+<li>两个任务：Predict masked word. Predict next sentence</li>
+</ul>
+<h3 id="randomly-mask-a-word">4.1 Randomly mask a word</h3>
+<ul>
+<li><p>随机遮挡词替换为Mask，输出<span class="math inline">\(u_M\)</span>经Softmax即可得到概率值，可通过概率值判断遮挡的词是什么。</p>
+<figure>
+<img src="https://s3.ax1x.com/2021/01/31/yVA1qP.png" alt="yVA1qP.png" /><figcaption aria-hidden="true">yVA1qP.png</figcaption>
+</figure></li>
+<li><p><span class="math inline">\(e\)</span>: one-hot vector of the masked word "cat"</p>
+<p><span class="math inline">\(p\)</span>: output probability distribution at the masked position</p>
+<p><span class="math inline">\(Loss = CrossEntropy(e, p)\)</span></p>
+<p>Performing one gradient descent to update the model parameters.</p></li>
+<li><p>为防止机器将mask当成一个词去训练，具体替换方式为：随机选取15%的词做如下改变</p>
+<ul>
+<li>80%的时间，将它替换成[MASK]</li>
+<li>10%的时间，将它替换成其他任意词（错别字）</li>
+<li>10%的时间，不变</li>
+</ul></li>
+<li><p><strong>预训练不需要人工标注的数据集，可自动生成标签，即可使用维基百科等数据去训练模型，可训练出非常大的模型</strong></p></li>
+</ul>
+<h3 id="predict-the-next-sentence">4.2 Predict the Next Sentence</h3>
+<ul>
+<li><p>分类：[CLS] is a token for classification.</p>
+<p>分隔符：[SEP] is for separating sentences.</p></li>
+<li><p>向量<span class="math inline">\(c\)</span>在<span class="math inline">\([CLS]\)</span>的位置上，但并不只依赖于<span class="math inline">\(c\)</span>，向量<span class="math inline">\(c\)</span>包含两部分的全部信息。</p>
+<p>可以采用<span class="math inline">\(CrossEntropy\)</span>来构建损失函数</p>
+<figure>
+<img src="https://s3.ax1x.com/2021/01/31/yVmjV1.png" alt="yVmjV1.png" /><figcaption aria-hidden="true">yVmjV1.png</figcaption>
+</figure></li>
+<li><p>用处：使Embedding词向量包含上下两句话之间的关联信息。Encoder网络中的self-attention层就是寻找相关性，也可使self-attention层找到正确的相关性。</p></li>
+</ul>
+<h3 id="combining-the-two-methods">4.3 Combining the two methods</h3>
+<ul>
+<li><p>两个任务，对应不同的loss function</p>
+<p>Objective function is the sum of these loss functions</p>
+<p>Update model parameters by performing one gradient descent</p></li>
+</ul>
+
+    </div>
+
+    
+	
+	
+
+	
+		<div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束 <i class="fa fa-heart"></i> 感谢阅读-------------</div>
+	<div class="post-widgets">
+      <div id="needsharebutton-postbottom">
+        <span class="btn">
+          <i class="fa fa-share-alt" aria-hidden="true"></i>
+        </span>
+      </div>
+    </div>
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/01/30/%E7%AC%AC%E4%BA%8C%E5%91%A8/Attention%20is%20%20all%20you%20need%E8%AE%BA%E6%96%87%E7%A0%94%E8%AF%BB/" rel="prev" title="Attention is  all you need论文研读">
+      <i class="fa fa-chevron-left"></i> Attention is  all you need论文研读
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2021/01/30/%E7%AC%AC%E4%BA%8C%E5%91%A8/%E8%8E%AB%E7%83%A6/" rel="next" title="NLP快速入门-莫烦">
+      NLP快速入门-莫烦 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%A5%E5%90%91%E9%87%8F"><span class="nav-number">1.</span> <span class="nav-text">1. 句向量</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#seq2seq"><span class="nav-number">2.</span> <span class="nav-text">2. Seq2Seq</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#lstm%E6%A8%A1%E5%9E%8Bsimplernn%E4%BB%A5%E6%9C%BA%E5%99%A8%E7%BF%BB%E8%AF%91%E4%B8%BA%E4%BE%8B"><span class="nav-number">2.1.</span> <span class="nav-text">2.1 LSTM模型【SimpleRNN】（以机器翻译为例）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#attention%E6%B3%A8%E6%84%8F%E5%8A%9B%E6%9C%BA%E5%88%B6simplernnattention"><span class="nav-number">2.2.</span> <span class="nav-text">2.2 Attention(注意力)机制【SimpleRNN+Attention】</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%80%BB%E7%BB%93"><span class="nav-number">2.3.</span> <span class="nav-text">2.3 总结</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#transformer"><span class="nav-number">3.</span> <span class="nav-text">3. Transformer</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#attention-layer"><span class="nav-number">3.1.</span> <span class="nav-text">3.1 Attention Layer</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#self-attention-layer"><span class="nav-number">3.2.</span> <span class="nav-text">3.2 Self-Attention Layer</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#multi-head-self-attention"><span class="nav-number">3.3.</span> <span class="nav-text">3.3 Multi-Head (Self-)Attention</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#stacked-self-attention-layersencoder"><span class="nav-number">3.4.</span> <span class="nav-text">3.4 Stacked Self-Attention Layers【Encoder】</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#stacked-attention-layersdecoder"><span class="nav-number">3.5.</span> <span class="nav-text">3.5 Stacked Attention Layers【Decoder】</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#put-togethertransformer"><span class="nav-number">3.6.</span> <span class="nav-text">3.6 Put together【Transformer】</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#bertbidirectional-encoder-representations-from-transformers"><span class="nav-number">4.</span> <span class="nav-text">4. BERT(Bidirectional Encoder Representations from Transformers)</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#randomly-mask-a-word"><span class="nav-number">4.1.</span> <span class="nav-text">4.1 Randomly mask a word</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#predict-the-next-sentence"><span class="nav-number">4.2.</span> <span class="nav-text">4.2 Predict the Next Sentence</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#combining-the-two-methods"><span class="nav-number">4.3.</span> <span class="nav-text">4.3 Combining the two methods</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Olivia"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Olivia</p>
+  <div class="site-description" itemprop="description">May All Your Troubles Be little Ones</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">7</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="/yajie.wang@mail.hfut.edu.cn" title="E-Mail → yajie.wang@mail.hfut.edu.cn"><i class="fa fa-envelope fa-fw"></i></a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-link fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="http://www.hfut.edu.cn/" title="http:&#x2F;&#x2F;www.hfut.edu.cn&#x2F;" rel="noopener" target="_blank">合肥工业大学</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2019 – 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">wyj-Olivia</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">75k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">1:08</span>
+</div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script color='0,0,255' opacity='0.5' zIndex='-1' count='99' src="/lib/canvas-nest/canvas-nest-nomobile.min.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+<div id="needsharebutton-float">
+      <span class="btn">
+        <i class="fa fa-share-alt" aria-hidden="true"></i>
+      </span>
+    </div>
+  <script src="//cdn.jsdelivr.net/gh/theme-next/theme-next-needmoreshare2@1/needsharebutton.min.js"></script>
+  <script>
+      pbOptions = {};
+        pbOptions.iconStyle = "box";
+        pbOptions.boxForm = "horizontal";
+        pbOptions.position = "bottomCenter";
+        pbOptions.networks = "Weibo,Wechat,Douban,QQZone,Twitter,Facebook";
+      new needShareButton('#needsharebutton-postbottom', pbOptions);
+      flOptions = {};
+        flOptions.iconStyle = "box";
+        flOptions.boxForm = "horizontal";
+        flOptions.position = "middleRight";
+        flOptions.networks = "Weibo,Wechat,Douban,QQZone,Twitter,Facebook";
+      new needShareButton('#needsharebutton-float', flOptions);
+  </script>
+</body>
+</html>

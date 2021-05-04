@@ -21,12 +21,12 @@
     var CONFIG = {"hostname":"example.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta name="description" content="早就想学习JS了，正好又有课设要做，就学习了JS，但是看着网课学习的东西我觉得并不是很全面，但是基本的学到了，还需要继续深入学习，所以就把学习到的JS先整理下来，后期会慢慢整理学到的 HTML5 和 CSS。   目录一、JS实现、变量二、JS异常捕获、事件三、DOM操作HTML、CSS、EventListener四、JS事件详解、事件流、事件处理、事件对象五、事件对象 对象 string">
+  <meta name="description" content="早就想学习JS了，正好又有课设要做，就学习了JS，但是看着网课学习的东西我觉得并不是很全面，但是基本的学到了，还需要继续深入学习，所以就把学习到的JS先整理下来，后期会慢慢整理学到的 HTML5 和 CSS。  目录 一、JS实现、变量 二、JS异常捕获、事件 三、DOM操作HTML、CSS、EventListener 四、JS事件详解、事件流、事件处理、事件对象 五、事件">
 <meta property="og:type" content="article">
 <meta property="og:title" content="JS基础知识总结">
 <meta property="og:url" content="http://example.com/2019/09/03/JS%E5%AD%A6%E4%B9%A0%E7%9F%A5%E8%AF%86%E6%80%BB%E7%BB%93/index.html">
 <meta property="og:site_name" content="Olivia的博客">
-<meta property="og:description" content="早就想学习JS了，正好又有课设要做，就学习了JS，但是看着网课学习的东西我觉得并不是很全面，但是基本的学到了，还需要继续深入学习，所以就把学习到的JS先整理下来，后期会慢慢整理学到的 HTML5 和 CSS。   目录一、JS实现、变量二、JS异常捕获、事件三、DOM操作HTML、CSS、EventListener四、JS事件详解、事件流、事件处理、事件对象五、事件对象 对象 string">
+<meta property="og:description" content="早就想学习JS了，正好又有课设要做，就学习了JS，但是看着网课学习的东西我觉得并不是很全面，但是基本的学到了，还需要继续深入学习，所以就把学习到的JS先整理下来，后期会慢慢整理学到的 HTML5 和 CSS。  目录 一、JS实现、变量 二、JS异常捕获、事件 三、DOM操作HTML、CSS、EventListener 四、JS事件详解、事件流、事件处理、事件对象 五、事件">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2019-09-03T12:50:03.000Z">
 <meta property="article:modified_time" content="2021-05-01T06:37:06.651Z">
@@ -247,506 +247,464 @@
 
       
         <span id="more"></span>
-<font size=3 face= "微软雅黑" color="darkred">
-　　早就想学习JS了，正好又有课设要做，就学习了JS，但是看着网课学习的东西我觉得并不是很全面，但是基本的学到了，还需要继续深入学习，所以就把学习到的JS先整理下来，后期会慢慢整理学到的 HTML5 和 CSS。</font>
-
+<p><font size=3 face= "微软雅黑" color="darkred"> 　　早就想学习JS了，正好又有课设要做，就学习了JS，但是看着网课学习的东西我觉得并不是很全面，但是基本的学到了，还需要继续深入学习，所以就把学习到的JS先整理下来，后期会慢慢整理学到的 HTML5 和 CSS。</font></p>
 <blockquote>
-<h2 id="目录"><a href="#目录" class="headerlink" title="目录"></a><em>目录</em></h2><h3 id="一、JS实现、变量"><a href="#一、JS实现、变量" class="headerlink" title="一、JS实现、变量"></a><em><a href="#1">一、JS实现、变量</a></em></h3><h3 id="二、JS异常捕获、事件"><a href="#二、JS异常捕获、事件" class="headerlink" title="二、JS异常捕获、事件"></a><em><a href="#2">二、JS异常捕获、事件</a></em></h3><h3 id="三、DOM操作HTML、CSS、EventListener"><a href="#三、DOM操作HTML、CSS、EventListener" class="headerlink" title="三、DOM操作HTML、CSS、EventListener"></a><em><a href="#3">三、DOM操作HTML、CSS、EventListener</a></em></h3><h3 id="四、JS事件详解、事件流、事件处理、事件对象"><a href="#四、JS事件详解、事件流、事件处理、事件对象" class="headerlink" title="四、JS事件详解、事件流、事件处理、事件对象"></a><em><a href="#4">四、JS事件详解、事件流、事件处理、事件对象</a></em></h3><h3 id="五、事件对象"><a href="#五、事件对象" class="headerlink" title="五、事件对象"></a><em><a href="#5">五、事件对象</a></em></h3><ul>
+<h2 id="目录"><em>目录</em></h2>
+<h3 id="一js实现变量"><em><a href="#1">一、JS实现、变量</a></em></h3>
+<h3 id="二js异常捕获事件"><em><a href="#2">二、JS异常捕获、事件</a></em></h3>
+<h3 id="三dom操作htmlcsseventlistener"><em><a href="#3">三、DOM操作HTML、CSS、EventListener</a></em></h3>
+<h3 id="四js事件详解事件流事件处理事件对象"><em><a href="#4">四、JS事件详解、事件流、事件处理、事件对象</a></em></h3>
+<h3 id="五事件对象"><em><a href="#5">五、事件对象</a></em></h3>
+<ul>
 <li><em><a href="#5.1">对象</a></em></li>
 <li><em><a href="#5.2">string对象</a></em></li>
 <li><em><a href="#5.3">data日期对象</a></em></li>
 <li><em><a href="#5.4">Array数组对象</a></em></li>
 <li><em><a href="#5.5">Math对象</a></em></li>
 </ul>
-<h3 id="六、DOM对象控制HTML"><a href="#六、DOM对象控制HTML" class="headerlink" title="六、DOM对象控制HTML"></a><em><a href="#6">六、DOM对象控制HTML</a></em></h3><h3 id="七、JS浏览器对象"><a href="#七、JS浏览器对象" class="headerlink" title="七、JS浏览器对象"></a><em><a href="#7">七、JS浏览器对象</a></em></h3><ul>
+</blockquote>
+<blockquote>
+<h3 id="六dom对象控制html"><em><a href="#6">六、DOM对象控制HTML</a></em></h3>
+<h3 id="七js浏览器对象"><em><a href="#7">七、JS浏览器对象</a></em></h3>
+<ul>
 <li><em><a href="#7.1">Window对象</a></em></li>
 <li><em><a href="#7.2">计时器对象</a></em></li>
 <li><em><a href="#7.3">History对象</a></em></li>
 <li><em><a href="#7.4">Location对象</a></em></li>
 <li><em><a href="#7.5">screen对象</a></em></li>
 </ul>
-<h3 id="八、面向对象"><a href="#八、面向对象" class="headerlink" title="八、面向对象"></a><em><a href="#8">八、面向对象</a></em></h3><h3 id="九、后记"><a href="#九、后记" class="headerlink" title="九、后记"></a><em><a href="#9">九、后记</a></em></h3></blockquote>
-<hr>
-<h2 id="一、JS实现、变量-1"><a href="#一、JS实现、变量-1" class="headerlink" title="一、JS实现、变量"></a><span id="1">一、JS实现、变量</span></h2><h3 id="1-JS实现"><a href="#1-JS实现" class="headerlink" title="1. JS实现"></a>1. JS实现</h3><ul>
+</blockquote>
+<blockquote>
+<h3 id="八面向对象"><em><a href="#8">八、面向对象</a></em></h3>
+<h3 id="九后记"><em><a href="#9">九、后记</a></em></h3>
+</blockquote>
+<hr />
+<h2 id="一js实现变量-1"><span id="1">一、JS实现、变量</span></h2>
+<h3 id="js实现">1. JS实现</h3>
+<ul>
 <li><p>JS用法</p>
 <blockquote>
-<p>HTML中的脚本必须位于<code>&lt;script&gt;&lt;/script&gt;</code>标签之间<br>脚本可被放置在HTML页面中<code>&lt;body&gt;&lt;/body&gt;</code>和<code>&lt;head&gt;</code>部分中  </p>
-</blockquote>
-</li>
+<p>HTML中的脚本必须位于<code>&lt;script&gt;&lt;/script&gt;</code>标签之间<br />
+脚本可被放置在HTML页面中<code>&lt;body&gt;&lt;/body&gt;</code>和<code>&lt;head&gt;</code>部分中</p>
+</blockquote></li>
 <li><p>JS标签</p>
 <blockquote>
-<p>在HTML中插入JS，使用<code>&lt;script&gt;</code>标签<br>在<code>&lt;script&gt;&lt;/script&gt;</code>中书写代码</p>
-</blockquote>
-</li>
+<p>在HTML中插入JS，使用<code>&lt;script&gt;</code>标签<br />
+在<code>&lt;script&gt;&lt;/script&gt;</code>中书写代码</p>
+</blockquote></li>
 <li><p>JS使用限制</p>
 <blockquote>
-<p>在HTML中，不限制脚本数量<br>通常把脚本放置于<code>&lt;head&gt;</code>标签中，以免干扰页面内容</p>
-</blockquote>
-</li>
+<p>在HTML中，不限制脚本数量<br />
+通常把脚本放置于<code>&lt;head&gt;</code>标签中，以免干扰页面内容</p>
+</blockquote></li>
 </ul>
-<h3 id="2-JS变量"><a href="#2-JS变量" class="headerlink" title="2. JS变量"></a>2. JS变量</h3><ul>
+<h3 id="js变量">2. JS变量</h3>
+<ul>
 <li><blockquote>
-<p>用var来声明，例var i = 10; 后面讲解 var 和 let 区别  </p>
-</blockquote>
-</li>
-<li>数据类型  <ol>
+<p>用var来声明，例var i = 10; 后面讲解 var 和 let 区别</p>
+</blockquote></li>
+<li><p>数据类型</p>
+<ol type="1">
 <li>字符串（string）</li>
 <li>数字(number)</li>
 <li>布尔值(boolean)</li>
-<li>数组(Array) <br><blockquote>
-<p>声明数组的方法<br>（1）var arr[1, 3, 2, 4];<br>（2）var arr = new Array(“miao”, “wong”);<br>（3）var arr = new Array; arr[0] = 10; arr[1] = 20; …..</p>
-</blockquote>
-</li>
+<li>数组(Array) <br> &gt;声明数组的方法<br />
+&gt;（1）var arr[1, 3, 2, 4];<br />
+&gt;（2）var arr = new Array("miao", "wong");<br />
+&gt;（3）var arr = new Array; arr[0] = 10; arr[1] = 20; .....</li>
 <li>对象(Object)</li>
 <li>空(null)</li>
 <li>未定义</li>
 <li>可通过赋值为null的方式消除变量</li>
-</ol>
-</li>
+</ol></li>
 <li><p>var 和 let 区别</p>
-<ol>
+<ol type="1">
 <li><p>全局变量：</p>
 <blockquote>
-<p>在函数外声明的变量，在JavaScript程序的任何地方都可以访问。  </p>
-</blockquote>
-</li>
+<p>在函数外声明的变量，在JavaScript程序的任何地方都可以访问。</p>
+</blockquote></li>
 <li><p>局部变量：</p>
 <blockquote>
-<p>在函数内声明的变量的作用域是局部的，函数内使用 var 声明的变量只能在函数内部访问，如果不使用 var 则是全局变量  </p>
-</blockquote>
-</li>
-<li><p>块级作用域：  </p>
+<p>在函数内声明的变量的作用域是局部的，函数内使用 var 声明的变量只能在函数内部访问，如果不使用 var 则是全局变量</p>
+</blockquote></li>
+<li><p>块级作用域：</p>
 <blockquote>
 <p>使用 var 关键字声明的变量不具备块级作用域的特性，它在 {} 外依然能被访问到。</p>
-</blockquote>
-</li>
+</blockquote></li>
 <li><p>重新定义变量</p>
 <blockquote>
-<p>var：在块中重新声明变量，也会重新声明变量块外的变量<br>let：let命令只在所在的代码块 {} 内有效</p>
-</blockquote>
-</li>
+<p>var：在块中重新声明变量，也会重新声明变量块外的变量<br />
+let：let命令只在所在的代码块 {} 内有效</p>
+</blockquote></li>
 <li><p>var 和 let 局部变量</p>
 <blockquote>
 <p>在函数体内声明的变量 var 和 let 的作用域都是局部的</p>
-</blockquote>
-</li>
+</blockquote></li>
 <li><p>var 和 let 全局变量</p>
 <blockquote>
 <p>在 函数体外 或 代码块外 使用 var 和 let 关键字声明的变量的作用域是全局的。</p>
-</blockquote>
-</li>
+</blockquote></li>
 <li><p>HTML代码中使用全局变量</p>
 <blockquote>
-<ol>
-<li>在JavaScript中，全局作用域是针对JavaScript环境。  </li>
-<li>在HTML中，全局作用域是针对window对象  </li>
-<li>使用 var 关键字的全局作用域是属于window对象。var i = 10; 可以使用 window.i 访问变量。  </li>
+<ol type="1">
+<li>在JavaScript中，全局作用域是针对JavaScript环境。<br />
+</li>
+<li>在HTML中，全局作用域是针对window对象<br />
+</li>
+<li>使用 var 关键字的全局作用域是属于window对象。var i = 10; 可以使用 window.i 访问变量。<br />
+</li>
 <li>使用let关键字声明的全局作用域变量不属于window对象。</li>
 </ol>
-</blockquote>
-</li>
+</blockquote></li>
 <li><p>重置变量</p>
 <blockquote>
-<ol>
-<li>在相同的作用域或块级作用域中，不能使用 let 关键字来重置 var 关键字声明的变量。  </li>
-<li>在相同的作用域或块级作用域中，不能使用 let 关键字来重置 let 关键字声明的变量。  </li>
-<li>在相同的作用域或块级作用域中，不能使用 var 关键字来重置 let 关键字声明的变量。  </li>
-<li>let 关键字在不同作用域，或不同块级作用域中是可以重新声明赋值的。  </li>
-</ol>
-</blockquote>
+<ol type="1">
+<li>在相同的作用域或块级作用域中，不能使用 let 关键字来重置 var 关键字声明的变量。<br />
 </li>
+<li>在相同的作用域或块级作用域中，不能使用 let 关键字来重置 let 关键字声明的变量。<br />
+</li>
+<li>在相同的作用域或块级作用域中，不能使用 var 关键字来重置 let 关键字声明的变量。<br />
+</li>
+<li>let 关键字在不同作用域，或不同块级作用域中是可以重新声明赋值的。</li>
+</ol>
+</blockquote></li>
 <li><p>变量提升</p>
 <blockquote>
-<p>var：定义的变量可以在使用后声明，也就是变量可以先使用再声明。<br>let：定义的变量则不可以在使用后声明，也就是变量需要先声明再使用。</p>
-</blockquote>
-</li>
-</ol>
-</li>
+<p>var：定义的变量可以在使用后声明，也就是变量可以先使用再声明。<br />
+let：定义的变量则不可以在使用后声明，也就是变量需要先声明再使用。</p>
+</blockquote></li>
+</ol></li>
 <li><p>this指针</p>
 <blockquote>
-<p>在方法中，this表示该方法所属的对象。<br>如果单独使用，this表示全局对象。<br>在函数中，this表示全局对象。<br>在函数中，在严格模式下，this是未定义的（undefined）。<br>在事件中，this表示接收事件的元素<br>类似 call() 和 apply() 方法可以将this引用到任何对象<br>（<em>详情见菜鸟教程</em>）</p>
-</blockquote>
-</li>
+<p>在方法中，this表示该方法所属的对象。 如果单独使用，this表示全局对象。 在函数中，this表示全局对象。 在函数中，在严格模式下，this是未定义的（undefined）。 在事件中，this表示接收事件的元素 类似 call() 和 apply() 方法可以将this引用到任何对象 （<em>详情见菜鸟教程</em>）</p>
+</blockquote></li>
 </ul>
-<hr>
-<h2 id="二、JS异常捕获、事件-1"><a href="#二、JS异常捕获、事件-1" class="headerlink" title="二、JS异常捕获、事件"></a><span id="2">二、JS异常捕获、事件</span></h2><h3 id="1-JS异常捕获"><a href="#1-JS异常捕获" class="headerlink" title="1. JS异常捕获"></a>1. JS异常捕获</h3><ul>
+<hr />
+<h2 id="二js异常捕获事件-1"><span id="2">二、JS异常捕获、事件</span></h2>
+<h3 id="js异常捕获">1. JS异常捕获</h3>
+<ul>
 <li><p>try 和 catch</p>
 <blockquote>
-<p>try：在执行时进行错误，需要测试的代码块<br>catch：当try代码块发生错误时所执行的代码<br>try 和 catch 是成对出现的</p>
+<p>try：在执行时进行错误，需要测试的代码块<br />
+catch：当try代码块发生错误时所执行的代码<br />
+try 和 catch 是成对出现的</p>
 </blockquote>
-<p>  1.语法</p>
-  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">try&#123;</span><br><span class="line">	...  &#x2F;&#x2F;异常的抛出</span><br><span class="line">&#125; catch(err)&#123;</span><br><span class="line">	...  &#x2F;&#x2F;异常的捕获与处理</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>  2.实例</p>
-  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">&lt;!DOCTYPE html&gt;</span><br><span class="line">&lt;html&gt;</span><br><span class="line">	&lt;head&gt;</span><br><span class="line">		&lt;meta charset&#x3D;&quot;UTF-8&quot;&gt;</span><br><span class="line">		&lt;title&gt;JS异常捕获&lt;&#x2F;title&gt;</span><br><span class="line">	&lt;&#x2F;head&gt;</span><br><span class="line">	&lt;body&gt;</span><br><span class="line">		&lt;button onclick&#x3D;&quot;demo()&quot;&gt;按钮&lt;&#x2F;button&gt;</span><br><span class="line">		&lt;script&gt;</span><br><span class="line">			function demo()&#123;</span><br><span class="line">				try&#123;</span><br><span class="line">					adddlert(&quot;hello&quot;);</span><br><span class="line">				&#125; catch(err)&#123;</span><br><span class="line">					alert(err);</span><br><span class="line">				&#125;</span><br><span class="line">			&#125;</span><br><span class="line">		&lt;&#x2F;script&gt;</span><br><span class="line">	&lt;&#x2F;body&gt;</span><br><span class="line">&lt;&#x2F;html&gt;</span><br></pre></td></tr></table></figure></li>
+<p>1.语法 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">try&#123;</span><br><span class="line">	...  &#x2F;&#x2F;异常的抛出</span><br><span class="line">&#125; catch(err)&#123;</span><br><span class="line">	...  &#x2F;&#x2F;异常的捕获与处理</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure> 2.实例 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">&lt;!DOCTYPE html&gt;</span><br><span class="line">&lt;html&gt;</span><br><span class="line">	&lt;head&gt;</span><br><span class="line">		&lt;meta charset&#x3D;&quot;UTF-8&quot;&gt;</span><br><span class="line">		&lt;title&gt;JS异常捕获&lt;&#x2F;title&gt;</span><br><span class="line">	&lt;&#x2F;head&gt;</span><br><span class="line">	&lt;body&gt;</span><br><span class="line">		&lt;button onclick&#x3D;&quot;demo()&quot;&gt;按钮&lt;&#x2F;button&gt;</span><br><span class="line">		&lt;script&gt;</span><br><span class="line">			function demo()&#123;</span><br><span class="line">				try&#123;</span><br><span class="line">					adddlert(&quot;hello&quot;);</span><br><span class="line">				&#125; catch(err)&#123;</span><br><span class="line">					alert(err);</span><br><span class="line">				&#125;</span><br><span class="line">			&#125;</span><br><span class="line">		&lt;&#x2F;script&gt;</span><br><span class="line">	&lt;&#x2F;body&gt;</span><br><span class="line">&lt;&#x2F;html&gt;</span><br></pre></td></tr></table></figure></p></li>
 <li><p>throw语句</p>
 <blockquote>
-<p>允许创建自定义错误<br>可以把 throw 与 try 和 catch 一起使用</p>
+<p>允许创建自定义错误 可以把 throw 与 try 和 catch 一起使用</p>
 </blockquote>
-<ol>
-<li><p>实例</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">&lt;!DOCTYPE html&gt;</span><br><span class="line">&lt;html lang&#x3D;&quot;en&quot;&gt;</span><br><span class="line">&lt;head&gt;</span><br><span class="line">  		&lt;meta charset&#x3D;&quot;UTF-8&quot;&gt;</span><br><span class="line">  		&lt;title&gt;JS异常捕获&lt;&#x2F;title&gt;</span><br><span class="line">&lt;&#x2F;head&gt;</span><br><span class="line">&lt;body&gt;</span><br><span class="line">  		&lt;form&gt;</span><br><span class="line">      		&lt;input id&#x3D;&quot;txt&quot; type&#x3D;&quot;text&quot;&gt;</span><br><span class="line">      		&lt;input id&#x3D;&quot;btn&quot; type&#x3D;&quot;button&quot; onclick&#x3D;&quot;demo()&quot; value&#x3D;&quot;按钮&quot;&gt;</span><br><span class="line">  		&lt;&#x2F;form&gt;</span><br><span class="line">  		&lt;script&gt;</span><br><span class="line">      		function demo()&#123;</span><br><span class="line">          		try&#123;</span><br><span class="line">              		var e &#x3D; document.getElementById(&quot;txt&quot;).value;</span><br><span class="line">              		if(e&#x3D;&#x3D;&quot;&quot;)&#123;</span><br><span class="line">                  		throw&quot;请输入&quot;;</span><br><span class="line">              		&#125;</span><br><span class="line">          		&#125;catch(err)&#123;</span><br><span class="line">              		alert(err);  &#x2F;&#x2F;将throw中的内容扔到err处</span><br><span class="line">          		&#125;</span><br><span class="line">      		&#125;</span><br><span class="line">  		&lt;&#x2F;script&gt;</span><br><span class="line">&lt;&#x2F;body&gt;</span><br><span class="line">&lt;&#x2F;html&gt;</span><br></pre></td></tr></table></figure>
-</li>
+<ol type="1">
+<li>实例</li>
 </ol>
-</li>
+<p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">&lt;!DOCTYPE html&gt;</span><br><span class="line">&lt;html lang&#x3D;&quot;en&quot;&gt;</span><br><span class="line">&lt;head&gt;</span><br><span class="line">  		&lt;meta charset&#x3D;&quot;UTF-8&quot;&gt;</span><br><span class="line">  		&lt;title&gt;JS异常捕获&lt;&#x2F;title&gt;</span><br><span class="line">&lt;&#x2F;head&gt;</span><br><span class="line">&lt;body&gt;</span><br><span class="line">  		&lt;form&gt;</span><br><span class="line">      		&lt;input id&#x3D;&quot;txt&quot; type&#x3D;&quot;text&quot;&gt;</span><br><span class="line">      		&lt;input id&#x3D;&quot;btn&quot; type&#x3D;&quot;button&quot; onclick&#x3D;&quot;demo()&quot; value&#x3D;&quot;按钮&quot;&gt;</span><br><span class="line">  		&lt;&#x2F;form&gt;</span><br><span class="line">  		&lt;script&gt;</span><br><span class="line">      		function demo()&#123;</span><br><span class="line">          		try&#123;</span><br><span class="line">              		var e &#x3D; document.getElementById(&quot;txt&quot;).value;</span><br><span class="line">              		if(e&#x3D;&#x3D;&quot;&quot;)&#123;</span><br><span class="line">                  		throw&quot;请输入&quot;;</span><br><span class="line">              		&#125;</span><br><span class="line">          		&#125;catch(err)&#123;</span><br><span class="line">              		alert(err);  &#x2F;&#x2F;将throw中的内容扔到err处</span><br><span class="line">          		&#125;</span><br><span class="line">      		&#125;</span><br><span class="line">  		&lt;&#x2F;script&gt;</span><br><span class="line">&lt;&#x2F;body&gt;</span><br><span class="line">&lt;&#x2F;html&gt;</span><br></pre></td></tr></table></figure></p></li>
 </ul>
-<h3 id="2-JS事件"><a href="#2-JS事件" class="headerlink" title="2. JS事件"></a>2. JS事件</h3><ul>
+<h3 id="js事件">2. JS事件</h3>
+<ul>
 <li>经常用到的事件</li>
 </ul>
-<div class="table-container">
 <table>
 <thead>
-<tr>
-<th style="text-align:center">事件（都是小写）</th>
-<th style="text-align:center">作用</th>
+<tr class="header">
+<th style="text-align: center;">事件（都是小写）</th>
+<th style="text-align: center;">作用</th>
 </tr>
 </thead>
 <tbody>
-<tr>
-<td style="text-align:center">onClick</td>
-<td style="text-align:center">单击事件</td>
+<tr class="odd">
+<td style="text-align: center;">onClick</td>
+<td style="text-align: center;">单击事件</td>
 </tr>
-<tr>
-<td style="text-align:center">onMouseOver</td>
-<td style="text-align:center">鼠标经过事件</td>
+<tr class="even">
+<td style="text-align: center;">onMouseOver</td>
+<td style="text-align: center;">鼠标经过事件</td>
 </tr>
-<tr>
-<td style="text-align:center">onMouseOut</td>
-<td style="text-align:center">鼠标移出事件</td>
+<tr class="odd">
+<td style="text-align: center;">onMouseOut</td>
+<td style="text-align: center;">鼠标移出事件</td>
 </tr>
-<tr>
-<td style="text-align:center">onChange</td>
-<td style="text-align:center">文本内容改变事件</td>
+<tr class="even">
+<td style="text-align: center;">onChange</td>
+<td style="text-align: center;">文本内容改变事件</td>
 </tr>
-<tr>
-<td style="text-align:center">onSelect</td>
-<td style="text-align:center">文本框选中事件</td>
+<tr class="odd">
+<td style="text-align: center;">onSelect</td>
+<td style="text-align: center;">文本框选中事件</td>
 </tr>
-<tr>
-<td style="text-align:center">onFocus</td>
-<td style="text-align:center">光标聚集事件</td>
+<tr class="even">
+<td style="text-align: center;">onFocus</td>
+<td style="text-align: center;">光标聚集事件</td>
 </tr>
-<tr>
-<td style="text-align:center">onBlur</td>
-<td style="text-align:center">移开光标事件</td>
+<tr class="odd">
+<td style="text-align: center;">onBlur</td>
+<td style="text-align: center;">移开光标事件</td>
 </tr>
-<tr>
-<td style="text-align:center">onLoad</td>
-<td style="text-align:center">网页加载事件</td>
+<tr class="even">
+<td style="text-align: center;">onLoad</td>
+<td style="text-align: center;">网页加载事件</td>
 </tr>
-<tr>
-<td style="text-align:center">onUnLoad</td>
-<td style="text-align:center">网页关闭事件</td>
+<tr class="odd">
+<td style="text-align: center;">onUnLoad</td>
+<td style="text-align: center;">网页关闭事件</td>
 </tr>
 </tbody>
 </table>
-</div>
 <ul>
-<li>实例<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><span class="line">&lt;!DOCTYPE html&gt;</span><br><span class="line">&lt;html lang&#x3D;&quot;en&quot;&gt;</span><br><span class="line">&lt;head&gt;</span><br><span class="line">    &lt;meta charset&#x3D;&quot;UTF-8&quot;&gt;</span><br><span class="line">    &lt;title&gt;JS事件&lt;&#x2F;title&gt;</span><br><span class="line">&lt;&#x2F;head&gt;</span><br><span class="line">&lt;body onload&#x3D;&quot;mgs()&quot;&gt;</span><br><span class="line">    &lt;!--onclick--&gt;</span><br><span class="line">    &lt;button onclick&#x3D;&quot;demo()&quot;&gt;按钮&lt;&#x2F;button&gt;</span><br><span class="line">    &lt;script&gt;</span><br><span class="line">        function demo()&#123;</span><br><span class="line">            alert(&quot;hello&quot;);</span><br><span class="line">        &#125;</span><br><span class="line">    &lt;&#x2F;script&gt;</span><br><span class="line"></span><br><span class="line">    &lt;!--onMouseOver  onMouseOut--&gt;</span><br><span class="line">    &lt;div style&#x3D;&quot;width: 100px; height: 100px; background-color: cadetblue;&quot;</span><br><span class="line">         onmouseover&#x3D;&quot;onOver(this)&quot; onmouseout&#x3D;&quot;onOut(this)&quot;&gt;&lt;&#x2F;div&gt;</span><br><span class="line">    &lt;script&gt;</span><br><span class="line">        function onOver(ooj)&#123;</span><br><span class="line">            ooj.innerHTML &#x3D; &quot;Hello&quot;;</span><br><span class="line">        &#125;</span><br><span class="line">        function onOut(ooj)&#123;</span><br><span class="line">            ooj.innerHTML &#x3D; &quot;World&quot;;</span><br><span class="line">        &#125;</span><br><span class="line">    &lt;&#x2F;script&gt;</span><br><span class="line"></span><br><span class="line">    &lt;!--onChange--&gt;</span><br><span class="line">    &lt;form&gt;</span><br><span class="line">        &lt;input type&#x3D;&quot;text&quot; onchange&#x3D;&quot;changeDemo1()&quot;&gt;</span><br><span class="line">    &lt;&#x2F;form&gt;</span><br><span class="line">    &lt;script&gt;</span><br><span class="line">        function changeDemo1()&#123;</span><br><span class="line">            alert(&quot;Hello, 内容改变了！&quot;);</span><br><span class="line">        &#125;</span><br><span class="line">    &lt;&#x2F;script&gt;</span><br><span class="line"></span><br><span class="line">    &lt;!--onSelect  onfocus--&gt;</span><br><span class="line">    &lt;form&gt;</span><br><span class="line">        &lt;input type&#x3D;&quot;text&quot; onselect&#x3D;&quot;changeDemo(this)&quot; onfocus&#x3D;&quot;changeDemo2(this)&quot;&gt;</span><br><span class="line">    &lt;&#x2F;form&gt;</span><br><span class="line">    &lt;script&gt;</span><br><span class="line">        function changeDemo(bg)&#123;</span><br><span class="line">            bg.style.background&#x3D;&quot;red&quot;;</span><br><span class="line">        &#125;</span><br><span class="line">        function changeDemo2(bg)&#123;</span><br><span class="line">            bg.style.background&#x3D;&quot;blue&quot;;</span><br><span class="line">        &#125;</span><br><span class="line">        function mgs()&#123;</span><br><span class="line">            alert(&quot;网页内容加载完毕&quot;);</span><br><span class="line">        &#125;</span><br><span class="line">    &lt;&#x2F;script&gt;</span><br><span class="line">&lt;&#x2F;body&gt;</span><br><span class="line">&lt;&#x2F;html&gt;</span><br></pre></td></tr></table></figure>
-</li>
+<li>实例 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><span class="line">&lt;!DOCTYPE html&gt;</span><br><span class="line">&lt;html lang&#x3D;&quot;en&quot;&gt;</span><br><span class="line">&lt;head&gt;</span><br><span class="line">    &lt;meta charset&#x3D;&quot;UTF-8&quot;&gt;</span><br><span class="line">    &lt;title&gt;JS事件&lt;&#x2F;title&gt;</span><br><span class="line">&lt;&#x2F;head&gt;</span><br><span class="line">&lt;body onload&#x3D;&quot;mgs()&quot;&gt;</span><br><span class="line">    &lt;!--onclick--&gt;</span><br><span class="line">    &lt;button onclick&#x3D;&quot;demo()&quot;&gt;按钮&lt;&#x2F;button&gt;</span><br><span class="line">    &lt;script&gt;</span><br><span class="line">        function demo()&#123;</span><br><span class="line">            alert(&quot;hello&quot;);</span><br><span class="line">        &#125;</span><br><span class="line">    &lt;&#x2F;script&gt;</span><br><span class="line"></span><br><span class="line">    &lt;!--onMouseOver  onMouseOut--&gt;</span><br><span class="line">    &lt;div style&#x3D;&quot;width: 100px; height: 100px; background-color: cadetblue;&quot;</span><br><span class="line">         onmouseover&#x3D;&quot;onOver(this)&quot; onmouseout&#x3D;&quot;onOut(this)&quot;&gt;&lt;&#x2F;div&gt;</span><br><span class="line">    &lt;script&gt;</span><br><span class="line">        function onOver(ooj)&#123;</span><br><span class="line">            ooj.innerHTML &#x3D; &quot;Hello&quot;;</span><br><span class="line">        &#125;</span><br><span class="line">        function onOut(ooj)&#123;</span><br><span class="line">            ooj.innerHTML &#x3D; &quot;World&quot;;</span><br><span class="line">        &#125;</span><br><span class="line">    &lt;&#x2F;script&gt;</span><br><span class="line"></span><br><span class="line">    &lt;!--onChange--&gt;</span><br><span class="line">    &lt;form&gt;</span><br><span class="line">        &lt;input type&#x3D;&quot;text&quot; onchange&#x3D;&quot;changeDemo1()&quot;&gt;</span><br><span class="line">    &lt;&#x2F;form&gt;</span><br><span class="line">    &lt;script&gt;</span><br><span class="line">        function changeDemo1()&#123;</span><br><span class="line">            alert(&quot;Hello, 内容改变了！&quot;);</span><br><span class="line">        &#125;</span><br><span class="line">    &lt;&#x2F;script&gt;</span><br><span class="line"></span><br><span class="line">    &lt;!--onSelect  onfocus--&gt;</span><br><span class="line">    &lt;form&gt;</span><br><span class="line">        &lt;input type&#x3D;&quot;text&quot; onselect&#x3D;&quot;changeDemo(this)&quot; onfocus&#x3D;&quot;changeDemo2(this)&quot;&gt;</span><br><span class="line">    &lt;&#x2F;form&gt;</span><br><span class="line">    &lt;script&gt;</span><br><span class="line">        function changeDemo(bg)&#123;</span><br><span class="line">            bg.style.background&#x3D;&quot;red&quot;;</span><br><span class="line">        &#125;</span><br><span class="line">        function changeDemo2(bg)&#123;</span><br><span class="line">            bg.style.background&#x3D;&quot;blue&quot;;</span><br><span class="line">        &#125;</span><br><span class="line">        function mgs()&#123;</span><br><span class="line">            alert(&quot;网页内容加载完毕&quot;);</span><br><span class="line">        &#125;</span><br><span class="line">    &lt;&#x2F;script&gt;</span><br><span class="line">&lt;&#x2F;body&gt;</span><br><span class="line">&lt;&#x2F;html&gt;</span><br></pre></td></tr></table></figure></li>
 </ul>
-<hr>
-<h2 id="三、DOM操作HTML、CSS、EventListener-1"><a href="#三、DOM操作HTML、CSS、EventListener-1" class="headerlink" title="三、DOM操作HTML、CSS、EventListener"></a><span id="3">三、DOM操作HTML、CSS、EventListener</span></h2><h3 id="1-DOM操作HTML"><a href="#1-DOM操作HTML" class="headerlink" title="1. DOM操作HTML"></a>1. DOM操作HTML</h3><ul>
-<li><p><strong>绝对不要在文档加载完成之后使用 <code>document.write()</code> 会覆盖整个文档</strong></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">&lt;!DOCTYPE html&gt;</span><br><span class="line">&lt;html&gt;</span><br><span class="line">&lt;head&gt;</span><br><span class="line">	&lt;meta charset&#x3D;&quot;utf-8&quot;&gt;</span><br><span class="line">	&lt;title&gt;覆盖文档&lt;&#x2F;title&gt;</span><br><span class="line">&lt;&#x2F;head&gt;</span><br><span class="line">&lt;body&gt;</span><br><span class="line">    &lt;script&gt;</span><br><span class="line">        document.write(&quot;首先输出&quot;);</span><br><span class="line">    &lt;&#x2F;script&gt;</span><br><span class="line">    &lt;p&gt;请点击这&lt;&#x2F;p&gt;</span><br><span class="line">    &lt;br&#x2F;&gt;</span><br><span class="line">    &lt;input type&#x3D;&quot;button&quot; onclick&#x3D;&quot;test()&quot; value&#x3D;&quot;调用函数&quot;&#x2F;&gt;</span><br><span class="line">    &lt;script&gt;</span><br><span class="line">        function test()&#123;</span><br><span class="line">        	document.write(&quot;覆盖输出:&quot;);  &#x2F;&#x2F;点击后 首先输出 则被覆盖</span><br><span class="line">            document.write(Date());</span><br><span class="line">        &#125;</span><br><span class="line">    &lt;&#x2F;script&gt;</span><br><span class="line">&lt;&#x2F;body&gt;</span><br><span class="line">&lt;&#x2F;html&gt;</span><br></pre></td></tr></table></figure>
-</li>
+<hr />
+<h2 id="三dom操作htmlcsseventlistener-1"><span id="3">三、DOM操作HTML、CSS、EventListener</span></h2>
+<h3 id="dom操作html">1. DOM操作HTML</h3>
+<ul>
+<li><p><strong>绝对不要在文档加载完成之后使用 <code>document.write()</code> 会覆盖整个文档</strong> <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">&lt;!DOCTYPE html&gt;</span><br><span class="line">&lt;html&gt;</span><br><span class="line">&lt;head&gt;</span><br><span class="line">	&lt;meta charset&#x3D;&quot;utf-8&quot;&gt;</span><br><span class="line">	&lt;title&gt;覆盖文档&lt;&#x2F;title&gt;</span><br><span class="line">&lt;&#x2F;head&gt;</span><br><span class="line">&lt;body&gt;</span><br><span class="line">    &lt;script&gt;</span><br><span class="line">        document.write(&quot;首先输出&quot;);</span><br><span class="line">    &lt;&#x2F;script&gt;</span><br><span class="line">    &lt;p&gt;请点击这&lt;&#x2F;p&gt;</span><br><span class="line">    &lt;br&#x2F;&gt;</span><br><span class="line">    &lt;input type&#x3D;&quot;button&quot; onclick&#x3D;&quot;test()&quot; value&#x3D;&quot;调用函数&quot;&#x2F;&gt;</span><br><span class="line">    &lt;script&gt;</span><br><span class="line">        function test()&#123;</span><br><span class="line">        	document.write(&quot;覆盖输出:&quot;);  &#x2F;&#x2F;点击后 首先输出 则被覆盖</span><br><span class="line">            document.write(Date());</span><br><span class="line">        &#125;</span><br><span class="line">    &lt;&#x2F;script&gt;</span><br><span class="line">&lt;&#x2F;body&gt;</span><br><span class="line">&lt;&#x2F;html&gt;</span><br></pre></td></tr></table></figure></p></li>
 <li><p>寻找元素</p>
-<ol>
-<li>通过 <strong>id</strong> 找到HTML元素：<code>document.getElementById(&quot;&quot;)</code> 。</li>
-<li>通过 <strong>标签名</strong> 找到HTML元素：<code>getElementsByTagName(&quot;&quot;)</code> 。  </li>
-</ol>
-</li>
+<ol type="1">
+<li>通过 <strong>id</strong> 找到HTML元素：<code>document.getElementById("")</code> 。</li>
+<li>通过 <strong>标签名</strong> 找到HTML元素：<code>getElementsByTagName("")</code> 。</li>
+</ol></li>
 <li><p>改变HTML内容</p>
 <blockquote>
-<p>使用属性 innerHTML<br>例：document.getElementById(“”).innerHTML = “”  //“”中跟具体内容，若是其他的，则不需””。</p>
+<p>使用属性 innerHTML<br />
+例：document.getElementById("").innerHTML = "" //""中跟具体内容，若是其他的，则不需""。</p>
 </blockquote>
-  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">&lt;!DOCTYPE html&gt;</span><br><span class="line">&lt;html&gt;</span><br><span class="line">&lt;head&gt;</span><br><span class="line">&lt;meta charset&#x3D;&quot;utf-8&quot;&gt;</span><br><span class="line">&lt;title&gt;改变HTML内容&lt;&#x2F;title&gt;</span><br><span class="line">&lt;&#x2F;head&gt;</span><br><span class="line">&lt;body&gt;</span><br><span class="line"></span><br><span class="line">&lt;p id&#x3D;&quot;p1&quot;&gt;Hello World!&lt;&#x2F;p&gt;</span><br><span class="line">&lt;script&gt;</span><br><span class="line">document.getElementById(&quot;p1&quot;).innerHTML&#x3D;&quot;新文本!&quot;;</span><br><span class="line">&lt;&#x2F;script&gt;</span><br><span class="line">&lt;p&gt;以上段落通过脚本修改文本。&lt;&#x2F;p&gt;</span><br><span class="line"></span><br><span class="line">&lt;&#x2F;body&gt;</span><br><span class="line">&lt;&#x2F;html&gt;</span><br></pre></td></tr></table></figure>
-</li>
+<p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">&lt;!DOCTYPE html&gt;</span><br><span class="line">&lt;html&gt;</span><br><span class="line">&lt;head&gt;</span><br><span class="line">&lt;meta charset&#x3D;&quot;utf-8&quot;&gt;</span><br><span class="line">&lt;title&gt;改变HTML内容&lt;&#x2F;title&gt;</span><br><span class="line">&lt;&#x2F;head&gt;</span><br><span class="line">&lt;body&gt;</span><br><span class="line"></span><br><span class="line">&lt;p id&#x3D;&quot;p1&quot;&gt;Hello World!&lt;&#x2F;p&gt;</span><br><span class="line">&lt;script&gt;</span><br><span class="line">document.getElementById(&quot;p1&quot;).innerHTML&#x3D;&quot;新文本!&quot;;</span><br><span class="line">&lt;&#x2F;script&gt;</span><br><span class="line">&lt;p&gt;以上段落通过脚本修改文本。&lt;&#x2F;p&gt;</span><br><span class="line"></span><br><span class="line">&lt;&#x2F;body&gt;</span><br><span class="line">&lt;&#x2F;html&gt;</span><br></pre></td></tr></table></figure></p></li>
 <li><p>改变HTML属性</p>
 <blockquote>
-<p>使用语法 document.getElementById(“”).attribute = 新属性值;<br>例：document.getElementById(“id”).href=”www.baidu.com”;</p>
+<p>使用语法 document.getElementById("").attribute = 新属性值; 例：document.getElementById("id").href="www.baidu.com";</p>
 </blockquote>
-  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">&lt;!DOCTYPE html&gt;</span><br><span class="line">&lt;html lang&#x3D;&quot;en&quot;&gt;</span><br><span class="line">&lt;head&gt;</span><br><span class="line">   	&lt;meta charset&#x3D;&quot;UTF-8&quot;&gt;</span><br><span class="line">   	&lt;title&gt;JS操作HTML&lt;&#x2F;title&gt;</span><br><span class="line">&lt;&#x2F;head&gt;</span><br><span class="line">&lt;body&gt;</span><br><span class="line">   	&lt;a id&#x3D;&quot;aid&quot; href&#x3D;&quot;http:&#x2F;&#x2F;www.baidu.com&quot;&gt;百度一下&lt;&#x2F;a&gt;</span><br><span class="line">   	&lt;button onclick&#x3D;&quot;demo()&quot;&gt;按钮&lt;&#x2F;button&gt;</span><br><span class="line">   	&lt;script&gt;</span><br><span class="line">       	function demo()&#123;</span><br><span class="line">           	document.getElementById(&quot;aid&quot;).href&#x3D;&quot;https:&#x2F;&#x2F;www.hao123.com&quot;;</span><br><span class="line">       	&#125;</span><br><span class="line">   	&lt;&#x2F;script&gt;</span><br><span class="line">&lt;&#x2F;body&gt;</span><br><span class="line">&lt;&#x2F;html&gt;</span><br></pre></td></tr></table></figure>
-</li>
+<p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">&lt;!DOCTYPE html&gt;</span><br><span class="line">&lt;html lang&#x3D;&quot;en&quot;&gt;</span><br><span class="line">&lt;head&gt;</span><br><span class="line">   	&lt;meta charset&#x3D;&quot;UTF-8&quot;&gt;</span><br><span class="line">   	&lt;title&gt;JS操作HTML&lt;&#x2F;title&gt;</span><br><span class="line">&lt;&#x2F;head&gt;</span><br><span class="line">&lt;body&gt;</span><br><span class="line">   	&lt;a id&#x3D;&quot;aid&quot; href&#x3D;&quot;http:&#x2F;&#x2F;www.baidu.com&quot;&gt;百度一下&lt;&#x2F;a&gt;</span><br><span class="line">   	&lt;button onclick&#x3D;&quot;demo()&quot;&gt;按钮&lt;&#x2F;button&gt;</span><br><span class="line">   	&lt;script&gt;</span><br><span class="line">       	function demo()&#123;</span><br><span class="line">           	document.getElementById(&quot;aid&quot;).href&#x3D;&quot;https:&#x2F;&#x2F;www.hao123.com&quot;;</span><br><span class="line">       	&#125;</span><br><span class="line">   	&lt;&#x2F;script&gt;</span><br><span class="line">&lt;&#x2F;body&gt;</span><br><span class="line">&lt;&#x2F;html&gt;</span><br></pre></td></tr></table></figure></p></li>
 </ul>
-<h3 id="2-DOM操作CSS"><a href="#2-DOM操作CSS" class="headerlink" title="2. DOM操作CSS"></a>2. DOM操作CSS</h3><ul>
+<h3 id="dom操作css">2. DOM操作CSS</h3>
+<ul>
 <li><p>语法</p>
 <blockquote>
-<p>document.getElementById(“”).style.property=新样式</p>
-</blockquote>
-</li>
-<li><p>实例</p>
-</li>
+<p>document.getElementById("").style.property=新样式</p>
+</blockquote></li>
+<li><p>实例</p></li>
 </ul>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">&lt;!DOCTYPE html&gt;</span><br><span class="line">&lt;html&gt;</span><br><span class="line">&lt;head&gt;</span><br><span class="line">	&lt;meta charset&#x3D;&quot;utf-8&quot;&gt;</span><br><span class="line">	&lt;title&gt;DOM操作CSS&lt;&#x2F;title&gt;</span><br><span class="line">&lt;&#x2F;head&gt;</span><br><span class="line">&lt;body&gt;</span><br><span class="line">	&lt;h1 id&#x3D;&quot;id1&quot;&gt;我的标题 1&lt;&#x2F;h1&gt;</span><br><span class="line">	&lt;button type&#x3D;&quot;button&quot; onclick&#x3D;&quot;document.getElementById(&#39;id1&#39;).style.color&#x3D;&#39;red&#39;&quot;&gt;</span><br><span class="line">	点我!&lt;&#x2F;button&gt;</span><br><span class="line">	</span><br><span class="line">&lt;&#x2F;body&gt;</span><br><span class="line">&lt;&#x2F;html&gt;</span><br></pre></td></tr></table></figure>
-<h3 id="3-DOM操作EventListener"><a href="#3-DOM操作EventListener" class="headerlink" title="3. DOM操作EventListener"></a>3. DOM操作EventListener</h3><ul>
+<h3 id="dom操作eventlistener">3. DOM操作EventListener</h3>
+<ul>
 <li><p>DOM EventListener 方法</p>
 <blockquote>
-<p>addEventListener()<br>removeEventListener()</p>
+<p>addEventListener() removeEventListener()</p>
 </blockquote>
-<ol>
+<ol type="1">
 <li><p>addEventListener()</p>
 <blockquote>
-<p>向指定元素添加事件句柄，且不会覆盖整个文档<br>可以向一个元素添加多个事件句柄</p>
-</blockquote>
-</li>
+<p>向指定元素添加事件句柄，且不会覆盖整个文档 可以向一个元素添加多个事件句柄</p>
+</blockquote></li>
 <li><p>removeEventListener()</p>
 <blockquote>
 <p>移除方法添加的事件句柄</p>
-</blockquote>
-</li>
-</ol>
-</li>
+</blockquote></li>
+</ol></li>
 <li><p><strong>addEventListener</strong></p>
-<ol>
+<ol type="1">
 <li><p>语法</p>
 <blockquote>
-<p>element.addEventListener(event, function, useCapture);<br>第一个参数是事件类型（如”click”或”mousedown”）。<br>第二个参数是事件触发后调用的函数。<br>第三个参数是个布尔值用于描述事件是冒泡（false）还是捕获（true），该参数是可选的。</p>
-</blockquote>
-</li>
+<p>element.addEventListener(event, function, useCapture); 第一个参数是事件类型（如"click"或"mousedown"）。 第二个参数是事件触发后调用的函数。 第三个参数是个布尔值用于描述事件是冒泡（false）还是捕获（true），该参数是可选的。</p>
+</blockquote></li>
 <li><p><strong>注意！</strong></p>
 <ul>
-<li><strong>事件类型不要使用 “on” 前缀，例如，使用”click”，而不是”onclick”。</strong></li>
+<li><strong>事件类型不要使用 "on" 前缀，例如，使用"click"，而不是"onclick"。</strong></li>
 <li><strong>调用函数不加括号，例如调用 mydemo() 函数，应该直接写成 mydemo。</strong></li>
+</ul></li>
+</ol></li>
+<li><p>实例 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">&lt;!DOCTYPE html&gt;</span><br><span class="line">&lt;html lang&#x3D;&quot;en&quot;&gt;</span><br><span class="line">&lt;head&gt;</span><br><span class="line">   	&lt;meta charset&#x3D;&quot;UTF-8&quot;&gt;</span><br><span class="line">   	&lt;title&gt;JS操作Dom EventListener&lt;&#x2F;title&gt;</span><br><span class="line">&lt;&#x2F;head&gt;</span><br><span class="line">&lt;body&gt;</span><br><span class="line">	&lt;button id&#x3D;&quot;btn&quot;&gt;按钮&lt;&#x2F;button&gt;</span><br><span class="line">	&lt;script&gt;</span><br><span class="line">   		document.getElementById(&quot;btn&quot;).addEventListener(&quot;click&quot;, function()&#123;</span><br><span class="line">       	alert(&quot;hello&quot;);</span><br><span class="line">   		&#125;);</span><br><span class="line">	&lt;&#x2F;script&gt;</span><br><span class="line"></span><br><span class="line">	&lt;button id&#x3D;&quot;btnn&quot;&gt;按钮&lt;&#x2F;button&gt;</span><br><span class="line">	&lt;script&gt;</span><br><span class="line">   		var x &#x3D; document.getElementById(&quot;btnn&quot;);</span><br><span class="line">   		x.addEventListener(&quot;click&quot;, hello);</span><br><span class="line">   		x.addEventListener(&quot;click&quot;, world);</span><br><span class="line"></span><br><span class="line">   		function hello()&#123;</span><br><span class="line">       		alert(&quot;Hello&quot;);</span><br><span class="line">   		&#125;</span><br><span class="line">   		function world()&#123;</span><br><span class="line">       		alert(&quot;World&quot;);</span><br><span class="line">   		&#125;</span><br><span class="line">	&lt;&#x2F;script&gt;</span><br><span class="line">&lt;&#x2F;body&gt;</span><br><span class="line">&lt;&#x2F;html&gt;</span><br></pre></td></tr></table></figure></p></li>
 </ul>
-</li>
-</ol>
-</li>
-<li><p>实例</p>
-  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">&lt;!DOCTYPE html&gt;</span><br><span class="line">&lt;html lang&#x3D;&quot;en&quot;&gt;</span><br><span class="line">&lt;head&gt;</span><br><span class="line">   	&lt;meta charset&#x3D;&quot;UTF-8&quot;&gt;</span><br><span class="line">   	&lt;title&gt;JS操作Dom EventListener&lt;&#x2F;title&gt;</span><br><span class="line">&lt;&#x2F;head&gt;</span><br><span class="line">&lt;body&gt;</span><br><span class="line">	&lt;button id&#x3D;&quot;btn&quot;&gt;按钮&lt;&#x2F;button&gt;</span><br><span class="line">	&lt;script&gt;</span><br><span class="line">   		document.getElementById(&quot;btn&quot;).addEventListener(&quot;click&quot;, function()&#123;</span><br><span class="line">       	alert(&quot;hello&quot;);</span><br><span class="line">   		&#125;);</span><br><span class="line">	&lt;&#x2F;script&gt;</span><br><span class="line"></span><br><span class="line">	&lt;button id&#x3D;&quot;btnn&quot;&gt;按钮&lt;&#x2F;button&gt;</span><br><span class="line">	&lt;script&gt;</span><br><span class="line">   		var x &#x3D; document.getElementById(&quot;btnn&quot;);</span><br><span class="line">   		x.addEventListener(&quot;click&quot;, hello);</span><br><span class="line">   		x.addEventListener(&quot;click&quot;, world);</span><br><span class="line"></span><br><span class="line">   		function hello()&#123;</span><br><span class="line">       		alert(&quot;Hello&quot;);</span><br><span class="line">   		&#125;</span><br><span class="line">   		function world()&#123;</span><br><span class="line">       		alert(&quot;World&quot;);</span><br><span class="line">   		&#125;</span><br><span class="line">	&lt;&#x2F;script&gt;</span><br><span class="line">&lt;&#x2F;body&gt;</span><br><span class="line">&lt;&#x2F;html&gt;</span><br></pre></td></tr></table></figure>
-</li>
-</ul>
-<hr>
-<h2 id="四、JS事件详解、事件流、事件处理、事件对象-1"><a href="#四、JS事件详解、事件流、事件处理、事件对象-1" class="headerlink" title="四、JS事件详解、事件流、事件处理、事件对象"></a><span id="4">四、JS事件详解、事件流、事件处理、事件对象</span></h2><h3 id="1-JS事件详解"><a href="#1-JS事件详解" class="headerlink" title="1. JS事件详解"></a>1. JS事件详解</h3><ul>
+<hr />
+<h2 id="四js事件详解事件流事件处理事件对象-1"><span id="4">四、JS事件详解、事件流、事件处理、事件对象</span></h2>
+<h3 id="js事件详解">1. JS事件详解</h3>
+<ul>
 <li><p>事件流</p>
 <blockquote>
 <p>描述的是在页面中接受事件的顺序。</p>
-</blockquote>
-</li>
+</blockquote></li>
 <li><p>事件冒泡</p>
 <blockquote>
 <p>由最具体的元素接收，然后逐级向上传播至最不具体的元素的节点（文档）。</p>
-</blockquote>
-</li>
+</blockquote></li>
 <li><p>事件捕获</p>
 <blockquote>
 <p>最不具体的节点先接收事件，而最具体的节点应该是最后接收事件。</p>
-</blockquote>
-</li>
+</blockquote></li>
 <li><p>实例</p>
 <blockquote>
-<p>将 p 元素插入到 div 元素中，用户点击 p 元素，观察哪个元素的 “click” 事件先被触发。</p>
-<p>在 冒泡 中，p先  再div<br>在 捕获 中，div先 再p</p>
-</blockquote>
-</li>
+<p>将 p 元素插入到 div 元素中，用户点击 p 元素，观察哪个元素的 "click" 事件先被触发。</p>
+<p>在 冒泡 中，p先 再div 在 捕获 中，div先 再p</p>
+</blockquote></li>
 </ul>
-<h3 id="2-JS事件处理"><a href="#2-JS事件处理" class="headerlink" title="2. JS事件处理"></a>2. JS事件处理</h3><ul>
+<h3 id="js事件处理">2. JS事件处理</h3>
+<ul>
 <li><p>HTML事件处理</p>
 <blockquote>
 <p>直接添加到HTML结构中（修改一处同时修改很多处）</p>
-</blockquote>
-</li>
+</blockquote></li>
 <li><p>DOM 0级事件处理</p>
 <blockquote>
-<p>把一个函数赋值给一个 事件处理程序 属性（会被覆盖掉）<br>例 btn1.onclick = function(){}</p>
-</blockquote>
-</li>
+<p>把一个函数赋值给一个 事件处理程序 属性（会被覆盖掉） 例 btn1.onclick = function(){}</p>
+</blockquote></li>
 <li><p>DOM 2级事件处理</p>
 <blockquote>
 <p>addEventListener() 和 removeEventListener</p>
-</blockquote>
-</li>
+</blockquote></li>
 <li><p>IE事件处理程序（不同浏览器所支持的事件不同）</p>
 <blockquote>
-<p>attachEvent<br>detachEvent</p>
-</blockquote>
-</li>
-<li><p>实例</p>
-  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line">	&lt;!DOCTYPE html&gt;</span><br><span class="line">	&lt;html lang&#x3D;&quot;en&quot;&gt;</span><br><span class="line">	&lt;head&gt;</span><br><span class="line">    	&lt;meta charset&#x3D;&quot;UTF-8&quot;&gt;</span><br><span class="line">    	&lt;title&gt;JS事件处理&lt;&#x2F;title&gt;</span><br><span class="line">	&lt;&#x2F;head&gt;</span><br><span class="line">	&lt;body&gt;</span><br><span class="line">    	&lt;div id&#x3D;&quot;div&quot;&gt;</span><br><span class="line">        	&lt;button id&#x3D;&quot;btn&quot;&gt;按钮&lt;&#x2F;button&gt;</span><br><span class="line">    	&lt;&#x2F;div&gt;</span><br><span class="line">	</span><br><span class="line">    &lt;!--HTML事件处理--&gt;</span><br><span class="line">	&lt;!--    &lt;script&gt;--&gt;</span><br><span class="line">	&lt;!--        function demo()&#123;--&gt;</span><br><span class="line">	&lt;!--            alert(&quot;hello HTML事件处理&quot;);--&gt;</span><br><span class="line">	&lt;!--        &#125;--&gt;</span><br><span class="line">	&lt;!--    &lt;&#x2F;script&gt;--&gt;</span><br><span class="line"></span><br><span class="line">    &lt;!--DOM 0级事件处理--&gt;</span><br><span class="line">	&lt;!--    &lt;script&gt;--&gt;</span><br><span class="line">	&lt;!--        var btn1 &#x3D; document.getElementById(&quot;btn&quot;);--&gt;</span><br><span class="line">	&lt;!--        btn1.onclick &#x3D; function()&#123; alert(&quot;Hello DOM 0级事件处理1&quot;);&#125;;&#x2F;&#x2F;会被覆盖--&gt;</span><br><span class="line">	&lt;!--        btn1.onclick &#x3D; function()&#123; alert(&quot;Hello DOM 0级事件处理2&quot;);&#125;;--&gt;</span><br><span class="line">	&lt;!--    &lt;&#x2F;script&gt;--&gt;</span><br><span class="line"></span><br><span class="line">    &lt;!--DOM 2级事件处理--&gt;</span><br><span class="line">	&lt;!--    &lt;script&gt;--&gt;</span><br><span class="line">	&lt;!--        var btn1 &#x3D; document.getElementById(&quot;btn&quot;).addEventListener(&quot;click&quot;, demo);--&gt;</span><br><span class="line">	&lt;!--        function demo()&#123;--&gt;</span><br><span class="line">	&lt;!--            alert(&quot;DOM 2级事件处理程序&quot;);--&gt;</span><br><span class="line">	&lt;!--        &#125;--&gt;</span><br><span class="line">	&lt;!--    &lt;&#x2F;script&gt;--&gt;</span><br><span class="line"></span><br><span class="line">    &lt;!--IE事件处理程序--&gt;</span><br><span class="line">    &lt;script&gt;</span><br><span class="line">        var btn1 &#x3D; document.getElementById(&quot;btn&quot;);</span><br><span class="line">        if(btn1.addEventListener)&#123;</span><br><span class="line">            btn1.addEventListener(&quot;click&quot;, demo);</span><br><span class="line">        &#125;else if(btn1.attachEvent)&#123;</span><br><span class="line">            btn1.attachEvent(&quot;onclick&quot;, demo);</span><br><span class="line">        &#125;else&#123;</span><br><span class="line">            btn1.onclick &#x3D; demo();</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        function demo()&#123;</span><br><span class="line">            alert(&quot;Hello IE事件处理程序&quot;);</span><br><span class="line">        &#125;</span><br><span class="line">    &lt;&#x2F;script&gt;</span><br><span class="line">&lt;&#x2F;body&gt;</span><br><span class="line">&lt;&#x2F;html&gt;</span><br></pre></td></tr></table></figure>
-</li>
+<p>attachEvent detachEvent</p>
+</blockquote></li>
+<li><p>实例 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br></pre></td><td class="code"><pre><span class="line">	&lt;!DOCTYPE html&gt;</span><br><span class="line">	&lt;html lang&#x3D;&quot;en&quot;&gt;</span><br><span class="line">	&lt;head&gt;</span><br><span class="line">    	&lt;meta charset&#x3D;&quot;UTF-8&quot;&gt;</span><br><span class="line">    	&lt;title&gt;JS事件处理&lt;&#x2F;title&gt;</span><br><span class="line">	&lt;&#x2F;head&gt;</span><br><span class="line">	&lt;body&gt;</span><br><span class="line">    	&lt;div id&#x3D;&quot;div&quot;&gt;</span><br><span class="line">        	&lt;button id&#x3D;&quot;btn&quot;&gt;按钮&lt;&#x2F;button&gt;</span><br><span class="line">    	&lt;&#x2F;div&gt;</span><br><span class="line">	</span><br><span class="line">    &lt;!--HTML事件处理--&gt;</span><br><span class="line">	&lt;!--    &lt;script&gt;--&gt;</span><br><span class="line">	&lt;!--        function demo()&#123;--&gt;</span><br><span class="line">	&lt;!--            alert(&quot;hello HTML事件处理&quot;);--&gt;</span><br><span class="line">	&lt;!--        &#125;--&gt;</span><br><span class="line">	&lt;!--    &lt;&#x2F;script&gt;--&gt;</span><br><span class="line"></span><br><span class="line">    &lt;!--DOM 0级事件处理--&gt;</span><br><span class="line">	&lt;!--    &lt;script&gt;--&gt;</span><br><span class="line">	&lt;!--        var btn1 &#x3D; document.getElementById(&quot;btn&quot;);--&gt;</span><br><span class="line">	&lt;!--        btn1.onclick &#x3D; function()&#123; alert(&quot;Hello DOM 0级事件处理1&quot;);&#125;;&#x2F;&#x2F;会被覆盖--&gt;</span><br><span class="line">	&lt;!--        btn1.onclick &#x3D; function()&#123; alert(&quot;Hello DOM 0级事件处理2&quot;);&#125;;--&gt;</span><br><span class="line">	&lt;!--    &lt;&#x2F;script&gt;--&gt;</span><br><span class="line"></span><br><span class="line">    &lt;!--DOM 2级事件处理--&gt;</span><br><span class="line">	&lt;!--    &lt;script&gt;--&gt;</span><br><span class="line">	&lt;!--        var btn1 &#x3D; document.getElementById(&quot;btn&quot;).addEventListener(&quot;click&quot;, demo);--&gt;</span><br><span class="line">	&lt;!--        function demo()&#123;--&gt;</span><br><span class="line">	&lt;!--            alert(&quot;DOM 2级事件处理程序&quot;);--&gt;</span><br><span class="line">	&lt;!--        &#125;--&gt;</span><br><span class="line">	&lt;!--    &lt;&#x2F;script&gt;--&gt;</span><br><span class="line"></span><br><span class="line">    &lt;!--IE事件处理程序--&gt;</span><br><span class="line">    &lt;script&gt;</span><br><span class="line">        var btn1 &#x3D; document.getElementById(&quot;btn&quot;);</span><br><span class="line">        if(btn1.addEventListener)&#123;</span><br><span class="line">            btn1.addEventListener(&quot;click&quot;, demo);</span><br><span class="line">        &#125;else if(btn1.attachEvent)&#123;</span><br><span class="line">            btn1.attachEvent(&quot;onclick&quot;, demo);</span><br><span class="line">        &#125;else&#123;</span><br><span class="line">            btn1.onclick &#x3D; demo();</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        function demo()&#123;</span><br><span class="line">            alert(&quot;Hello IE事件处理程序&quot;);</span><br><span class="line">        &#125;</span><br><span class="line">    &lt;&#x2F;script&gt;</span><br><span class="line">&lt;&#x2F;body&gt;</span><br><span class="line">&lt;&#x2F;html&gt;</span><br></pre></td></tr></table></figure></p></li>
 </ul>
-<h3 id="3-JS事件对象"><a href="#3-JS事件对象" class="headerlink" title="3. JS事件对象"></a>3. JS事件对象</h3><ul>
+<h3 id="js事件对象">3. JS事件对象</h3>
+<ul>
 <li><p>事件对象</p>
 <blockquote>
 <p>在触发DOM事件的时候都会产生一个对象</p>
-</blockquote>
-</li>
+</blockquote></li>
 <li><p>事件对象event</p>
-<ol>
+<ol type="1">
 <li>type：获取事件类型</li>
 <li>target：获取事件目标</li>
 <li>stopPropagation()：阻止事件冒泡</li>
 <li>preventDefault()：阻止事件默认行为</li>
-</ol>
-</li>
-<li><p>实例</p>
-  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">&lt;!DOCTYPE html&gt;</span><br><span class="line">&lt;html lang&#x3D;&quot;en&quot;&gt;</span><br><span class="line">&lt;head&gt;</span><br><span class="line">   	&lt;meta charset&#x3D;&quot;UTF-8&quot;&gt;</span><br><span class="line">   	&lt;title&gt;JS事件对象&lt;&#x2F;title&gt;</span><br><span class="line">&lt;&#x2F;head&gt;</span><br><span class="line">&lt;body&gt;</span><br><span class="line">   	&lt;div id&#x3D;&quot;div&quot;&gt;</span><br><span class="line">       	&lt;button id&#x3D;&quot;btn&quot;&gt;按钮&lt;&#x2F;button&gt;</span><br><span class="line">       	&lt;a href&#x3D;&quot;http:&#x2F;&#x2F;www.baidu.com&quot; id&#x3D;&quot;aid&quot;&gt;搜索&lt;&#x2F;a&gt;</span><br><span class="line">   	&lt;&#x2F;div&gt;</span><br><span class="line">   	&lt;script&gt;</span><br><span class="line">       	document.getElementById(&quot;aid&quot;).addEventListener(&quot;click&quot;, showA);</span><br><span class="line">       	document.getElementById(&quot;div&quot;).addEventListener(&quot;click&quot;, showDiv);</span><br><span class="line">       	document.getElementById(&quot;btn&quot;).addEventListener(&quot;click&quot;, showType);</span><br><span class="line">       	function showType(event)&#123;</span><br><span class="line">           	alert(event.type);  &#x2F;&#x2F;获取事件类型</span><br><span class="line">           	alert(event.target);  &#x2F;&#x2F;获取事件目标</span><br><span class="line">           	event.stopPropagation();</span><br><span class="line">       	&#125;</span><br><span class="line">       	function showDiv()&#123;</span><br><span class="line">           	alert(&quot;div&quot;);</span><br><span class="line">       	&#125;</span><br><span class="line">       	function showA(event)&#123;</span><br><span class="line">           	event.stopPropagation();</span><br><span class="line">           	event.preventDefault();</span><br><span class="line">       	&#125;</span><br><span class="line">   	&lt;&#x2F;script&gt;</span><br><span class="line">&lt;&#x2F;body&gt;</span><br><span class="line">&lt;&#x2F;html&gt;</span><br></pre></td></tr></table></figure>
-</li>
+</ol></li>
+<li><p>实例 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">&lt;!DOCTYPE html&gt;</span><br><span class="line">&lt;html lang&#x3D;&quot;en&quot;&gt;</span><br><span class="line">&lt;head&gt;</span><br><span class="line">   	&lt;meta charset&#x3D;&quot;UTF-8&quot;&gt;</span><br><span class="line">   	&lt;title&gt;JS事件对象&lt;&#x2F;title&gt;</span><br><span class="line">&lt;&#x2F;head&gt;</span><br><span class="line">&lt;body&gt;</span><br><span class="line">   	&lt;div id&#x3D;&quot;div&quot;&gt;</span><br><span class="line">       	&lt;button id&#x3D;&quot;btn&quot;&gt;按钮&lt;&#x2F;button&gt;</span><br><span class="line">       	&lt;a href&#x3D;&quot;http:&#x2F;&#x2F;www.baidu.com&quot; id&#x3D;&quot;aid&quot;&gt;搜索&lt;&#x2F;a&gt;</span><br><span class="line">   	&lt;&#x2F;div&gt;</span><br><span class="line">   	&lt;script&gt;</span><br><span class="line">       	document.getElementById(&quot;aid&quot;).addEventListener(&quot;click&quot;, showA);</span><br><span class="line">       	document.getElementById(&quot;div&quot;).addEventListener(&quot;click&quot;, showDiv);</span><br><span class="line">       	document.getElementById(&quot;btn&quot;).addEventListener(&quot;click&quot;, showType);</span><br><span class="line">       	function showType(event)&#123;</span><br><span class="line">           	alert(event.type);  &#x2F;&#x2F;获取事件类型</span><br><span class="line">           	alert(event.target);  &#x2F;&#x2F;获取事件目标</span><br><span class="line">           	event.stopPropagation();</span><br><span class="line">       	&#125;</span><br><span class="line">       	function showDiv()&#123;</span><br><span class="line">           	alert(&quot;div&quot;);</span><br><span class="line">       	&#125;</span><br><span class="line">       	function showA(event)&#123;</span><br><span class="line">           	event.stopPropagation();</span><br><span class="line">           	event.preventDefault();</span><br><span class="line">       	&#125;</span><br><span class="line">   	&lt;&#x2F;script&gt;</span><br><span class="line">&lt;&#x2F;body&gt;</span><br><span class="line">&lt;&#x2F;html&gt;</span><br></pre></td></tr></table></figure></p></li>
 </ul>
-<hr>
-<h2 id="五、事件对象-1"><a href="#五、事件对象-1" class="headerlink" title="五、事件对象"></a><span id="5">五、事件对象</span></h2><h3 id="1-JS对象"><a href="#1-JS对象" class="headerlink" title="1. JS对象"></a><span id="5.1">1. JS对象</span></h3><ul>
-<li>JS中的所有事物都是对象：字符串、数值、数组、函数。。</li>
-<li>每个对象都带有属性和方法</li>
+<hr />
+<h2 id="五事件对象-1"><span id="5">五、事件对象</span></h2>
+<h3 id="js对象"><span id="5.1">1. JS对象</span></h3>
+<ul>
+<li><p>JS中的所有事物都是对象：字符串、数值、数组、函数。。</p></li>
+<li><p>每个对象都带有属性和方法</p></li>
 <li><p>JS允许自定义对象</p>
 <blockquote>
-<p>自定义并创建对象实例<br>使用函数来定义对象，然后创建新的对象实例</p>
-</blockquote>
-</li>
-<li><p>具体详见后面 <strong><a href="#8">八、面向对象</a></strong></p>
-</li>
+<p>自定义并创建对象实例 使用函数来定义对象，然后创建新的对象实例</p>
+</blockquote></li>
+<li><p>具体详见后面 <strong><a href="#8">八、面向对象</a></strong></p></li>
 </ul>
-<h3 id="2-string对象"><a href="#2-string对象" class="headerlink" title="2. string对象"></a><span id="5.2">2. string对象</span></h3><ul>
+<h3 id="string对象"><span id="5.2">2. string对象</span></h3>
+<ul>
 <li><blockquote>
-<p>string对象用于处理已有的字符串<br>字符串可以用单引号或双引号</p>
-</blockquote>
-</li>
-<li><p>常用方法</p>
-<ol>
+<p>string对象用于处理已有的字符串 字符串可以用单引号或双引号</p>
+</blockquote></li>
+<li>常用方法
+<ol type="1">
 <li><p>length属性来计算字符串长度</p>
- <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">var txt&#x3D;&quot;ABCDEFGHIJKLMNOPQRSTUVWXYZ&quot;;</span><br><span class="line">document.write(txt.length);</span><br></pre></td></tr></table></figure></li>
-<li><p>indexOf() 定位字符串中某一个指定字符串首次出现的位置</p>
-<blockquote>
-<p>返回位置，从 0 开始。<br>若没有找到则返回 -1。<br>lastIndexOf() 在字符串末尾开始查找字符串出现的位置。</p>
-</blockquote>
- <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">var str&#x3D;&quot;Hello world, welcome to the universe.&quot;;</span><br><span class="line">var n&#x3D;str.indexOf(&quot;welcome&quot;);</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-</li>
+<p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">var txt&#x3D;&quot;ABCDEFGHIJKLMNOPQRSTUVWXYZ&quot;;</span><br><span class="line">document.write(txt.length);</span><br></pre></td></tr></table></figure></p></li>
+<li><p>indexOf() 定位字符串中某一个指定字符串首次出现的位置 &gt;返回位置，从 0 开始。 &gt;若没有找到则返回 -1。 &gt;lastIndexOf() 在字符串末尾开始查找字符串出现的位置。</p>
+<p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">var str&#x3D;&quot;Hello world, welcome to the universe.&quot;;</span><br><span class="line">var n&#x3D;str.indexOf(&quot;welcome&quot;);</span><br><span class="line"></span><br></pre></td></tr></table></figure></p></li>
 <li><p>match() 内容匹配</p>
 <blockquote>
-<p>查找字符串中特定的字符（串）。<br>找到的话，则返回这个字符。<br>若没有则返回 null。</p>
+<p>查找字符串中特定的字符（串）。 找到的话，则返回这个字符。 若没有则返回 null。</p>
 </blockquote>
- <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">var str&#x3D;&quot;Hello world!&quot;;</span><br><span class="line">document.write(str.match(&quot;world&quot;) + &quot;&lt;br&gt;&quot;);</span><br><span class="line">document.write(str.match(&quot;World&quot;) + &quot;&lt;br&gt;&quot;);</span><br><span class="line">document.write(str.match(&quot;world!&quot;));</span><br></pre></td></tr></table></figure>
-</li>
+<p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">var str&#x3D;&quot;Hello world!&quot;;</span><br><span class="line">document.write(str.match(&quot;world&quot;) + &quot;&lt;br&gt;&quot;);</span><br><span class="line">document.write(str.match(&quot;World&quot;) + &quot;&lt;br&gt;&quot;);</span><br><span class="line">document.write(str.match(&quot;world!&quot;));</span><br></pre></td></tr></table></figure></p></li>
 <li><p>replace() 替换内容</p>
 <blockquote>
-<p>在字符串中用某些字符替换另一些字符。<br>replace(“ “, “ “)，后面替换前面</p>
+<p>在字符串中用某些字符替换另一些字符。 replace(" ", " ")，后面替换前面</p>
 </blockquote>
- <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">str&#x3D;&quot;Please visit Microsoft!&quot;</span><br><span class="line">var n&#x3D;str.replace(&quot;Microsoft&quot;,&quot;Runoob&quot;);</span><br></pre></td></tr></table></figure>
-</li>
+<p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">str&#x3D;&quot;Please visit Microsoft!&quot;</span><br><span class="line">var n&#x3D;str.replace(&quot;Microsoft&quot;,&quot;Runoob&quot;);</span><br></pre></td></tr></table></figure></p></li>
 <li><p>toUpperCase() / toLowerCase 字符大小写转换</p>
 <blockquote>
-<p>toUpperCase()：转换为大写<br>toLowerCase()：转换为小写</p>
+<p>toUpperCase()：转换为大写 toLowerCase()：转换为小写</p>
 </blockquote>
- <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">var txt&#x3D;&quot;Hello World!&quot;;       &#x2F;&#x2F; String</span><br><span class="line">var txt1&#x3D;txt.toUpperCase();   &#x2F;&#x2F; txt1 文本会转换为大写</span><br><span class="line">var txt2&#x3D;txt.toLowerCase();   &#x2F;&#x2F; txt2 文本会转换为小写</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-</li>
+<p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">var txt&#x3D;&quot;Hello World!&quot;;       &#x2F;&#x2F; String</span><br><span class="line">var txt1&#x3D;txt.toUpperCase();   &#x2F;&#x2F; txt1 文本会转换为大写</span><br><span class="line">var txt2&#x3D;txt.toLowerCase();   &#x2F;&#x2F; txt2 文本会转换为小写</span><br><span class="line"></span><br></pre></td></tr></table></figure></p></li>
 <li><p>split() 字符串转换为数组</p>
- <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">var txt&#x3D;&quot;a,b,c,d,e&quot;   &#x2F;&#x2F; String</span><br><span class="line">txt.split(&quot;,&quot;);   &#x2F;&#x2F; 使用逗号分隔</span><br><span class="line">txt.split(&quot; &quot;);   &#x2F;&#x2F; 使用空格分隔</span><br><span class="line">txt.split(&quot;|&quot;);   &#x2F;&#x2F; 使用竖线分隔 </span><br></pre></td></tr></table></figure>
-</li>
-</ol>
-</li>
+<p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">var txt&#x3D;&quot;a,b,c,d,e&quot;   &#x2F;&#x2F; String</span><br><span class="line">txt.split(&quot;,&quot;);   &#x2F;&#x2F; 使用逗号分隔</span><br><span class="line">txt.split(&quot; &quot;);   &#x2F;&#x2F; 使用空格分隔</span><br><span class="line">txt.split(&quot;|&quot;);   &#x2F;&#x2F; 使用竖线分隔 </span><br></pre></td></tr></table></figure></p></li>
+</ol></li>
 </ul>
-<h3 id="3-data日期对象"><a href="#3-data日期对象" class="headerlink" title="3. data日期对象"></a><span id="5.3">3. data日期对象</span></h3><ul>
+<h3 id="data日期对象"><span id="5.3">3. data日期对象</span></h3>
+<ul>
 <li><p>Date对象</p>
-<ol>
-<li>日期对象用于处理日期和时间<blockquote>
-<p>var date = Date();<br>document.write(date);<br>即可获得当前时间</p>
-</blockquote>
-</li>
-</ol>
-</li>
+<ol type="1">
+<li>日期对象用于处理日期和时间 &gt;var date = Date(); &gt;document.write(date); &gt;即可获得当前时间</li>
+</ol></li>
 <li><p>常用方法</p>
 <blockquote>
-<p>getFullYear()：获取年份<br>getTime()：获取毫秒（自1970年1月1日至今）<br>setFullYear()：设置具体的日期<br>getDay()：获取星期</p>
-</blockquote>
-</li>
-<li><p>实例</p>
-  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line">&lt;!DOCTYPE html&gt;</span><br><span class="line">&lt;html lang&#x3D;&quot;en&quot;&gt;</span><br><span class="line">&lt;head&gt;</span><br><span class="line">   	&lt;meta charset&#x3D;&quot;UTF-8&quot;&gt;</span><br><span class="line">   	&lt;title&gt;JS data日期对象&lt;&#x2F;title&gt;</span><br><span class="line">&lt;&#x2F;head&gt;</span><br><span class="line">&lt;body onload&#x3D;&quot;startTime()&quot;&gt;</span><br><span class="line">   	&lt;div id&#x3D;&quot;timetxt&quot;&gt;&lt;&#x2F;div&gt;</span><br><span class="line">   	&lt;script&gt;</span><br><span class="line">       	var date &#x3D; Date();</span><br><span class="line">     	&#x2F;&#x2F;  document.write(date);</span><br><span class="line">     	&#x2F;&#x2F;  document.write(date.getFullYear());</span><br><span class="line">     	&#x2F;&#x2F;  date.setFullYear(2010,1,1);</span><br><span class="line">     	&#x2F;&#x2F;  document.write(date);</span><br><span class="line">     	&#x2F;&#x2F;  时钟</span><br><span class="line">       	function startTime()&#123;</span><br><span class="line">           	var today &#x3D; new Date();</span><br><span class="line">           	var h &#x3D; today.getHours();</span><br><span class="line">           	var m &#x3D; today.getMinutes();</span><br><span class="line">           	var s &#x3D; today.getSeconds();</span><br><span class="line">           	m &#x3D; checkTime(m);</span><br><span class="line">           	s &#x3D; checkTime(s);</span><br><span class="line">           	document.getElementById(&quot;timetxt&quot;).innerHTML &#x3D; h + &quot;:&quot; + m + &quot;:&quot; +s;</span><br><span class="line">           	t &#x3D; setTimeout(function()&#123;</span><br><span class="line">               	startTime();</span><br><span class="line">           	&#125;, 500);</span><br><span class="line">       	&#125;</span><br><span class="line"></span><br><span class="line">       	function checkTime(i)&#123;</span><br><span class="line">           	if(i&lt;10)&#123;</span><br><span class="line">               	i &#x3D; &quot;0&quot;+ i;</span><br><span class="line">           	&#125;</span><br><span class="line">           	return i;</span><br><span class="line">       	&#125;</span><br><span class="line">   	&lt;&#x2F;script&gt;</span><br><span class="line">&lt;&#x2F;body&gt;</span><br><span class="line">&lt;&#x2F;html&gt;</span><br></pre></td></tr></table></figure>
-</li>
+<p>getFullYear()：获取年份 getTime()：获取毫秒（自1970年1月1日至今） setFullYear()：设置具体的日期 getDay()：获取星期</p>
+</blockquote></li>
+<li><p>实例 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line">&lt;!DOCTYPE html&gt;</span><br><span class="line">&lt;html lang&#x3D;&quot;en&quot;&gt;</span><br><span class="line">&lt;head&gt;</span><br><span class="line">   	&lt;meta charset&#x3D;&quot;UTF-8&quot;&gt;</span><br><span class="line">   	&lt;title&gt;JS data日期对象&lt;&#x2F;title&gt;</span><br><span class="line">&lt;&#x2F;head&gt;</span><br><span class="line">&lt;body onload&#x3D;&quot;startTime()&quot;&gt;</span><br><span class="line">   	&lt;div id&#x3D;&quot;timetxt&quot;&gt;&lt;&#x2F;div&gt;</span><br><span class="line">   	&lt;script&gt;</span><br><span class="line">       	var date &#x3D; Date();</span><br><span class="line">     	&#x2F;&#x2F;  document.write(date);</span><br><span class="line">     	&#x2F;&#x2F;  document.write(date.getFullYear());</span><br><span class="line">     	&#x2F;&#x2F;  date.setFullYear(2010,1,1);</span><br><span class="line">     	&#x2F;&#x2F;  document.write(date);</span><br><span class="line">     	&#x2F;&#x2F;  时钟</span><br><span class="line">       	function startTime()&#123;</span><br><span class="line">           	var today &#x3D; new Date();</span><br><span class="line">           	var h &#x3D; today.getHours();</span><br><span class="line">           	var m &#x3D; today.getMinutes();</span><br><span class="line">           	var s &#x3D; today.getSeconds();</span><br><span class="line">           	m &#x3D; checkTime(m);</span><br><span class="line">           	s &#x3D; checkTime(s);</span><br><span class="line">           	document.getElementById(&quot;timetxt&quot;).innerHTML &#x3D; h + &quot;:&quot; + m + &quot;:&quot; +s;</span><br><span class="line">           	t &#x3D; setTimeout(function()&#123;</span><br><span class="line">               	startTime();</span><br><span class="line">           	&#125;, 500);</span><br><span class="line">       	&#125;</span><br><span class="line"></span><br><span class="line">       	function checkTime(i)&#123;</span><br><span class="line">           	if(i&lt;10)&#123;</span><br><span class="line">               	i &#x3D; &quot;0&quot;+ i;</span><br><span class="line">           	&#125;</span><br><span class="line">           	return i;</span><br><span class="line">       	&#125;</span><br><span class="line">   	&lt;&#x2F;script&gt;</span><br><span class="line">&lt;&#x2F;body&gt;</span><br><span class="line">&lt;&#x2F;html&gt;</span><br></pre></td></tr></table></figure></p></li>
 </ul>
-<h3 id="4-Array数组对象"><a href="#4-Array数组对象" class="headerlink" title="4. Array数组对象"></a><span id="5.4">4. Array数组对象</span></h3><ul>
+<h3 id="array数组对象"><span id="5.4">4. Array数组对象</span></h3>
+<ul>
 <li><p>Array对象</p>
 <blockquote>
 <p>仅用单独的变量名来存储一</p>
 <p>系列的值</p>
 <p>数组中可以包含对象元素、函数、数组</p>
-</blockquote>
-</li>
+</blockquote></li>
 <li><p>数组的创建</p>
-<ol>
+<ol type="1">
 <li><p>常规方式</p>
 <blockquote>
-<p>var myCars=new Array();<br>myCars[0]=”Saab”;<br>myCars[1]=”Volvo”;<br>myCars[2]=”BMW”;</p>
-</blockquote>
-</li>
+<p>var myCars=new Array(); myCars[0]="Saab"; myCars[1]="Volvo"; myCars[2]="BMW";</p>
+</blockquote></li>
 <li><p>简洁方式</p>
 <blockquote>
-<p>var myCars=new Array(“Saab”, “Volvo”, “BMW”);</p>
-</blockquote>
-</li>
+<p>var myCars=new Array("Saab", "Volvo", "BMW");</p>
+</blockquote></li>
 <li><p>字面</p>
 <blockquote>
-<p>var myCars=[“Saab”, “Volvo”, “BMW”];</p>
-</blockquote>
-</li>
-</ol>
-</li>
+<p>var myCars=["Saab", "Volvo", "BMW"];</p>
+</blockquote></li>
+</ol></li>
 <li><p>数组的常用方法</p>
 <blockquote>
-<p>concat()：合并数组 例：var c = a.concat(b);<br>sort()：排序（升序），降序见后面实例 例：a.sort();<br>push()：末尾追加元素<br>reverse()：数组元素翻身</p>
-</blockquote>
-</li>
-<li><p>实例</p>
-  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">&lt;!DOCTYPE html&gt;</span><br><span class="line">&lt;html lang&#x3D;&quot;en&quot;&gt;</span><br><span class="line">&lt;head&gt;</span><br><span class="line">   	&lt;meta charset&#x3D;&quot;UTF-8&quot;&gt;</span><br><span class="line">   	&lt;title&gt;JS Array数组对象&lt;&#x2F;title&gt;</span><br><span class="line">&lt;&#x2F;head&gt;</span><br><span class="line">&lt;body&gt;</span><br><span class="line">   	&lt;script&gt;</span><br><span class="line">       	var a &#x3D; [&quot;hello&quot;, &quot;world&quot;];</span><br><span class="line">       	var b &#x3D; [&quot;iwen&quot;, &quot;ime&quot;];</span><br><span class="line">       	var c &#x3D; a.concat(b);</span><br><span class="line">       	document.write(c + &quot;&lt;br&#x2F;&gt;&quot;);</span><br><span class="line"></span><br><span class="line">       	var d &#x3D; [&quot;a&quot;, &quot;c&quot;, &quot;d&quot;, &quot;t&quot;, &quot;e&quot;, &quot;p&quot;];</span><br><span class="line">       	document.write(d.sort() + &quot;&lt;br&#x2F;&gt;&quot;);</span><br><span class="line">       	document.write(d.sort(function(a, b)&#123;</span><br><span class="line">           	return b-a;</span><br><span class="line">       	&#125;) + &quot;&lt;br&#x2F;&gt;&quot;);</span><br><span class="line"></span><br><span class="line">       	var e &#x3D; [&quot;a&quot;, &quot;b&quot;];</span><br><span class="line">       	e.push(&quot;c&quot;);</span><br><span class="line">       	document.write(e + &quot;&lt;br&#x2F;&gt;&quot;);</span><br><span class="line"></span><br><span class="line">       	var f &#x3D; [&quot;c&quot;, &quot;b&quot;, &quot;a&quot;];</span><br><span class="line">       	document.write(f.reverse());</span><br><span class="line">   	&lt;&#x2F;script&gt;</span><br><span class="line">&lt;&#x2F;body&gt;</span><br><span class="line">&lt;&#x2F;html&gt;</span><br></pre></td></tr></table></figure>
-</li>
+<p>concat()：合并数组 例：var c = a.concat(b); sort()：排序（升序），降序见后面实例 例：a.sort(); push()：末尾追加元素 reverse()：数组元素翻身</p>
+</blockquote></li>
+<li><p>实例 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">&lt;!DOCTYPE html&gt;</span><br><span class="line">&lt;html lang&#x3D;&quot;en&quot;&gt;</span><br><span class="line">&lt;head&gt;</span><br><span class="line">   	&lt;meta charset&#x3D;&quot;UTF-8&quot;&gt;</span><br><span class="line">   	&lt;title&gt;JS Array数组对象&lt;&#x2F;title&gt;</span><br><span class="line">&lt;&#x2F;head&gt;</span><br><span class="line">&lt;body&gt;</span><br><span class="line">   	&lt;script&gt;</span><br><span class="line">       	var a &#x3D; [&quot;hello&quot;, &quot;world&quot;];</span><br><span class="line">       	var b &#x3D; [&quot;iwen&quot;, &quot;ime&quot;];</span><br><span class="line">       	var c &#x3D; a.concat(b);</span><br><span class="line">       	document.write(c + &quot;&lt;br&#x2F;&gt;&quot;);</span><br><span class="line"></span><br><span class="line">       	var d &#x3D; [&quot;a&quot;, &quot;c&quot;, &quot;d&quot;, &quot;t&quot;, &quot;e&quot;, &quot;p&quot;];</span><br><span class="line">       	document.write(d.sort() + &quot;&lt;br&#x2F;&gt;&quot;);</span><br><span class="line">       	document.write(d.sort(function(a, b)&#123;</span><br><span class="line">           	return b-a;</span><br><span class="line">       	&#125;) + &quot;&lt;br&#x2F;&gt;&quot;);</span><br><span class="line"></span><br><span class="line">       	var e &#x3D; [&quot;a&quot;, &quot;b&quot;];</span><br><span class="line">       	e.push(&quot;c&quot;);</span><br><span class="line">       	document.write(e + &quot;&lt;br&#x2F;&gt;&quot;);</span><br><span class="line"></span><br><span class="line">       	var f &#x3D; [&quot;c&quot;, &quot;b&quot;, &quot;a&quot;];</span><br><span class="line">       	document.write(f.reverse());</span><br><span class="line">   	&lt;&#x2F;script&gt;</span><br><span class="line">&lt;&#x2F;body&gt;</span><br><span class="line">&lt;&#x2F;html&gt;</span><br></pre></td></tr></table></figure></p></li>
 </ul>
-<h3 id="5-Math对象"><a href="#5-Math对象" class="headerlink" title="5. Math对象"></a><span id="5.5">5. Math对象</span></h3><ul>
+<h3 id="math对象"><span id="5.5">5. Math对象</span></h3>
+<ul>
 <li><blockquote>
 <p>执行常见的算数任务</p>
-</blockquote>
-</li>
+</blockquote></li>
 <li><p>算数值</p>
 <blockquote>
-<p>Math.E<br>Math.PI<br>Math.SQRT2  //返回2的平方根<br>Math.SQRT1_2  //返回2的平方根的倒数</p>
-</blockquote>
-</li>
+<p>Math.E Math.PI Math.SQRT2 //返回2的平方根 Math.SQRT1_2 //返回2的平方根的倒数</p>
+</blockquote></li>
 <li><p>常见方法</p>
 <blockquote>
-<p>round()：四舍五入<br>random()：返回0-1之间的随机数<br>　　　　　０-10：<em>10<br>　　　　　０-100：</em>100<br>　　　　　整型：parseInt(Math.random() * 10);<br>floor()：返回小于等于x的最大整数<br>max()：返回最大值<br>min()：返回最小值<br>abs()：返回绝对值</p>
-</blockquote>
-</li>
+<p>round()：四舍五入 random()：返回0-1之间的随机数 　　　　　０-10：<em>10 　　　　　０-100：</em>100 　　　　　整型：parseInt(Math.random() * 10); floor()：返回小于等于x的最大整数 max()：返回最大值 min()：返回最小值 abs()：返回绝对值</p>
+</blockquote></li>
 <li><p>生成指定范围内的随机整数</p>
-<ol>
+<ol type="1">
 <li><p>包括下限数字 (lower) ，不包括上限数字 (upper)</p>
- <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">function random(lower, upper)&#123;</span><br><span class="line">	return Math.floor(Math.random() * (upper - lower)) + lower;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-</li>
+<p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">function random(lower, upper)&#123;</span><br><span class="line">	return Math.floor(Math.random() * (upper - lower)) + lower;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p></li>
 <li><p>包括下限数字 (lower) ，也包括上限数字 (upper)</p>
- <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">function random(lower, upper)&#123;</span><br><span class="line">	return Math.floor(Math.random() * (upper - lower+1)) + lower;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-</li>
+<p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">function random(lower, upper)&#123;</span><br><span class="line">	return Math.floor(Math.random() * (upper - lower+1)) + lower;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p></li>
 <li><p>扩展：产生一个随机的rgb颜色</p>
- <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">function randomColor()&#123;</span><br><span class="line">	var r &#x3D; random(0, 256),</span><br><span class="line">	g &#x3D; random(0, 256),</span><br><span class="line">	b &#x3D; random(0, 256);</span><br><span class="line">	&#x2F;&#x2F;连接字符串结果</span><br><span class="line">	var result &#x3D; &quot;rgb(&quot; + r + &quot;,&quot; + g + &quot;,&quot; + b + &quot;)&quot;;</span><br><span class="line">	return result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-</li>
-</ol>
-</li>
-<li><p>实例</p>
-  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">&lt;!DOCTYPE html&gt;</span><br><span class="line">&lt;html lang&#x3D;&quot;en&quot;&gt;</span><br><span class="line">&lt;head&gt;</span><br><span class="line">   	&lt;meta charset&#x3D;&quot;UTF-8&quot;&gt;</span><br><span class="line">   	&lt;title&gt;JS Math对象&lt;&#x2F;title&gt;</span><br><span class="line">&lt;&#x2F;head&gt;</span><br><span class="line">&lt;body&gt;</span><br><span class="line">   	&lt;script&gt;</span><br><span class="line">       	document.write(Math.round(2.3) + &quot;&lt;br&#x2F;&gt;&quot;);</span><br><span class="line">       	document.write(Math.random() * 10 + &quot;&lt;br&#x2F;&gt;&quot;);</span><br><span class="line">       	document.write(parseInt(Math.random()*10) + &quot;&lt;br&#x2F;&gt;&quot;);</span><br><span class="line">       	document.write(Math.max(10, 20, 4, 1));</span><br><span class="line">   	&lt;&#x2F;script&gt;</span><br><span class="line">&lt;&#x2F;body&gt;</span><br><span class="line">&lt;&#x2F;html&gt;</span><br></pre></td></tr></table></figure>
-</li>
+<p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">function randomColor()&#123;</span><br><span class="line">	var r &#x3D; random(0, 256),</span><br><span class="line">	g &#x3D; random(0, 256),</span><br><span class="line">	b &#x3D; random(0, 256);</span><br><span class="line">	&#x2F;&#x2F;连接字符串结果</span><br><span class="line">	var result &#x3D; &quot;rgb(&quot; + r + &quot;,&quot; + g + &quot;,&quot; + b + &quot;)&quot;;</span><br><span class="line">	return result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p></li>
+</ol></li>
+<li><p>实例 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">&lt;!DOCTYPE html&gt;</span><br><span class="line">&lt;html lang&#x3D;&quot;en&quot;&gt;</span><br><span class="line">&lt;head&gt;</span><br><span class="line">   	&lt;meta charset&#x3D;&quot;UTF-8&quot;&gt;</span><br><span class="line">   	&lt;title&gt;JS Math对象&lt;&#x2F;title&gt;</span><br><span class="line">&lt;&#x2F;head&gt;</span><br><span class="line">&lt;body&gt;</span><br><span class="line">   	&lt;script&gt;</span><br><span class="line">       	document.write(Math.round(2.3) + &quot;&lt;br&#x2F;&gt;&quot;);</span><br><span class="line">       	document.write(Math.random() * 10 + &quot;&lt;br&#x2F;&gt;&quot;);</span><br><span class="line">       	document.write(parseInt(Math.random()*10) + &quot;&lt;br&#x2F;&gt;&quot;);</span><br><span class="line">       	document.write(Math.max(10, 20, 4, 1));</span><br><span class="line">   	&lt;&#x2F;script&gt;</span><br><span class="line">&lt;&#x2F;body&gt;</span><br><span class="line">&lt;&#x2F;html&gt;</span><br></pre></td></tr></table></figure></p></li>
 </ul>
-<hr>
-<h2 id="六、DOM对象控制HTML-1"><a href="#六、DOM对象控制HTML-1" class="headerlink" title="六、DOM对象控制HTML"></a><span id="6">六、DOM对象控制HTML</span></h2><h3 id="1-方法"><a href="#1-方法" class="headerlink" title="1. 方法"></a>1. 方法</h3><ul>
+<hr />
+<h2 id="六dom对象控制html-1"><span id="6">六、DOM对象控制HTML</span></h2>
+<h3 id="方法">1. 方法</h3>
+<ul>
 <li><p>getElementByName()</p>
 <blockquote>
 <p>通过name属性来获取元素</p>
-</blockquote>
-</li>
+</blockquote></li>
 <li><p>getElementByTagName()</p>
 <blockquote>
 <p>通过标签名称来获取元素</p>
-</blockquote>
-</li>
+</blockquote></li>
 <li><p>getAttribute()</p>
 <blockquote>
-<p>获取元素属性<br><em>想要获取的元素</em>.getAttribute(“<em>想要获取的属性</em>“);</p>
-</blockquote>
-</li>
+<p>获取元素属性 <em>想要获取的元素</em>.getAttribute("<em>想要获取的属性</em>");</p>
+</blockquote></li>
 <li><p>setAttribute()</p>
 <blockquote>
-<p>设置元素属性<br><em>想要设置的元素</em>.(“<em>要设置的属性</em>“, “<em>属性内容</em> “)</p>
-</blockquote>
-</li>
+<p>设置元素属性 <em>想要设置的元素</em>.("<em>要设置的属性</em>", "<em>属性内容</em> ")</p>
+</blockquote></li>
 <li><p>childNodes</p>
 <blockquote>
-<p>访问子节点, <strong>注意空白项</strong> ,空白项算文本节点<br>类似于存放节点的数组，故需用[0] / [1]等确定具体的子节点<br><em>length</em> 属性可获得节点数<br><em>nodeType</em> 属性</p>
+<p>访问子节点, <strong>注意空白项</strong> ,空白项算文本节点 类似于存放节点的数组，故需用[0] / [1]等确定具体的子节点 <em>length</em> 属性可获得节点数 <em>nodeType</em> 属性</p>
+</blockquote>
 <blockquote>
-<p>返回节点的类型</p>
-<ol>
+<blockquote>
+返回节点的类型
+<ol type="1">
 <li>如果节点是一个元素节点，nodeType属性返回1。</li>
 <li>如果节点是属性节点，nodeType属性返回2。</li>
 <li>如果节点是一个文本节点，nodeType属性返回3。</li>
@@ -754,263 +712,201 @@
 </ol>
 <p>该属性是只读的。</p>
 </blockquote>
-</blockquote>
-</li>
+</blockquote></li>
 <li><p>parentNode</p>
 <blockquote>
-<p>访问父节点<br>nodeName：节点名称</p>
-</blockquote>
-</li>
+<p>访问父节点 nodeName：节点名称</p>
+</blockquote></li>
 <li><p>createElement()</p>
 <blockquote>
-<p>创建元素节点<br>例：var input = document.createElement(“input”);</p>
-</blockquote>
-</li>
+<p>创建元素节点 例：var input = document.createElement("input");</p>
+</blockquote></li>
 <li><p>createTextNode()</p>
 <blockquote>
-<p>创建文本节点<br>与 createElement() 和 appendChild() 共同使用</p>
+<p>创建文本节点 与 createElement() 和 appendChild() 共同使用 &gt;var para = document.createElement("p"); &gt;var node = document.createTextNode("这是创建的新文本"); para.appendChild(node);</p>
+</blockquote></li>
+<li><p>appendChild() &gt;创建新的HTML元素（节点） &gt; &gt; &gt;要创建新的HTML元素（节点）需要先创建一个元素，然后在已存在的元素中添加它。</p>
 <blockquote>
-<p>var para = document.createElement(“p”);<br>var node = document.createTextNode(“这是创建的新文本”);<br>   para.appendChild(node);</p>
-</blockquote>
-</blockquote>
-</li>
-<li><p>appendChild()</p>
-<blockquote>
-<p>创建新的HTML元素（节点）</p>
-<blockquote>
-<p>要创建新的HTML元素（节点）需要先创建一个元素，然后在已存在的元素中添加它。</p>
-</blockquote>
-<p>在节点之后添加。例：<em>打算添加到它的最后</em>.appendChild( <em>要添加的节点</em> )</p>
-<blockquote>
-<p>（接上面createTextNode()部分代码）<br>var element = document.getElementById(“div1”);<br>element.appendChild(para);</p>
-</blockquote>
-</blockquote>
-</li>
+<p>在节点之后添加。例：<em>打算添加到它的最后</em>.appendChild( <em>要添加的节点</em> ) &gt;（接上面createTextNode()部分代码） &gt;var element = document.getElementById("div1"); &gt;element.appendChild(para);</p>
+</blockquote></li>
 <li><p>insertBefore()</p>
 <blockquote>
 <p>用法和 appendChild() 很像，不过它用于添加新元素到开始位置</p>
-<p>例：<em>打算添加到它中</em>.insertBefore(<em>要添加的元素, 它中打算添加到现在这个元素之前的元素</em> )</p>
-<blockquote>
-<p>（接上面createTextNode()部分代码）<br>var element = documentById(“div1”);<br>var child = documentById(“p1”);<br>element.insertBefore(para, child);</p>
-</blockquote>
-</blockquote>
-</li>
+<p>例：<em>打算添加到它中</em>.insertBefore(<em>要添加的元素, 它中打算添加到现在这个元素之前的元素</em> ) &gt;（接上面createTextNode()部分代码） &gt;var element = documentById("div1"); &gt;var child = documentById("p1"); &gt;element.insertBefore(para, child);</p>
+</blockquote></li>
 <li><p>removeChild()</p>
 <blockquote>
-<p>删除节点 例：<em>想要删除节点的父节点</em>.removeChild(<em>想要删除的节点</em> )<br>两种方法</p>
-<blockquote>
-<p>var parent = document.getElementById(“div1”);<br>var child = document.getElementById(“p1”);<br>parent.removeChild(child);</p>
-<hr>
-<p>var parent = document.getElementById(“div”);<br>div.removeChild(div.childNodes[1]);</p>
-</blockquote>
-</blockquote>
-</li>
+<p>删除节点 例：<em>想要删除节点的父节点</em>.removeChild(<em>想要删除的节点</em> ) 两种方法 &gt;var parent = document.getElementById("div1"); &gt;var child = document.getElementById("p1"); &gt;parent.removeChild(child); ***** &gt;var parent = document.getElementById("div"); &gt;div.removeChild(div.childNodes[1]);</p>
+</blockquote></li>
 <li><p>offsetHeight / offsetWidth</p>
 <blockquote>
-<p>返回任何一个元素的高度或宽度，包括边框和填充，但不是边距</p>
+<p>返回任何一个元素的高度或宽度，包括边框和填充，但不是边距 &gt;element.offsetHeight; &gt;element.offsetWidth;</p>
+</blockquote>
 <blockquote>
-<p>element.offsetHeight;<br>element.offsetWidth;</p>
-</blockquote>
-<p>返回网页尺寸（不包含滚动条）</p>
-<blockquote>
-<p>document.documentElement.offsetWidth || document.body.offsetWidth;<br>//考虑到兼容性，故还有 || 后面的内容</p>
-</blockquote>
-</blockquote>
-</li>
-</ul>
-<ul>
+<p>返回网页尺寸（不包含滚动条） &gt;document.documentElement.offsetWidth || document.body.offsetWidth; &gt;//考虑到兼容性，故还有 || 后面的内容</p>
+</blockquote></li>
 <li><p>scrollHeight / scrollWidth</p>
 <blockquote>
 <p>网页尺寸，包含滚动条</p>
-</blockquote>
-</li>
-<li><p><strong>实例（这一节请仔细查看实例）</strong></p>
-  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br></pre></td><td class="code"><pre><span class="line">&lt;!DOCTYPE html&gt;</span><br><span class="line">&lt;html lang&#x3D;&quot;en&quot;&gt;</span><br><span class="line">&lt;head&gt;</span><br><span class="line">   	&lt;meta charset&#x3D;&quot;UTF-8&quot;&gt;</span><br><span class="line">   	&lt;title&gt;DOM对象控制HTML&lt;&#x2F;title&gt;</span><br><span class="line">&lt;&#x2F;head&gt;</span><br><span class="line">&lt;body&gt;</span><br><span class="line">   	&lt;p name&#x3D;&quot;pn&quot;&gt;hello&lt;&#x2F;p&gt;</span><br><span class="line">   	&lt;p name&#x3D;&quot;pn&quot;&gt;hello&lt;&#x2F;p&gt;</span><br><span class="line">   	&lt;p name&#x3D;&quot;pn&quot;&gt;hello&lt;&#x2F;p&gt;</span><br><span class="line">   	&lt;p name&#x3D;&quot;pn&quot;&gt;hello&lt;&#x2F;p&gt;</span><br><span class="line">   	&lt;a id&#x3D;&quot;aid&quot; title&#x3D;&quot;得到了a标签的属性&quot;&gt;hello&lt;&#x2F;a&gt;</span><br><span class="line">   	&lt;a id&#x3D;&quot;aid2&quot;&gt;aid2&lt;&#x2F;a&gt;</span><br><span class="line">   	&lt;ul&gt;&lt;li&gt;1&lt;&#x2F;li&gt;&lt;li&gt;2&lt;&#x2F;li&gt;&lt;li&gt;3&lt;&#x2F;li&gt;&lt;&#x2F;ul&gt;</span><br><span class="line">   	&lt;div id&#x3D;&quot;div&quot;&gt;</span><br><span class="line">       	&lt;p id&#x3D;&quot;pid&quot;&gt;div的p元素&lt;&#x2F;p&gt;</span><br><span class="line">   	&lt;&#x2F;div&gt;</span><br><span class="line">   	&lt;script&gt;</span><br><span class="line">       	function getName()&#123;</span><br><span class="line">       	    var count &#x3D; document.getElementsByName(&quot;pn&quot;);</span><br><span class="line">           	alert(count.length);</span><br><span class="line">           	var p &#x3D; count[3];</span><br><span class="line">           	p.innerHTML &#x3D; &quot;World&quot;;</span><br><span class="line">       	&#125;</span><br><span class="line">       	getName();</span><br><span class="line"></span><br><span class="line">       	function getAttr()&#123;</span><br><span class="line">           	var anode &#x3D; document.getElementById(&quot;aid&quot;);</span><br><span class="line">           	var attr &#x3D; anode.getAttribute(&quot;id&quot;);</span><br><span class="line">           	alert(attr);</span><br><span class="line">       	&#125;</span><br><span class="line">       	getAttr();</span><br><span class="line"></span><br><span class="line">       	function setAttr()&#123;</span><br><span class="line">           	var anode &#x3D; document.getElementById(&quot;aid2&quot;);</span><br><span class="line">           	anode.setAttribute(&quot;title&quot;, &quot;动态设置a的title属性&quot;);</span><br><span class="line">           	var attr &#x3D; anode.getAttribute(&quot;title&quot;);</span><br><span class="line">           	alert(attr);</span><br><span class="line">       	&#125;</span><br><span class="line">       	setAttr();</span><br><span class="line"></span><br><span class="line">       	function getChildNode()&#123;</span><br><span class="line">           	var childnode &#x3D; document.getElementsByTagName(&quot;ul&quot;)[0].childNodes;</span><br><span class="line">           	alert(childnode.length);</span><br><span class="line">           	alert(childnode[0].nodeType);</span><br><span class="line">       	&#125;</span><br><span class="line">       	getChildNode();</span><br><span class="line"></span><br><span class="line">       	function getParentNode()&#123;</span><br><span class="line">           	var div &#x3D; document.getElementById(&quot;pid&quot;).parentNode.nodeName;</span><br><span class="line">           	alert(div);</span><br><span class="line">       	&#125;</span><br><span class="line">       	getParentNode();</span><br><span class="line"></span><br><span class="line">       	function createNode()&#123;</span><br><span class="line">           	var body &#x3D; document.body;</span><br><span class="line">           	var input &#x3D; document.createElement(&quot;input&quot;);</span><br><span class="line">           	input.type &#x3D; &quot;button&quot;;</span><br><span class="line">           	input.value &#x3D; &quot;按钮&quot;;</span><br><span class="line">           	body.appendChild(input);</span><br><span class="line">       	&#125;</span><br><span class="line">       	createNode();</span><br><span class="line"></span><br><span class="line">       	function addNode()&#123;</span><br><span class="line">           	var div &#x3D; document.getElementById(&quot;div&quot;);</span><br><span class="line">           	var node &#x3D; document.getElementById(&quot;pid&quot;);</span><br><span class="line">           	var newnode &#x3D; document.createElement(&quot;p&quot;);</span><br><span class="line">           	newnode.innerHTML &#x3D; &quot;动态添加一个p元素&quot;;</span><br><span class="line">           	div.insertBefore(newnode, node);</span><br><span class="line">       	&#125;</span><br><span class="line">       	addNode();</span><br><span class="line"></span><br><span class="line">       	function removeNode()&#123;</span><br><span class="line">           	var div &#x3D; document.getElementById(&quot;div&quot;);</span><br><span class="line">          	&#x2F;&#x2F; var p &#x3D; div.removeChild(div.childNodes[1]);</span><br><span class="line">       	&#125;</span><br><span class="line">       	removeNode();</span><br><span class="line"></span><br><span class="line">       	function getSize()&#123;</span><br><span class="line">           	var width &#x3D; document.documentElement.offsetWidth||document.body.offsetWidth;</span><br><span class="line">           	var height &#x3D; document.documentElement.offsetHeight||document.body.offsetHeight;</span><br><span class="line">           	alert(width + &quot;，&quot; + height);</span><br><span class="line">       	&#125;</span><br><span class="line">       	getSize();</span><br><span class="line">   	&lt;&#x2F;script&gt;</span><br><span class="line">&lt;&#x2F;body&gt;</span><br><span class="line">&lt;&#x2F;html&gt;</span><br></pre></td></tr></table></figure>
-</li>
+</blockquote></li>
+<li><p><strong>实例（这一节请仔细查看实例）</strong> <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br></pre></td><td class="code"><pre><span class="line">&lt;!DOCTYPE html&gt;</span><br><span class="line">&lt;html lang&#x3D;&quot;en&quot;&gt;</span><br><span class="line">&lt;head&gt;</span><br><span class="line">   	&lt;meta charset&#x3D;&quot;UTF-8&quot;&gt;</span><br><span class="line">   	&lt;title&gt;DOM对象控制HTML&lt;&#x2F;title&gt;</span><br><span class="line">&lt;&#x2F;head&gt;</span><br><span class="line">&lt;body&gt;</span><br><span class="line">   	&lt;p name&#x3D;&quot;pn&quot;&gt;hello&lt;&#x2F;p&gt;</span><br><span class="line">   	&lt;p name&#x3D;&quot;pn&quot;&gt;hello&lt;&#x2F;p&gt;</span><br><span class="line">   	&lt;p name&#x3D;&quot;pn&quot;&gt;hello&lt;&#x2F;p&gt;</span><br><span class="line">   	&lt;p name&#x3D;&quot;pn&quot;&gt;hello&lt;&#x2F;p&gt;</span><br><span class="line">   	&lt;a id&#x3D;&quot;aid&quot; title&#x3D;&quot;得到了a标签的属性&quot;&gt;hello&lt;&#x2F;a&gt;</span><br><span class="line">   	&lt;a id&#x3D;&quot;aid2&quot;&gt;aid2&lt;&#x2F;a&gt;</span><br><span class="line">   	&lt;ul&gt;&lt;li&gt;1&lt;&#x2F;li&gt;&lt;li&gt;2&lt;&#x2F;li&gt;&lt;li&gt;3&lt;&#x2F;li&gt;&lt;&#x2F;ul&gt;</span><br><span class="line">   	&lt;div id&#x3D;&quot;div&quot;&gt;</span><br><span class="line">       	&lt;p id&#x3D;&quot;pid&quot;&gt;div的p元素&lt;&#x2F;p&gt;</span><br><span class="line">   	&lt;&#x2F;div&gt;</span><br><span class="line">   	&lt;script&gt;</span><br><span class="line">       	function getName()&#123;</span><br><span class="line">       	    var count &#x3D; document.getElementsByName(&quot;pn&quot;);</span><br><span class="line">           	alert(count.length);</span><br><span class="line">           	var p &#x3D; count[3];</span><br><span class="line">           	p.innerHTML &#x3D; &quot;World&quot;;</span><br><span class="line">       	&#125;</span><br><span class="line">       	getName();</span><br><span class="line"></span><br><span class="line">       	function getAttr()&#123;</span><br><span class="line">           	var anode &#x3D; document.getElementById(&quot;aid&quot;);</span><br><span class="line">           	var attr &#x3D; anode.getAttribute(&quot;id&quot;);</span><br><span class="line">           	alert(attr);</span><br><span class="line">       	&#125;</span><br><span class="line">       	getAttr();</span><br><span class="line"></span><br><span class="line">       	function setAttr()&#123;</span><br><span class="line">           	var anode &#x3D; document.getElementById(&quot;aid2&quot;);</span><br><span class="line">           	anode.setAttribute(&quot;title&quot;, &quot;动态设置a的title属性&quot;);</span><br><span class="line">           	var attr &#x3D; anode.getAttribute(&quot;title&quot;);</span><br><span class="line">           	alert(attr);</span><br><span class="line">       	&#125;</span><br><span class="line">       	setAttr();</span><br><span class="line"></span><br><span class="line">       	function getChildNode()&#123;</span><br><span class="line">           	var childnode &#x3D; document.getElementsByTagName(&quot;ul&quot;)[0].childNodes;</span><br><span class="line">           	alert(childnode.length);</span><br><span class="line">           	alert(childnode[0].nodeType);</span><br><span class="line">       	&#125;</span><br><span class="line">       	getChildNode();</span><br><span class="line"></span><br><span class="line">       	function getParentNode()&#123;</span><br><span class="line">           	var div &#x3D; document.getElementById(&quot;pid&quot;).parentNode.nodeName;</span><br><span class="line">           	alert(div);</span><br><span class="line">       	&#125;</span><br><span class="line">       	getParentNode();</span><br><span class="line"></span><br><span class="line">       	function createNode()&#123;</span><br><span class="line">           	var body &#x3D; document.body;</span><br><span class="line">           	var input &#x3D; document.createElement(&quot;input&quot;);</span><br><span class="line">           	input.type &#x3D; &quot;button&quot;;</span><br><span class="line">           	input.value &#x3D; &quot;按钮&quot;;</span><br><span class="line">           	body.appendChild(input);</span><br><span class="line">       	&#125;</span><br><span class="line">       	createNode();</span><br><span class="line"></span><br><span class="line">       	function addNode()&#123;</span><br><span class="line">           	var div &#x3D; document.getElementById(&quot;div&quot;);</span><br><span class="line">           	var node &#x3D; document.getElementById(&quot;pid&quot;);</span><br><span class="line">           	var newnode &#x3D; document.createElement(&quot;p&quot;);</span><br><span class="line">           	newnode.innerHTML &#x3D; &quot;动态添加一个p元素&quot;;</span><br><span class="line">           	div.insertBefore(newnode, node);</span><br><span class="line">       	&#125;</span><br><span class="line">       	addNode();</span><br><span class="line"></span><br><span class="line">       	function removeNode()&#123;</span><br><span class="line">           	var div &#x3D; document.getElementById(&quot;div&quot;);</span><br><span class="line">          	&#x2F;&#x2F; var p &#x3D; div.removeChild(div.childNodes[1]);</span><br><span class="line">       	&#125;</span><br><span class="line">       	removeNode();</span><br><span class="line"></span><br><span class="line">       	function getSize()&#123;</span><br><span class="line">           	var width &#x3D; document.documentElement.offsetWidth||document.body.offsetWidth;</span><br><span class="line">           	var height &#x3D; document.documentElement.offsetHeight||document.body.offsetHeight;</span><br><span class="line">           	alert(width + &quot;，&quot; + height);</span><br><span class="line">       	&#125;</span><br><span class="line">       	getSize();</span><br><span class="line">   	&lt;&#x2F;script&gt;</span><br><span class="line">&lt;&#x2F;body&gt;</span><br><span class="line">&lt;&#x2F;html&gt;</span><br></pre></td></tr></table></figure></p></li>
 </ul>
-<hr>
-<h2 id="七、JS浏览器对象-1"><a href="#七、JS浏览器对象-1" class="headerlink" title="七、JS浏览器对象"></a><span id="7">七、JS浏览器对象</span></h2><h3 id="1-Window对象"><a href="#1-Window对象" class="headerlink" title="1. Window对象"></a><span id="7.1">1. Window对象</span></h3><ul>
+<hr />
+<h2 id="七js浏览器对象-1"><span id="7">七、JS浏览器对象</span></h2>
+<h3 id="window对象"><span id="7.1">1. Window对象</span></h3>
+<ul>
 <li><p>Window对象</p>
 <blockquote>
-<p>Window对象是BOM的核心，Window对象指当前浏览器的窗口<br>所有JS全局对象、函数、以及变量均自动变成为Window对象的成员<br>全局变量是Window对象的属性<br>全局函数是Window对象的方法<br>甚至HTML DOM的document也是Window对象的属性之一</p>
-</blockquote>
-</li>
+<p>Window对象是BOM的核心，Window对象指当前浏览器的窗口 所有JS全局对象、函数、以及变量均自动变成为Window对象的成员 全局变量是Window对象的属性 全局函数是Window对象的方法 甚至HTML DOM的document也是Window对象的属性之一</p>
+</blockquote></li>
 <li><p>Window尺寸</p>
 <blockquote>
-<p>window.innerHeight：浏览器窗口的内部高度（包括滚动条）<br>window.innerWidth：浏览器窗口的内部宽度（包括滚动条）</p>
-</blockquote>
-</li>
+<p>window.innerHeight：浏览器窗口的内部高度（包括滚动条） window.innerWidth：浏览器窗口的内部宽度（包括滚动条）</p>
+</blockquote></li>
 <li><p>Window方法</p>
 <blockquote>
-<p>window.open()：打开新窗口<br>window.close()：关闭新窗口</p>
-</blockquote>
-</li>
+<p>window.open()：打开新窗口 window.close()：关闭新窗口</p>
+</blockquote></li>
 <li><p>实例</p>
-  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">&lt;!DOCTYPE html&gt;</span><br><span class="line">&lt;html lang&#x3D;&quot;en&quot;&gt;</span><br><span class="line">&lt;head&gt;</span><br><span class="line">   	&lt;meta charset&#x3D;&quot;UTF-8&quot;&gt;</span><br><span class="line">   	&lt;title&gt;JS浏览器对象——window对象&lt;&#x2F;title&gt;</span><br><span class="line">&lt;&#x2F;head&gt;</span><br><span class="line">&lt;body&gt;</span><br><span class="line">   	&lt;button id&#x3D;&quot;btn&quot; onclick&#x3D;&quot;btnClicked()&quot;&gt;按钮&lt;&#x2F;button&gt;</span><br><span class="line">   	&lt;script&gt;</span><br><span class="line">       	function btnClicked()&#123;</span><br><span class="line">           	&#x2F;&#x2F;window.open(&quot;JS事件.html&quot;, &quot;windowname&quot;, &quot;height &#x3D; 200, width &#x3D; 200, top &#x3D; 100, left &#x3D; 100, toolbar &#x3D; no, menubar &#x3D; no&quot;);</span><br><span class="line">           	window.close();</span><br><span class="line">       	&#125;</span><br><span class="line">   	&lt;&#x2F;script&gt;</span><br><span class="line">&lt;&#x2F;body&gt;</span><br><span class="line">&lt;&#x2F;html&gt;</span><br></pre></td></tr></table></figure>
-</li>
+<p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">&lt;!DOCTYPE html&gt;</span><br><span class="line">&lt;html lang&#x3D;&quot;en&quot;&gt;</span><br><span class="line">&lt;head&gt;</span><br><span class="line">   	&lt;meta charset&#x3D;&quot;UTF-8&quot;&gt;</span><br><span class="line">   	&lt;title&gt;JS浏览器对象——window对象&lt;&#x2F;title&gt;</span><br><span class="line">&lt;&#x2F;head&gt;</span><br><span class="line">&lt;body&gt;</span><br><span class="line">   	&lt;button id&#x3D;&quot;btn&quot; onclick&#x3D;&quot;btnClicked()&quot;&gt;按钮&lt;&#x2F;button&gt;</span><br><span class="line">   	&lt;script&gt;</span><br><span class="line">       	function btnClicked()&#123;</span><br><span class="line">           	&#x2F;&#x2F;window.open(&quot;JS事件.html&quot;, &quot;windowname&quot;, &quot;height &#x3D; 200, width &#x3D; 200, top &#x3D; 100, left &#x3D; 100, toolbar &#x3D; no, menubar &#x3D; no&quot;);</span><br><span class="line">           	window.close();</span><br><span class="line">       	&#125;</span><br><span class="line">   	&lt;&#x2F;script&gt;</span><br><span class="line">&lt;&#x2F;body&gt;</span><br><span class="line">&lt;&#x2F;html&gt;</span><br></pre></td></tr></table></figure></p></li>
 </ul>
-<h3 id="2-计时器对象"><a href="#2-计时器对象" class="headerlink" title="2. 计时器对象"></a><span id="7.2">2. 计时器对象</span></h3><ul>
+<h3 id="计时器对象"><span id="7.2">2. 计时器对象</span></h3>
+<ul>
 <li><p>计时事件</p>
 <blockquote>
 <p>通过JS，我们有能力做到在一个设定的时间间隔之后来执行代码，而不是函数调用后立刻执行</p>
-</blockquote>
-</li>
+</blockquote></li>
 <li><p>计时方法</p>
-<ol>
+<ol type="1">
 <li><p>setInterval() / clearInterval()</p>
 <blockquote>
-<p>(函数, 时间间隔) <strong>//函数特别喜欢写成一种样子…祥看实例</strong><br>间隔指定毫秒数 <strong>不停</strong> 地执行代码</p>
-</blockquote>
-</li>
+<p>(函数, 时间间隔) <strong>//函数特别喜欢写成一种样子...祥看实例</strong> 间隔指定毫秒数 <strong>不停</strong> 地执行代码</p>
+</blockquote></li>
 <li><p>setTimeout() / clearTimeout()</p>
 <blockquote>
-<p>（函数，间隔时间）<br>暂停指定毫秒后 <strong>执行</strong> 指定代码<br><strong>可以设计成循环，递归调用，即可不停得执行代码</strong>（祥看实例）</p>
-</blockquote>
-</li>
-</ol>
-</li>
+<p>（函数，间隔时间） 暂停指定毫秒后 <strong>执行</strong> 指定代码 <strong>可以设计成循环，递归调用，即可不停得执行代码</strong>（祥看实例）</p>
+</blockquote></li>
+</ol></li>
 <li><p>实例</p>
-  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line">&lt;!DOCTYPE html&gt;</span><br><span class="line">&lt;html lang&#x3D;&quot;en&quot;&gt;</span><br><span class="line">&lt;head&gt;</span><br><span class="line">   	&lt;meta charset&#x3D;&quot;UTF-8&quot;&gt;</span><br><span class="line">   	&lt;title&gt;JS浏览器对象——计时器对象&lt;&#x2F;title&gt;</span><br><span class="line">&lt;&#x2F;head&gt;</span><br><span class="line">&lt;body&gt;</span><br><span class="line">   	&lt;p id&#x3D;&quot;ptime&quot;&gt;&lt;&#x2F;p&gt;</span><br><span class="line">   	&lt;button onclick&#x3D;&quot;stopTime()&quot;&gt;按钮&lt;&#x2F;button&gt;</span><br><span class="line">   	&lt;br&#x2F;&gt;&lt;br&#x2F;&gt;&lt;br&#x2F;&gt;&lt;br&#x2F;&gt;</span><br><span class="line">   	&lt;button onclick&#x3D;&quot;myWin()&quot;&gt;开始&lt;&#x2F;button&gt;</span><br><span class="line">   	&lt;br&#x2F;&gt;&lt;br&#x2F;&gt;</span><br><span class="line">   	&lt;button onclick&#x3D;&quot;stopWin()&quot;&gt;停止&lt;&#x2F;button&gt;</span><br><span class="line"></span><br><span class="line">   	&lt;script&gt;</span><br><span class="line">       	var mytime &#x3D; setInterval(function()&#123;</span><br><span class="line">           getTime();</span><br><span class="line">       	&#125;, 1000);</span><br><span class="line">       	function getTime()&#123;</span><br><span class="line">           	var d &#x3D; new Date();</span><br><span class="line">           	var t &#x3D; d.toLocaleTimeString();</span><br><span class="line">           	document.getElementById(&quot;ptime&quot;).innerHTML &#x3D; t;</span><br><span class="line">       	&#125;	</span><br><span class="line">       	function stopTime()&#123;</span><br><span class="line">           	clearInterval(mytime);</span><br><span class="line">       	&#125;</span><br><span class="line"></span><br><span class="line">       	var win;</span><br><span class="line">       	function myWin()&#123;</span><br><span class="line">           	alert(&quot;hello&quot;);</span><br><span class="line">           	win &#x3D; setTimeout(function () &#123;</span><br><span class="line">           	    myWin();</span><br><span class="line">           	&#125;, 3000);</span><br><span class="line">       	&#125;</span><br><span class="line">       	function stopWin()&#123;</span><br><span class="line">           	clearTimeout(win);</span><br><span class="line">       	&#125;</span><br><span class="line">   	&lt;&#x2F;script&gt;</span><br><span class="line">&lt;&#x2F;body&gt;</span><br><span class="line">&lt;&#x2F;html&gt;</span><br></pre></td></tr></table></figure>
-</li>
+<p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line">&lt;!DOCTYPE html&gt;</span><br><span class="line">&lt;html lang&#x3D;&quot;en&quot;&gt;</span><br><span class="line">&lt;head&gt;</span><br><span class="line">   	&lt;meta charset&#x3D;&quot;UTF-8&quot;&gt;</span><br><span class="line">   	&lt;title&gt;JS浏览器对象——计时器对象&lt;&#x2F;title&gt;</span><br><span class="line">&lt;&#x2F;head&gt;</span><br><span class="line">&lt;body&gt;</span><br><span class="line">   	&lt;p id&#x3D;&quot;ptime&quot;&gt;&lt;&#x2F;p&gt;</span><br><span class="line">   	&lt;button onclick&#x3D;&quot;stopTime()&quot;&gt;按钮&lt;&#x2F;button&gt;</span><br><span class="line">   	&lt;br&#x2F;&gt;&lt;br&#x2F;&gt;&lt;br&#x2F;&gt;&lt;br&#x2F;&gt;</span><br><span class="line">   	&lt;button onclick&#x3D;&quot;myWin()&quot;&gt;开始&lt;&#x2F;button&gt;</span><br><span class="line">   	&lt;br&#x2F;&gt;&lt;br&#x2F;&gt;</span><br><span class="line">   	&lt;button onclick&#x3D;&quot;stopWin()&quot;&gt;停止&lt;&#x2F;button&gt;</span><br><span class="line"></span><br><span class="line">   	&lt;script&gt;</span><br><span class="line">       	var mytime &#x3D; setInterval(function()&#123;</span><br><span class="line">           getTime();</span><br><span class="line">       	&#125;, 1000);</span><br><span class="line">       	function getTime()&#123;</span><br><span class="line">           	var d &#x3D; new Date();</span><br><span class="line">           	var t &#x3D; d.toLocaleTimeString();</span><br><span class="line">           	document.getElementById(&quot;ptime&quot;).innerHTML &#x3D; t;</span><br><span class="line">       	&#125;	</span><br><span class="line">       	function stopTime()&#123;</span><br><span class="line">           	clearInterval(mytime);</span><br><span class="line">       	&#125;</span><br><span class="line"></span><br><span class="line">       	var win;</span><br><span class="line">       	function myWin()&#123;</span><br><span class="line">           	alert(&quot;hello&quot;);</span><br><span class="line">           	win &#x3D; setTimeout(function () &#123;</span><br><span class="line">           	    myWin();</span><br><span class="line">           	&#125;, 3000);</span><br><span class="line">       	&#125;</span><br><span class="line">       	function stopWin()&#123;</span><br><span class="line">           	clearTimeout(win);</span><br><span class="line">       	&#125;</span><br><span class="line">   	&lt;&#x2F;script&gt;</span><br><span class="line">&lt;&#x2F;body&gt;</span><br><span class="line">&lt;&#x2F;html&gt;</span><br></pre></td></tr></table></figure></p></li>
 </ul>
-<h3 id="3-History对象"><a href="#3-History对象" class="headerlink" title="3. History对象"></a><span id="7.3">3. History对象</span></h3><ul>
-<li>window.history对象包含浏览器的历史（URL）的集合</li>
+<h3 id="history对象"><span id="7.3">3. History对象</span></h3>
+<ul>
+<li><p>window.history对象包含浏览器的历史（URL）的集合</p></li>
 <li><p>方法</p>
 <blockquote>
-<p>history.back()：与浏览器点击后退键相同<br>history.forward()：与浏览器点击向前键相同<br>history.go()：进入历史中的某个页面</p>
-</blockquote>
-</li>
+<p>history.back()：与浏览器点击后退键相同 history.forward()：与浏览器点击向前键相同 history.go()：进入历史中的某个页面</p>
+</blockquote></li>
 </ul>
-<h3 id="4-Location对象"><a href="#4-Location对象" class="headerlink" title="4. Location对象"></a><span id="7.4">4. Location对象</span></h3><ul>
-<li>window.location对象用于获得当前页面的地址URL，并把浏览器重新定向到新的页面</li>
+<h3 id="location对象"><span id="7.4">4. Location对象</span></h3>
+<ul>
+<li><p>window.location对象用于获得当前页面的地址URL，并把浏览器重新定向到新的页面</p></li>
 <li><p>Location对象的属性</p>
 <blockquote>
-<p>location.hostname：返回web主机的域名<br>location.pathname：返回当前页面的路径和文件名<br>location.port：返回web主机的端口<br>location.portocol：返回所使用的web协议（<a target="_blank" rel="noopener" href="http://或https://）">http://或https://）</a><br>location.href：返回当前页面的URL<br>location.assign：方法加载新的文档</p>
-</blockquote>
-</li>
-<li><p>实例</p>
-  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">&lt;!DOCTYPE html&gt;</span><br><span class="line">&lt;html lang&#x3D;&quot;en&quot;&gt;</span><br><span class="line">&lt;head&gt;</span><br><span class="line">   	&lt;meta charset&#x3D;&quot;UTF-8&quot;&gt;</span><br><span class="line">   	&lt;title&gt;JS浏览器对象——Location对象&lt;&#x2F;title&gt;</span><br><span class="line">&lt;&#x2F;head&gt;</span><br><span class="line">&lt;body&gt;</span><br><span class="line">   	&lt;button id&#x3D;&quot;btn&quot; onclick&#x3D;&quot;getLoc()&quot;&gt;按钮展示&lt;&#x2F;button&gt;</span><br><span class="line">   	&lt;br&#x2F;&gt;&lt;br&#x2F;&gt;&lt;br&#x2F;&gt;&lt;br&#x2F;&gt;&lt;br&#x2F;&gt;&lt;br&#x2F;&gt;&lt;br&#x2F;&gt;&lt;br&#x2F;&gt;</span><br><span class="line">   	&lt;button id&#x3D;&quot;btn1&quot; onclick&#x3D;&quot;assi()&quot;&gt;按钮跳转&lt;&#x2F;button&gt;</span><br><span class="line">   	&lt;p id&#x3D;&quot;pid&quot;&gt;&lt;&#x2F;p&gt;</span><br><span class="line">   	&lt;script&gt;</span><br><span class="line">       	function getLoc()&#123;</span><br><span class="line">           	document.getElementById(&quot;pid&quot;).innerHTML &#x3D; window.location.href;</span><br><span class="line">       	&#125;</span><br><span class="line">       	function assi() &#123;</span><br><span class="line">           	location.assign(&quot;https:&#x2F;&#x2F;www.baidu.com&quot;);</span><br><span class="line">       	&#125;</span><br><span class="line">   	&lt;&#x2F;script&gt;</span><br><span class="line">&lt;&#x2F;body&gt;</span><br><span class="line">&lt;&#x2F;html&gt;</span><br></pre></td></tr></table></figure>
-</li>
+<p>location.hostname：返回web主机的域名 location.pathname：返回当前页面的路径和文件名 location.port：返回web主机的端口 location.portocol：返回所使用的web协议（http://或https://） location.href：返回当前页面的URL location.assign：方法加载新的文档</p>
+</blockquote></li>
+<li><p>实例 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">&lt;!DOCTYPE html&gt;</span><br><span class="line">&lt;html lang&#x3D;&quot;en&quot;&gt;</span><br><span class="line">&lt;head&gt;</span><br><span class="line">   	&lt;meta charset&#x3D;&quot;UTF-8&quot;&gt;</span><br><span class="line">   	&lt;title&gt;JS浏览器对象——Location对象&lt;&#x2F;title&gt;</span><br><span class="line">&lt;&#x2F;head&gt;</span><br><span class="line">&lt;body&gt;</span><br><span class="line">   	&lt;button id&#x3D;&quot;btn&quot; onclick&#x3D;&quot;getLoc()&quot;&gt;按钮展示&lt;&#x2F;button&gt;</span><br><span class="line">   	&lt;br&#x2F;&gt;&lt;br&#x2F;&gt;&lt;br&#x2F;&gt;&lt;br&#x2F;&gt;&lt;br&#x2F;&gt;&lt;br&#x2F;&gt;&lt;br&#x2F;&gt;&lt;br&#x2F;&gt;</span><br><span class="line">   	&lt;button id&#x3D;&quot;btn1&quot; onclick&#x3D;&quot;assi()&quot;&gt;按钮跳转&lt;&#x2F;button&gt;</span><br><span class="line">   	&lt;p id&#x3D;&quot;pid&quot;&gt;&lt;&#x2F;p&gt;</span><br><span class="line">   	&lt;script&gt;</span><br><span class="line">       	function getLoc()&#123;</span><br><span class="line">           	document.getElementById(&quot;pid&quot;).innerHTML &#x3D; window.location.href;</span><br><span class="line">       	&#125;</span><br><span class="line">       	function assi() &#123;</span><br><span class="line">           	location.assign(&quot;https:&#x2F;&#x2F;www.baidu.com&quot;);</span><br><span class="line">       	&#125;</span><br><span class="line">   	&lt;&#x2F;script&gt;</span><br><span class="line">&lt;&#x2F;body&gt;</span><br><span class="line">&lt;&#x2F;html&gt;</span><br></pre></td></tr></table></figure></p></li>
 </ul>
-<h3 id="5-screen对象"><a href="#5-screen对象" class="headerlink" title="5. screen对象"></a><span id="7.5">5. screen对象</span></h3><ul>
-<li>window.screen对象包含有关用户屏幕的信息</li>
+<h3 id="screen对象"><span id="7.5">5. screen对象</span></h3>
+<ul>
+<li><p>window.screen对象包含有关用户屏幕的信息</p></li>
 <li><p>属性</p>
 <blockquote>
-<p>screen.availWidth：可用屏幕宽度<br>screen.availHeight：可用屏幕高度<br>screen.height：屏幕高度<br>screen.width：屏幕宽度</p>
-</blockquote>
-</li>
+<p>screen.availWidth：可用屏幕宽度 screen.availHeight：可用屏幕高度 screen.height：屏幕高度 screen.width：屏幕宽度</p>
+</blockquote></li>
 </ul>
-<hr>
-<h2 id="八、面向对象-1"><a href="#八、面向对象-1" class="headerlink" title="八、面向对象"></a><span id="8">八、面向对象</span></h2><h3 id="1-创建对象"><a href="#1-创建对象" class="headerlink" title="1. 创建对象"></a>1. 创建对象</h3><ul>
+<hr />
+<h2 id="八面向对象-1"><span id="8">八、面向对象</span></h2>
+<h3 id="创建对象">1. 创建对象</h3>
+<ul>
 <li><p>new操作符 + Object创建对象</p>
-  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">var person &#x3D; new Object();</span><br><span class="line">person.name &#x3D; &quot;lisi&quot;;</span><br><span class="line">person.age &#x3D; 21;</span><br><span class="line">person.family &#x3D; [&quot;haha&quot;, &quot;heihei&quot;];</span><br><span class="line">person.say &#x3D; function()&#123;</span><br><span class="line">	alert(this.name);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></li>
+<p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">var person &#x3D; new Object();</span><br><span class="line">person.name &#x3D; &quot;lisi&quot;;</span><br><span class="line">person.age &#x3D; 21;</span><br><span class="line">person.family &#x3D; [&quot;haha&quot;, &quot;heihei&quot;];</span><br><span class="line">person.say &#x3D; function()&#123;</span><br><span class="line">	alert(this.name);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p></li>
 <li><p>字面式创建对象</p>
-  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">var person &#x3D; &#123;</span><br><span class="line">	name: &quot;lisi&quot;,</span><br><span class="line">	age: 21,</span><br><span class="line">	family: [&quot;haha&quot;, &quot;heihei&quot;],</span><br><span class="line">	say: function()&#123;</span><br><span class="line">		alert(this.name);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;; </span><br></pre></td></tr></table></figure>
-<p>  <strong>以上两种方法在使用同一接口创建多个对象 时，会产生大量重复代码，为了解决此问题，工厂模式被开发</strong></p>
-</li>
+<p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">var person &#x3D; &#123;</span><br><span class="line">	name: &quot;lisi&quot;,</span><br><span class="line">	age: 21,</span><br><span class="line">	family: [&quot;haha&quot;, &quot;heihei&quot;],</span><br><span class="line">	say: function()&#123;</span><br><span class="line">		alert(this.name);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;; </span><br></pre></td></tr></table></figure> <strong>以上两种方法在使用同一接口创建多个对象 时，会产生大量重复代码，为了解决此问题，工厂模式被开发</strong></p></li>
 <li><p>工厂模式</p>
-  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">function createPerson(name, age, family)&#123;</span><br><span class="line">	var o &#x3D; new Object();</span><br><span class="line">	o.name &#x3D; name;</span><br><span class="line">	o.age &#x3D; age;</span><br><span class="line">	o.family &#x3D; family;</span><br><span class="line">	o.say &#x3D; function()&#123;</span><br><span class="line">		alert(this.name);</span><br><span class="line">	&#125;</span><br><span class="line">	return o;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">var person1 &#x3D; createPerson(&quot;lisi&quot;, 21, [&quot;haha&quot;, &quot;heihei&quot;]); &#x2F;&#x2F;instanceof无法判断它是谁的实例，只能判断他是对象，构造函数都可以判断出</span><br><span class="line">console.log(person1 instanceof Object); &#x2F;&#x2F;true</span><br></pre></td></tr></table></figure>
+<p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">function createPerson(name, age, family)&#123;</span><br><span class="line">	var o &#x3D; new Object();</span><br><span class="line">	o.name &#x3D; name;</span><br><span class="line">	o.age &#x3D; age;</span><br><span class="line">	o.family &#x3D; family;</span><br><span class="line">	o.say &#x3D; function()&#123;</span><br><span class="line">		alert(this.name);</span><br><span class="line">	&#125;</span><br><span class="line">	return o;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">var person1 &#x3D; createPerson(&quot;lisi&quot;, 21, [&quot;haha&quot;, &quot;heihei&quot;]); &#x2F;&#x2F;instanceof无法判断它是谁的实例，只能判断他是对象，构造函数都可以判断出</span><br><span class="line">console.log(person1 instanceof Object); &#x2F;&#x2F;true</span><br></pre></td></tr></table></figure></p>
 <blockquote>
-<p>缺点：工厂模式解决了重复实例化多个对象的问题，但没有解决 <em> 对象识别 </em> 的问题，（工厂模式无从识别对象的类型，因为全部都是Object，不像Date, Array等），于是出现了构造函数模式。</p>
-</blockquote>
-</li>
+<p>缺点：工厂模式解决了重复实例化多个对象的问题，但没有解决 * 对象识别 * 的问题，（工厂模式无从识别对象的类型，因为全部都是Object，不像Date, Array等），于是出现了构造函数模式。</p>
+</blockquote></li>
 <li><p>构造函数模式</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">function Person(name, age, job)&#123;</span><br><span class="line">	this.name &#x3D; name;</span><br><span class="line">	this.age &#x3D; age;</span><br><span class="line">	this.job &#x3D; job;</span><br><span class="line">	this.sayName &#x3D; function()&#123;</span><br><span class="line">		alert(this.name);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">var person &#x3D; new Person(&quot;Jim&quot;, 22, &quot;Teacher&quot;);</span><br></pre></td></tr></table></figure>
-<ol>
-<li><p><strong>构造函数模式相对于工厂模式有几个显著的区别</strong></p>
+<ol type="1">
+<li><strong>构造函数模式相对于工厂模式有几个显著的区别</strong></li>
+</ol>
 <ul>
 <li>没有显式地创建对象。</li>
 <li>直接将属性和方法赋给了this对象。</li>
 <li><strong>没有 return 语句</strong>。</li>
 <li>函数名的首字母大写（Person 和 createPerson）：按照惯例，构造函数始终都是以大写字母开头，而非构造函数则应该以小写字母开头。</li>
 </ul>
-</li>
-<li><p><strong>解决对象识别问题</strong></p>
-<ol>
+<ol start="2" type="1">
+<li><p><strong>解决对象识别问题</strong></p></li>
 <li><p>constructor</p>
 <blockquote>
 <p>上面的例子使person保存这个Person的示实例，因此有了一个constructor（构造函数）属性，该属性指向Person</p>
 </blockquote>
-<p> <code>alert(person.constructor == Person); //true</code></p>
+<p><code>alert(person.constructor == Person); //true</code></p>
 <blockquote>
 <p>对象的constructor属性最初是用来标识对象类型的，但是检测对象类型还是instanceof操作符更加可靠</p>
-</blockquote>
-</li>
+</blockquote></li>
 <li><p>instanceof</p>
-<p> <code>alert(person instanceof Object); //true</code><br> <code>alert(person instanceof Person); //true</code></p>
-</li>
-</ol>
-</li>
-</ol>
-</li>
-</ul>
-<pre><code>      &gt; 这个例子里创建的对象 既是Object实例又是Person的实例
-</code></pre><ol>
-<li><p>new Person()这条语句经历了什么</p>
+<p><code>alert(person instanceof Object); //true</code> <code>alert(person instanceof Person); //true</code></p>
 <blockquote>
-<ol>
-<li>创建一个新对象 </li>
+<p>这个例子里创建的对象 既是Object实例又是Person的实例</p>
+</blockquote></li>
+<li><p>new Person()这条语句经历了什么</p></li>
+</ol>
+<blockquote>
+<ol type="1">
+<li>创建一个新对象</li>
 <li>将构造函数的作用域赋给新对象（因此this就指向了这个新对象）</li>
 <li>执行构造函数中的代码（为这个新对象添加属性）</li>
 <li>返回新对象</li>
 </ol>
 </blockquote>
-</li>
-<li><p>构造函数中的问题</p>
-<blockquote>
-<p>ECMAScript中的函数是对象，因此每定义一个函数，也就是实例化了一个对象。而构造函数在每次创建的时候都会完成同样function实例（sayName），这是很没有必要的。因此可以把函数定义转移到构造函数外部来解决这个问题。         </p>
-</blockquote>
-</li>
+<ol start="4" type="1">
+<li>构造函数中的问题</li>
 </ol>
-<ul>
+<blockquote>
+<p>ECMAScript中的函数是对象，因此每定义一个函数，也就是实例化了一个对象。而构造函数在每次创建的时候都会完成同样function实例（sayName），这是很没有必要的。因此可以把函数定义转移到构造函数外部来解决这个问题。</p>
+</blockquote></li>
 <li><p>原型模式</p>
-  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">function Person()&#123;&#125;</span><br><span class="line">Person.prototype.name &#x3D; &quot;Jim&quot;;</span><br><span class="line">Person.prototype.age &#x3D; 22;</span><br><span class="line">Person.prototype.job &#x3D; &quot;Doctor&quot;;</span><br><span class="line">Person.prototype.sayName &#x3D; function()&#123;</span><br><span class="line">	alert(this.name);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">var person &#x3D; new Person();</span><br><span class="line">person.age &#x3D; 50;</span><br><span class="line">person.sayName(); &#x2F;&#x2F;Jim</span><br></pre></td></tr></table></figure>
-<ol>
+<p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">function Person()&#123;&#125;</span><br><span class="line">Person.prototype.name &#x3D; &quot;Jim&quot;;</span><br><span class="line">Person.prototype.age &#x3D; 22;</span><br><span class="line">Person.prototype.job &#x3D; &quot;Doctor&quot;;</span><br><span class="line">Person.prototype.sayName &#x3D; function()&#123;</span><br><span class="line">	alert(this.name);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">var person &#x3D; new Person();</span><br><span class="line">person.age &#x3D; 50;</span><br><span class="line">person.sayName(); &#x2F;&#x2F;Jim</span><br></pre></td></tr></table></figure></p>
+<ol type="1">
 <li><p>原型模式的好处</p>
 <blockquote>
 <p>可以让所有对象实例共享它所包含的属性和方法。换句话说，不必在构造函数中定义对象实例的信息，而是可以让这些信息直接添加到原型对象中。</p>
-</blockquote>
-</li>
+</blockquote></li>
 <li><p>原型对象是什么</p>
 <blockquote>
-<ol>
-<li><p>无论什么时候，只要创建了一个新函数，就会根据一组特定的规则为这个函数创建一个 prototype 属性，这个属性指向函数的原型对象。在默认情况下，所有的原型对象都会自动获得一个constructor（构造函数）的属性，这个属性包含一个指向prototype属性所在的函数的指针，如下：<br><code>alert(Person.prototype.constructor == Person); //true</code></p>
-</li>
-<li><p>在我们调用 <code>person.sayName();</code>的时候，会先后执行两次搜索，先找实例再找原型。<br><em>首先编译器会问：“实例person有sayName属性吗？”<br>答曰：“没有”<br>然后继续搜索，再问“person的原型里有sayName属性吗？”<br>答曰：“有”</em><br>于是他就读取那个保存在原型对象中的函数</p>
-</li>
-<li><p>当给person主动添加属性时，就会屏蔽掉原型的属性（但不会替代，其他Person对象调用更改的属性，依然会时默认值）</p>
-</li>
-</ol>
-<ol>
-<li><p>使用delete操作符删除 <strong>实例</strong> 的属性</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">person.name &#x3D; &quot;Tom&quot;;</span><br><span class="line">alert(person.name); &#x2F;&#x2F;Tom</span><br><span class="line">delete person.name;</span><br><span class="line">alert(person.name); &#x2F;&#x2F;Jim</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>hasOwnProperty()方法检测一个属性时存在于实例中还是原型中</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">var person &#x3D; new Person();</span><br><span class="line">alert(person.hasOwnProperty(&quot;name&quot;)); &#x2F;&#x2F;false：在原型中</span><br><span class="line">person.name &#x3D; &quot;Tom&quot;;</span><br><span class="line">alert(person.hasOwnProperty(&quot;name&quot;)); &#x2F;&#x2F;true：存在对象实例中 </span><br></pre></td></tr></table></figure>
-</li>
+<ol type="1">
+<li><p>无论什么时候，只要创建了一个新函数，就会根据一组特定的规则为这个函数创建一个 prototype 属性，这个属性指向函数的原型对象。在默认情况下，所有的原型对象都会自动获得一个constructor（构造函数）的属性，这个属性包含一个指向prototype属性所在的函数的指针，如下： <code>alert(Person.prototype.constructor == Person); //true</code></p></li>
+<li><p>在我们调用 <code>person.sayName();</code>的时候，会先后执行两次搜索，先找实例再找原型。 <em>首先编译器会问：“实例person有sayName属性吗？” 答曰：“没有” 然后继续搜索，再问“person的原型里有sayName属性吗？” 答曰：“有”</em> 于是他就读取那个保存在原型对象中的函数</p></li>
+<li><p>当给person主动添加属性时，就会屏蔽掉原型的属性（但不会替代，其他Person对象调用更改的属性，依然会时默认值）</p></li>
 </ol>
 </blockquote>
-<ol>
+<blockquote>
+<ol start="4" type="1">
+<li><p>使用delete操作符删除 <strong>实例</strong> 的属性</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">person.name &#x3D; &quot;Tom&quot;;</span><br><span class="line">alert(person.name); &#x2F;&#x2F;Tom</span><br><span class="line">delete person.name;</span><br><span class="line">alert(person.name); &#x2F;&#x2F;Jim</span><br></pre></td></tr></table></figure></li>
+<li><p>hasOwnProperty()方法检测一个属性时存在于实例中还是原型中</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">var person &#x3D; new Person();</span><br><span class="line">alert(person.hasOwnProperty(&quot;name&quot;)); &#x2F;&#x2F;false：在原型中</span><br><span class="line">person.name &#x3D; &quot;Tom&quot;;</span><br><span class="line">alert(person.hasOwnProperty(&quot;name&quot;)); &#x2F;&#x2F;true：存在对象实例中 </span><br></pre></td></tr></table></figure></li>
+</ol>
+</blockquote></li>
 <li><p>原型与in操作符</p>
 <blockquote>
 <p>in操作符通过对象访问对象中的属性时，返回true，无论该属性是存在于实例中还是原型中</p>
-   <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">var person &#x3D; new Person();</span><br><span class="line">alert(&quot;name&quot; in person); &#x2F;&#x2F;true</span><br><span class="line">person.name &#x3D; &quot;Tom&quot;;</span><br><span class="line">alert(&quot;name&quot; in person); &#x2F;&#x2F;true</span><br></pre></td></tr></table></figure>
-</blockquote>
-</li>
+<p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">var person &#x3D; new Person();</span><br><span class="line">alert(&quot;name&quot; in person); &#x2F;&#x2F;true</span><br><span class="line">person.name &#x3D; &quot;Tom&quot;;</span><br><span class="line">alert(&quot;name&quot; in person); &#x2F;&#x2F;true</span><br></pre></td></tr></table></figure></p>
+</blockquote></li>
 <li><p>for-in循环</p>
 <blockquote>
 <p>循环遍历对象的属性</p>
-   <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">for(var x in person)&#123; &#x2F;&#x2F;x为属性名</span><br><span class="line">    if(x &#x3D;&#x3D; &quot;name&quot;)&#123;</span><br><span class="line">        alert(&quot;Found name!&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-</blockquote>
-</li>
-</ol>
-</li>
-</ol>
-</li>
+<p><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">for(var x in person)&#123; &#x2F;&#x2F;x为属性名</span><br><span class="line">    if(x &#x3D;&#x3D; &quot;name&quot;)&#123;</span><br><span class="line">        alert(&quot;Found name!&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+</blockquote></li>
+</ol></li>
 <li><p><strong>组合使用构造函数模式和原型模式</strong></p>
 <blockquote>
-<p>构造函数模式用于定义实例属性<br>原型模式用于定义方法和共享属性</p>
-   <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">   functon Person(name, age, job)&#123;</span><br><span class="line">	this.name &#x3D; name;</span><br><span class="line">	this.age &#x3D; age;</span><br><span class="line">	this.job &#x3D; job;</span><br><span class="line">	this.friends &#x3D; [&quot;Amy&quot;, &quot;Bob&quot;];</span><br><span class="line">   &#125;</span><br><span class="line">   Person.prototype &#x3D; &#123;</span><br><span class="line">	constructor: Person, &#x2F;&#x2F;每个函数都有prototype属性，指向该函数原型对象，原型对象都有constructor属性，这是一个指向prototype属性所在函数的指针</span><br><span class="line">	sayName: function()&#123;</span><br><span class="line">	alert(this.name);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>构造函数模式用于定义实例属性 原型模式用于定义方法和共享属性 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">   functon Person(name, age, job)&#123;</span><br><span class="line">	this.name &#x3D; name;</span><br><span class="line">	this.age &#x3D; age;</span><br><span class="line">	this.job &#x3D; job;</span><br><span class="line">	this.friends &#x3D; [&quot;Amy&quot;, &quot;Bob&quot;];</span><br><span class="line">   &#125;</span><br><span class="line">   Person.prototype &#x3D; &#123;</span><br><span class="line">	constructor: Person, &#x2F;&#x2F;每个函数都有prototype属性，指向该函数原型对象，原型对象都有constructor属性，这是一个指向prototype属性所在函数的指针</span><br><span class="line">	sayName: function()&#123;</span><br><span class="line">	alert(this.name);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></p>
 </blockquote>
 <pre><code>   var person1 = new Person();
    var person2 = new Person();
@@ -1018,37 +914,21 @@
    person1.friends.push(&quot;Van&quot;);
    alert(person1.friends); //Amy, Bob. Van
    alert(person2.friends); //Amy, Bob
-   <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">### 2. 对象的封装###</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">&gt;(function()&#123;</span><br><span class="line">&gt;    正常创建对象即可</span><br><span class="line">&gt;    **window.People &#x3D; People; &#x2F;&#x2F;对象名称**</span><br><span class="line">&gt;&#125;());</span><br><span class="line"></span><br><span class="line">+ 实例</span><br></pre></td></tr></table></figure>
-</code></pre><p>  (function () {</p>
-<pre><code>  function People(name)&#123;
-      this.name = name;
-  &#125;
-  People.prototype = &#123;
-      say: function()&#123;
-      alert(&quot;peo-hello &quot;+this.name);
-      &#125;
-  &#125;;
-  window.People = People;
-</code></pre><p>  }());</p>
-  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">### 3. 对象的继承###</span><br><span class="line"></span><br><span class="line">&gt;继承的对象.prototype &#x3D; new 被继承对象();</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p>(function(){<br>  function Student(name){</p>
-<pre><code>  this.name = name;
-</code></pre><p>  }</p>
-<p>  Student.prototype = new People();</p>
-<p>  var superSsay = Student.prototype.say;</p>
-<p>  Student.prototype.say = function(){</p>
-<pre><code>  superSsay.call(this);
-  alert(&quot;stu-hello &quot;+this.name);
-</code></pre><p>  };<br>  window.Student = Student;<br>}());</p>
-</li>
+   <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">### 2. 对象的封装###</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">&gt;(function()&#123;</span><br><span class="line">&gt;    正常创建对象即可</span><br><span class="line">&gt;    **window.People &#x3D; People; &#x2F;&#x2F;对象名称**</span><br><span class="line">&gt;&#125;());</span><br><span class="line"></span><br><span class="line">+ 实例</span><br></pre></td></tr></table></figure></code></pre>
+<p>(function () { function People(name){ this.name = name; } People.prototype = { say: function(){ alert("peo-hello "+this.name); } }; window.People = People; }()); <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">### 3. 对象的继承###</span><br><span class="line"></span><br><span class="line">&gt;继承的对象.prototype &#x3D; new 被继承对象();</span><br><span class="line"></span><br></pre></td></tr></table></figure> (function(){ function Student(name){ this.name = name; }</p>
+<p>Student.prototype = new People();</p>
+<p>var superSsay = Student.prototype.say;</p>
+<p>Student.prototype.say = function(){ superSsay.call(this); alert("stu-hello "+this.name); }; window.Student = Student; }());</p></li>
 </ul>
-<p>var s = new Student(“Olivia”);<br>s.say();<br>```</p>
-<hr>
-<h1 id="后记"><a href="#后记" class="headerlink" title="后记 "></a><em><font color="darkcyan"><span id="9">后记</span> </em></h1><ul>
-<li><h3 id="一边看当时的笔记，一边看当时看网课时跟着写的代码，遇到不会的和忘记的再到菜鸟论坛查一查补充一下，整理笔记倒还是挺快乐的，当然也有可能是课少hhh。"><a href="#一边看当时的笔记，一边看当时看网课时跟着写的代码，遇到不会的和忘记的再到菜鸟论坛查一查补充一下，整理笔记倒还是挺快乐的，当然也有可能是课少hhh。" class="headerlink" title="一边看当时的笔记，一边看当时看网课时跟着写的代码，遇到不会的和忘记的再到菜鸟论坛查一查补充一下，整理笔记倒还是挺快乐的，当然也有可能是课少hhh。"></a>一边看当时的笔记，一边看当时看网课时跟着写的代码，遇到不会的和忘记的再到菜鸟论坛查一查补充一下，整理笔记倒还是挺快乐的，当然也有可能是课少hhh。</h3></li>
-<li><h3 id="经常复习是重点-！！时不时来看看！"><a href="#经常复习是重点-！！时不时来看看！" class="headerlink" title="经常复习是重点 ！！时不时来看看！"></a>经常复习是重点 ！！时不时来看看！</h3>&lt;/font&gt;</li>
+<p>var s = new Student("Olivia"); s.say(); ```</p>
+<hr />
+<h1 id="后记"><em><font color="darkcyan"><span id="9">后记</span> </em></h1>
+<ul>
+<li><h3 id="一边看当时的笔记一边看当时看网课时跟着写的代码遇到不会的和忘记的再到菜鸟论坛查一查补充一下整理笔记倒还是挺快乐的当然也有可能是课少hhh">一边看当时的笔记，一边看当时看网课时跟着写的代码，遇到不会的和忘记的再到菜鸟论坛查一查补充一下，整理笔记倒还是挺快乐的，当然也有可能是课少hhh。</h3></li>
+<li><h3 id="经常复习是重点-时不时来看看">经常复习是重点 ！！时不时来看看！</h3>
+</font></li>
 </ul>
-<hr>
+<hr />
 
     </div>
 
@@ -1136,7 +1016,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%9B%AE%E5%BD%95"><span class="nav-number">1.</span> <span class="nav-text">目录</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%80%E3%80%81JS%E5%AE%9E%E7%8E%B0%E3%80%81%E5%8F%98%E9%87%8F"><span class="nav-number">1.1.</span> <span class="nav-text">一、JS实现、变量</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%8C%E3%80%81JS%E5%BC%82%E5%B8%B8%E6%8D%95%E8%8E%B7%E3%80%81%E4%BA%8B%E4%BB%B6"><span class="nav-number">1.2.</span> <span class="nav-text">二、JS异常捕获、事件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%89%E3%80%81DOM%E6%93%8D%E4%BD%9CHTML%E3%80%81CSS%E3%80%81EventListener"><span class="nav-number">1.3.</span> <span class="nav-text">三、DOM操作HTML、CSS、EventListener</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9B%9B%E3%80%81JS%E4%BA%8B%E4%BB%B6%E8%AF%A6%E8%A7%A3%E3%80%81%E4%BA%8B%E4%BB%B6%E6%B5%81%E3%80%81%E4%BA%8B%E4%BB%B6%E5%A4%84%E7%90%86%E3%80%81%E4%BA%8B%E4%BB%B6%E5%AF%B9%E8%B1%A1"><span class="nav-number">1.4.</span> <span class="nav-text">四、JS事件详解、事件流、事件处理、事件对象</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%94%E3%80%81%E4%BA%8B%E4%BB%B6%E5%AF%B9%E8%B1%A1"><span class="nav-number">1.5.</span> <span class="nav-text">五、事件对象</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%AD%E3%80%81DOM%E5%AF%B9%E8%B1%A1%E6%8E%A7%E5%88%B6HTML"><span class="nav-number">1.6.</span> <span class="nav-text">六、DOM对象控制HTML</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%83%E3%80%81JS%E6%B5%8F%E8%A7%88%E5%99%A8%E5%AF%B9%E8%B1%A1"><span class="nav-number">1.7.</span> <span class="nav-text">七、JS浏览器对象</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%AB%E3%80%81%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1"><span class="nav-number">1.8.</span> <span class="nav-text">八、面向对象</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B9%9D%E3%80%81%E5%90%8E%E8%AE%B0"><span class="nav-number">1.9.</span> <span class="nav-text">九、后记</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E3%80%81JS%E5%AE%9E%E7%8E%B0%E3%80%81%E5%8F%98%E9%87%8F-1"><span class="nav-number">2.</span> <span class="nav-text">一、JS实现、变量</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-JS%E5%AE%9E%E7%8E%B0"><span class="nav-number">2.1.</span> <span class="nav-text">1. JS实现</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-JS%E5%8F%98%E9%87%8F"><span class="nav-number">2.2.</span> <span class="nav-text">2. JS变量</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%E3%80%81JS%E5%BC%82%E5%B8%B8%E6%8D%95%E8%8E%B7%E3%80%81%E4%BA%8B%E4%BB%B6-1"><span class="nav-number">3.</span> <span class="nav-text">二、JS异常捕获、事件</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-JS%E5%BC%82%E5%B8%B8%E6%8D%95%E8%8E%B7"><span class="nav-number">3.1.</span> <span class="nav-text">1. JS异常捕获</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-JS%E4%BA%8B%E4%BB%B6"><span class="nav-number">3.2.</span> <span class="nav-text">2. JS事件</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%89%E3%80%81DOM%E6%93%8D%E4%BD%9CHTML%E3%80%81CSS%E3%80%81EventListener-1"><span class="nav-number">4.</span> <span class="nav-text">三、DOM操作HTML、CSS、EventListener</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-DOM%E6%93%8D%E4%BD%9CHTML"><span class="nav-number">4.1.</span> <span class="nav-text">1. DOM操作HTML</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-DOM%E6%93%8D%E4%BD%9CCSS"><span class="nav-number">4.2.</span> <span class="nav-text">2. DOM操作CSS</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-DOM%E6%93%8D%E4%BD%9CEventListener"><span class="nav-number">4.3.</span> <span class="nav-text">3. DOM操作EventListener</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%9B%E3%80%81JS%E4%BA%8B%E4%BB%B6%E8%AF%A6%E8%A7%A3%E3%80%81%E4%BA%8B%E4%BB%B6%E6%B5%81%E3%80%81%E4%BA%8B%E4%BB%B6%E5%A4%84%E7%90%86%E3%80%81%E4%BA%8B%E4%BB%B6%E5%AF%B9%E8%B1%A1-1"><span class="nav-number">5.</span> <span class="nav-text">四、JS事件详解、事件流、事件处理、事件对象</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-JS%E4%BA%8B%E4%BB%B6%E8%AF%A6%E8%A7%A3"><span class="nav-number">5.1.</span> <span class="nav-text">1. JS事件详解</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-JS%E4%BA%8B%E4%BB%B6%E5%A4%84%E7%90%86"><span class="nav-number">5.2.</span> <span class="nav-text">2. JS事件处理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-JS%E4%BA%8B%E4%BB%B6%E5%AF%B9%E8%B1%A1"><span class="nav-number">5.3.</span> <span class="nav-text">3. JS事件对象</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%94%E3%80%81%E4%BA%8B%E4%BB%B6%E5%AF%B9%E8%B1%A1-1"><span class="nav-number">6.</span> <span class="nav-text">五、事件对象</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-JS%E5%AF%B9%E8%B1%A1"><span class="nav-number">6.1.</span> <span class="nav-text">1. JS对象</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-string%E5%AF%B9%E8%B1%A1"><span class="nav-number">6.2.</span> <span class="nav-text">2. string对象</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-data%E6%97%A5%E6%9C%9F%E5%AF%B9%E8%B1%A1"><span class="nav-number">6.3.</span> <span class="nav-text">3. data日期对象</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-Array%E6%95%B0%E7%BB%84%E5%AF%B9%E8%B1%A1"><span class="nav-number">6.4.</span> <span class="nav-text">4. Array数组对象</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-Math%E5%AF%B9%E8%B1%A1"><span class="nav-number">6.5.</span> <span class="nav-text">5. Math对象</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%AD%E3%80%81DOM%E5%AF%B9%E8%B1%A1%E6%8E%A7%E5%88%B6HTML-1"><span class="nav-number">7.</span> <span class="nav-text">六、DOM对象控制HTML</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E6%96%B9%E6%B3%95"><span class="nav-number">7.1.</span> <span class="nav-text">1. 方法</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%83%E3%80%81JS%E6%B5%8F%E8%A7%88%E5%99%A8%E5%AF%B9%E8%B1%A1-1"><span class="nav-number">8.</span> <span class="nav-text">七、JS浏览器对象</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-Window%E5%AF%B9%E8%B1%A1"><span class="nav-number">8.1.</span> <span class="nav-text">1. Window对象</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E8%AE%A1%E6%97%B6%E5%99%A8%E5%AF%B9%E8%B1%A1"><span class="nav-number">8.2.</span> <span class="nav-text">2. 计时器对象</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-History%E5%AF%B9%E8%B1%A1"><span class="nav-number">8.3.</span> <span class="nav-text">3. History对象</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-Location%E5%AF%B9%E8%B1%A1"><span class="nav-number">8.4.</span> <span class="nav-text">4. Location对象</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-screen%E5%AF%B9%E8%B1%A1"><span class="nav-number">8.5.</span> <span class="nav-text">5. screen对象</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%AB%E3%80%81%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1-1"><span class="nav-number">9.</span> <span class="nav-text">八、面向对象</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E5%88%9B%E5%BB%BA%E5%AF%B9%E8%B1%A1"><span class="nav-number">9.1.</span> <span class="nav-text">1. 创建对象</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%90%8E%E8%AE%B0"><span class="nav-number"></span> <span class="nav-text">后记 </span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%80%E8%BE%B9%E7%9C%8B%E5%BD%93%E6%97%B6%E7%9A%84%E7%AC%94%E8%AE%B0%EF%BC%8C%E4%B8%80%E8%BE%B9%E7%9C%8B%E5%BD%93%E6%97%B6%E7%9C%8B%E7%BD%91%E8%AF%BE%E6%97%B6%E8%B7%9F%E7%9D%80%E5%86%99%E7%9A%84%E4%BB%A3%E7%A0%81%EF%BC%8C%E9%81%87%E5%88%B0%E4%B8%8D%E4%BC%9A%E7%9A%84%E5%92%8C%E5%BF%98%E8%AE%B0%E7%9A%84%E5%86%8D%E5%88%B0%E8%8F%9C%E9%B8%9F%E8%AE%BA%E5%9D%9B%E6%9F%A5%E4%B8%80%E6%9F%A5%E8%A1%A5%E5%85%85%E4%B8%80%E4%B8%8B%EF%BC%8C%E6%95%B4%E7%90%86%E7%AC%94%E8%AE%B0%E5%80%92%E8%BF%98%E6%98%AF%E6%8C%BA%E5%BF%AB%E4%B9%90%E7%9A%84%EF%BC%8C%E5%BD%93%E7%84%B6%E4%B9%9F%E6%9C%89%E5%8F%AF%E8%83%BD%E6%98%AF%E8%AF%BE%E5%B0%91hhh%E3%80%82"><span class="nav-number">0.1.</span> <span class="nav-text">一边看当时的笔记，一边看当时看网课时跟着写的代码，遇到不会的和忘记的再到菜鸟论坛查一查补充一下，整理笔记倒还是挺快乐的，当然也有可能是课少hhh。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BB%8F%E5%B8%B8%E5%A4%8D%E4%B9%A0%E6%98%AF%E9%87%8D%E7%82%B9-%EF%BC%81%EF%BC%81%E6%97%B6%E4%B8%8D%E6%97%B6%E6%9D%A5%E7%9C%8B%E7%9C%8B%EF%BC%81"><span class="nav-number">0.2.</span> <span class="nav-text">经常复习是重点 ！！时不时来看看！</span></a></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%9B%AE%E5%BD%95"><span class="nav-number">1.</span> <span class="nav-text">目录</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%80js%E5%AE%9E%E7%8E%B0%E5%8F%98%E9%87%8F"><span class="nav-number">1.1.</span> <span class="nav-text">一、JS实现、变量</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%8Cjs%E5%BC%82%E5%B8%B8%E6%8D%95%E8%8E%B7%E4%BA%8B%E4%BB%B6"><span class="nav-number">1.2.</span> <span class="nav-text">二、JS异常捕获、事件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%89dom%E6%93%8D%E4%BD%9Chtmlcsseventlistener"><span class="nav-number">1.3.</span> <span class="nav-text">三、DOM操作HTML、CSS、EventListener</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9B%9Bjs%E4%BA%8B%E4%BB%B6%E8%AF%A6%E8%A7%A3%E4%BA%8B%E4%BB%B6%E6%B5%81%E4%BA%8B%E4%BB%B6%E5%A4%84%E7%90%86%E4%BA%8B%E4%BB%B6%E5%AF%B9%E8%B1%A1"><span class="nav-number">1.4.</span> <span class="nav-text">四、JS事件详解、事件流、事件处理、事件对象</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BA%94%E4%BA%8B%E4%BB%B6%E5%AF%B9%E8%B1%A1"><span class="nav-number">1.5.</span> <span class="nav-text">五、事件对象</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%ADdom%E5%AF%B9%E8%B1%A1%E6%8E%A7%E5%88%B6html"><span class="nav-number">1.6.</span> <span class="nav-text">六、DOM对象控制HTML</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%83js%E6%B5%8F%E8%A7%88%E5%99%A8%E5%AF%B9%E8%B1%A1"><span class="nav-number">1.7.</span> <span class="nav-text">七、JS浏览器对象</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%AB%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1"><span class="nav-number">1.8.</span> <span class="nav-text">八、面向对象</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B9%9D%E5%90%8E%E8%AE%B0"><span class="nav-number">1.9.</span> <span class="nav-text">九、后记</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80js%E5%AE%9E%E7%8E%B0%E5%8F%98%E9%87%8F-1"><span class="nav-number">2.</span> <span class="nav-text">一、JS实现、变量</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#js%E5%AE%9E%E7%8E%B0"><span class="nav-number">2.1.</span> <span class="nav-text">1. JS实现</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#js%E5%8F%98%E9%87%8F"><span class="nav-number">2.2.</span> <span class="nav-text">2. JS变量</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8Cjs%E5%BC%82%E5%B8%B8%E6%8D%95%E8%8E%B7%E4%BA%8B%E4%BB%B6-1"><span class="nav-number">3.</span> <span class="nav-text">二、JS异常捕获、事件</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#js%E5%BC%82%E5%B8%B8%E6%8D%95%E8%8E%B7"><span class="nav-number">3.1.</span> <span class="nav-text">1. JS异常捕获</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#js%E4%BA%8B%E4%BB%B6"><span class="nav-number">3.2.</span> <span class="nav-text">2. JS事件</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%89dom%E6%93%8D%E4%BD%9Chtmlcsseventlistener-1"><span class="nav-number">4.</span> <span class="nav-text">三、DOM操作HTML、CSS、EventListener</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#dom%E6%93%8D%E4%BD%9Chtml"><span class="nav-number">4.1.</span> <span class="nav-text">1. DOM操作HTML</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#dom%E6%93%8D%E4%BD%9Ccss"><span class="nav-number">4.2.</span> <span class="nav-text">2. DOM操作CSS</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#dom%E6%93%8D%E4%BD%9Ceventlistener"><span class="nav-number">4.3.</span> <span class="nav-text">3. DOM操作EventListener</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%9Bjs%E4%BA%8B%E4%BB%B6%E8%AF%A6%E8%A7%A3%E4%BA%8B%E4%BB%B6%E6%B5%81%E4%BA%8B%E4%BB%B6%E5%A4%84%E7%90%86%E4%BA%8B%E4%BB%B6%E5%AF%B9%E8%B1%A1-1"><span class="nav-number">5.</span> <span class="nav-text">四、JS事件详解、事件流、事件处理、事件对象</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#js%E4%BA%8B%E4%BB%B6%E8%AF%A6%E8%A7%A3"><span class="nav-number">5.1.</span> <span class="nav-text">1. JS事件详解</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#js%E4%BA%8B%E4%BB%B6%E5%A4%84%E7%90%86"><span class="nav-number">5.2.</span> <span class="nav-text">2. JS事件处理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#js%E4%BA%8B%E4%BB%B6%E5%AF%B9%E8%B1%A1"><span class="nav-number">5.3.</span> <span class="nav-text">3. JS事件对象</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%94%E4%BA%8B%E4%BB%B6%E5%AF%B9%E8%B1%A1-1"><span class="nav-number">6.</span> <span class="nav-text">五、事件对象</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#js%E5%AF%B9%E8%B1%A1"><span class="nav-number">6.1.</span> <span class="nav-text">1. JS对象</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#string%E5%AF%B9%E8%B1%A1"><span class="nav-number">6.2.</span> <span class="nav-text">2. string对象</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#data%E6%97%A5%E6%9C%9F%E5%AF%B9%E8%B1%A1"><span class="nav-number">6.3.</span> <span class="nav-text">3. data日期对象</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#array%E6%95%B0%E7%BB%84%E5%AF%B9%E8%B1%A1"><span class="nav-number">6.4.</span> <span class="nav-text">4. Array数组对象</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#math%E5%AF%B9%E8%B1%A1"><span class="nav-number">6.5.</span> <span class="nav-text">5. Math对象</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%ADdom%E5%AF%B9%E8%B1%A1%E6%8E%A7%E5%88%B6html-1"><span class="nav-number">7.</span> <span class="nav-text">六、DOM对象控制HTML</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%B9%E6%B3%95"><span class="nav-number">7.1.</span> <span class="nav-text">1. 方法</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%83js%E6%B5%8F%E8%A7%88%E5%99%A8%E5%AF%B9%E8%B1%A1-1"><span class="nav-number">8.</span> <span class="nav-text">七、JS浏览器对象</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#window%E5%AF%B9%E8%B1%A1"><span class="nav-number">8.1.</span> <span class="nav-text">1. Window对象</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AE%A1%E6%97%B6%E5%99%A8%E5%AF%B9%E8%B1%A1"><span class="nav-number">8.2.</span> <span class="nav-text">2. 计时器对象</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#history%E5%AF%B9%E8%B1%A1"><span class="nav-number">8.3.</span> <span class="nav-text">3. History对象</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#location%E5%AF%B9%E8%B1%A1"><span class="nav-number">8.4.</span> <span class="nav-text">4. Location对象</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#screen%E5%AF%B9%E8%B1%A1"><span class="nav-number">8.5.</span> <span class="nav-text">5. screen对象</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%AB%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1-1"><span class="nav-number">9.</span> <span class="nav-text">八、面向对象</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E5%AF%B9%E8%B1%A1"><span class="nav-number">9.1.</span> <span class="nav-text">1. 创建对象</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%90%8E%E8%AE%B0"><span class="nav-number"></span> <span class="nav-text">后记 </span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%80%E8%BE%B9%E7%9C%8B%E5%BD%93%E6%97%B6%E7%9A%84%E7%AC%94%E8%AE%B0%E4%B8%80%E8%BE%B9%E7%9C%8B%E5%BD%93%E6%97%B6%E7%9C%8B%E7%BD%91%E8%AF%BE%E6%97%B6%E8%B7%9F%E7%9D%80%E5%86%99%E7%9A%84%E4%BB%A3%E7%A0%81%E9%81%87%E5%88%B0%E4%B8%8D%E4%BC%9A%E7%9A%84%E5%92%8C%E5%BF%98%E8%AE%B0%E7%9A%84%E5%86%8D%E5%88%B0%E8%8F%9C%E9%B8%9F%E8%AE%BA%E5%9D%9B%E6%9F%A5%E4%B8%80%E6%9F%A5%E8%A1%A5%E5%85%85%E4%B8%80%E4%B8%8B%E6%95%B4%E7%90%86%E7%AC%94%E8%AE%B0%E5%80%92%E8%BF%98%E6%98%AF%E6%8C%BA%E5%BF%AB%E4%B9%90%E7%9A%84%E5%BD%93%E7%84%B6%E4%B9%9F%E6%9C%89%E5%8F%AF%E8%83%BD%E6%98%AF%E8%AF%BE%E5%B0%91hhh"><span class="nav-number">0.1.</span> <span class="nav-text">一边看当时的笔记，一边看当时看网课时跟着写的代码，遇到不会的和忘记的再到菜鸟论坛查一查补充一下，整理笔记倒还是挺快乐的，当然也有可能是课少hhh。</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BB%8F%E5%B8%B8%E5%A4%8D%E4%B9%A0%E6%98%AF%E9%87%8D%E7%82%B9-%E6%97%B6%E4%B8%8D%E6%97%B6%E6%9D%A5%E7%9C%8B%E7%9C%8B"><span class="nav-number">0.2.</span> <span class="nav-text">经常复习是重点 ！！时不时来看看！</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -1152,14 +1032,14 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">3</span>
+          <span class="site-state-item-count">7</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">1</span>
+        <span class="site-state-item-count">4</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
   </nav>
@@ -1215,13 +1095,13 @@
       <i class="fa fa-chart-area"></i>
     </span>
       <span class="post-meta-item-text">站点总字数：</span>
-    <span title="站点总字数">58k</span>
+    <span title="站点总字数">75k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">52 分钟</span>
+    <span title="站点阅读时长">1:08</span>
 </div>
 
         
