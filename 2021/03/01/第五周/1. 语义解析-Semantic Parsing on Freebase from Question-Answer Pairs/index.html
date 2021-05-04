@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="论文原文：https:&#x2F;&#x2F;nlp.stanford.edu&#x2F;pubs&#x2F;semparseEMNLP13.pdf  1. 简介  经典的语义解析，baseline方法 语义解析（Semantic Parsing）KB-QA的思路是通过对自然语言进行语义上的分析，转化为一种在知识库中的语义表示，进而通过知识库中的知识，进行推理（Inference）查询（Query），得出最终答案，这种语义">
+<meta property="og:type" content="article">
+<meta property="og:title" content="1. 语义解析-Semantic Parsing on Freebase from Question-Answer Pairs">
+<meta property="og:url" content="http://example.com/2021/03/01/%E7%AC%AC%E4%BA%94%E5%91%A8/1.%20%E8%AF%AD%E4%B9%89%E8%A7%A3%E6%9E%90-Semantic%20Parsing%20on%20Freebase%20from%20Question-Answer%20Pairs/index.html">
+<meta property="og:site_name" content="Olivia的博客">
+<meta property="og:description" content="论文原文：https:&#x2F;&#x2F;nlp.stanford.edu&#x2F;pubs&#x2F;semparseEMNLP13.pdf  1. 简介  经典的语义解析，baseline方法 语义解析（Semantic Parsing）KB-QA的思路是通过对自然语言进行语义上的分析，转化为一种在知识库中的语义表示，进而通过知识库中的知识，进行推理（Inference）查询（Query），得出最终答案，这种语义">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://pic1.zhimg.com/v2-9e277da14c5756f74b97cc36c626e69c_r.jpg">
+<meta property="og:image" content="https://pic1.zhimg.com/v2-30043234fb15d3c23f1739fdaffb9278_r.jpg">
+<meta property="og:image" content="https://pic1.zhimg.com/v2-14c20c55d76c3b34edcc0a933615bd28_r.jpg">
+<meta property="og:image" content="https://pic3.zhimg.com/v2-28e033572f6ccd29d0f9a9488adedb46_r.jpg">
+<meta property="og:image" content="https://pic4.zhimg.com/v2-72891bc0e46a96e2aa07681e4df686c3_r.jpg">
+<meta property="og:image" content="https://pic3.zhimg.com/v2-fffcd8fa43219bfe3aaa6fc19b384c72_r.jpg">
+<meta property="og:image" content="https://pic2.zhimg.com/v2-663915191bcb3eb1e1717a2797ac27e1_r.jpg">
+<meta property="og:image" content="https://pic4.zhimg.com/v2-1db39b61fccb5447df696d4b6aab982b_r.jpg">
+<meta property="og:image" content="https://pic2.zhimg.com/v2-951fe5ee41549505d281310e904ae0cd_r.jpg">
+<meta property="og:image" content="https://pic2.zhimg.com/v2-150278f7206e060eef59e7be580e5c15_r.jpg">
+<meta property="article:published_time" content="2021-02-28T16:00:00.000Z">
+<meta property="article:modified_time" content="2021-05-04T07:15:37.087Z">
+<meta property="article:author" content="Olivia">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://pic1.zhimg.com/v2-9e277da14c5756f74b97cc36c626e69c_r.jpg">
+
+<link rel="canonical" href="http://example.com/2021/03/01/%E7%AC%AC%E4%BA%94%E5%91%A8/1.%20%E8%AF%AD%E4%B9%89%E8%A7%A3%E6%9E%90-Semantic%20Parsing%20on%20Freebase%20from%20Question-Answer%20Pairs/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+<link rel="stylesheet" href="//cdn.jsdelivr.net/gh/theme-next/theme-next-needmoreshare2@1/needsharebutton.min.css"><style>
+#needsharebutton-postbottom {
+  cursor: pointer;
+  height: 26px;
+  margin-top: 10px;
+  position: relative;
+}
+#needsharebutton-postbottom .btn {
+  border: 1px solid $btn-default-border-color;
+  border-radius: 3px;
+  display: initial;
+  padding: 1px 4px;
+}
+</style><style>
+#needsharebutton-float {
+  bottom: 88px;
+  cursor: pointer;
+  left: -8px;
+  position: fixed;
+  z-index: 9999;
+}
+#needsharebutton-float .btn {
+  border: 1px solid $btn-default-border-color;
+  border-radius: 4px;
+  padding: 0 10px 0 14px;
+}
+</style>
+  <title>1. 语义解析-Semantic Parsing on Freebase from Question-Answer Pairs | Olivia的博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Olivia的博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/03/01/%E7%AC%AC%E4%BA%94%E5%91%A8/1.%20%E8%AF%AD%E4%B9%89%E8%A7%A3%E6%9E%90-Semantic%20Parsing%20on%20Freebase%20from%20Question-Answer%20Pairs/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="Olivia">
+      <meta itemprop="description" content="May All Your Troubles Be little Ones">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Olivia的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          1. 语义解析-Semantic Parsing on Freebase from Question-Answer Pairs
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-03-01 00:00:00" itemprop="dateCreated datePublished" datetime="2021-03-01T00:00:00+08:00">2021-03-01</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-05-04 15:15:37" itemprop="dateModified" datetime="2021-05-04T15:15:37+08:00">2021-05-04</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Knowledge-Base-Qestion-Answering/" itemprop="url" rel="index"><span itemprop="name">Knowledge Base Qestion Answering</span></a>
+                </span>
+                  >
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Knowledge-Base-Qestion-Answering/paper-comprehension/" itemprop="url" rel="index"><span itemprop="name">paper comprehension</span></a>
+                </span>
+                  >
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Knowledge-Base-Qestion-Answering/paper-comprehension/basis/" itemprop="url" rel="index"><span itemprop="name">basis</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>4.7k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>4 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <ul>
+<li>论文原文：https://nlp.stanford.edu/pubs/semparseEMNLP13.pdf</li>
+</ul>
+<h2 id="简介">1. 简介</h2>
+<ul>
+<li><p>经典的语义解析，baseline方法</p></li>
+<li><p><strong>语义解析（Semantic Parsing）</strong>KB-QA的思路是通过对自然语言进行语义上的分析，转化为一种在知识库中的语义表示，进而通过知识库中的知识，进行<strong>推理（Inference）查询（Query）</strong>，得出最终答案，这种语义表示即<strong>逻辑形式（Logic Form）</strong></p></li>
+<li><p>逻辑形式</p>
+<ul>
+<li><p>Lambda Dependency-Based Compositional Semantics ( Lambda-DCS)是一种经典的逻辑语言，它用于处理逻辑形式（在实际操作中，逻辑形式会转化SPARQL query，可以在Virtuoso engine上对Freebase进行查询）</p></li>
+<li><p>用<span class="math inline">\(z\)</span>表示一个逻辑形式，用<span class="math inline">\(K\)</span>表示知识库，<span class="math inline">\(e\)</span>表示实体，<span class="math inline">\(p\)</span>表示实体关系（谓词或属性）。逻辑形式分为一元形式（unary）和二元形式（binary）。对于一个一元实体<span class="math inline">\(e\)</span>，我们可以查询出对应知识库中的实体，给定一个二元关系<span class="math inline">\(p\)</span>，可以查到它在知识库中所有与该实体关系<span class="math inline">\(p\)</span>相关的三元组中的实体对。并且我们可以像数据库语言一样，进行连接Join，并求交集Intersection和聚合Aggregate（如计数，求最大值等等）操作。具体来说，逻辑形式有以下形式和操作</p>
+<figure>
+<img src="https://pic1.zhimg.com/v2-9e277da14c5756f74b97cc36c626e69c_r.jpg" alt="img" /><figcaption aria-hidden="true">img</figcaption>
+</figure>
+<p>有了上面的定义，就可将一个自然语言问题表示为一个可以在知识库中进行查询的逻辑形式，比如问句</p>
+<p>"Number of dramas starring Tom Cruise"</p>
+<p>它对应的逻辑形式是</p>
+<p><span class="math inline">\(count(Genre.Drama\cap Performance.Actor.TomCruise)\)</span></p>
+<p>当自然语言问题转化为逻辑形式后，通过相应的逻辑语言（转化为SPARQL query）查询知识库就可以得到答案。</p></li>
+</ul></li>
+</ul>
+<h2 id="语义解析kb-qa的方法框架">2. 语义解析KB-QA的方法框架</h2>
+<ul>
+<li><p>语义解析的过程可以看作是自底向上构造语法树的过程，树的根节点，就是该自然语言问题最终的逻辑形式表达。整个流程可以分为两部分</p>
+<ul>
+<li><strong>词汇映射</strong>：即构造底层的语法树节点。将单个自然语言短语或单词映射到知识库实体或知识库实体关系所对应的逻辑形式。我们可以通过构造一个<strong>词汇表(Lexicon)</strong>来完成这样的映射。</li>
+<li><strong>构建(Composition)</strong>：即自底向上对树的节点进行两两合并，最后生成根节点，完成语法树的构建。这一步有很多方法，诸如构造大量手工规则，组合范畴语法（Combinatory Categorical Grammars，CCG），本文采用了最暴力的方法，即对于两个节点都可以执行上面所谈到的连接Join，求交Intersection，聚合Aggregate三种操作，以及本文独创的桥接Bridging操作进行结点合并。显然，这种合并方式复杂程度是指数级的，最终会生成许多棵语法树，我们需要通过对训练数据进行训练，训练一个分类器，对语法树进行筛选。</li>
+</ul></li>
+<li><p>自然语言转化为逻辑形式的流程如下图所示：</p>
+<figure>
+<img src="https://pic1.zhimg.com/v2-30043234fb15d3c23f1739fdaffb9278_r.jpg" alt="img" /><figcaption aria-hidden="true">img</figcaption>
+</figure>
+<p>红色部分即<strong>逻辑形式</strong>，绿色部分where was Obama born为自然语言问题，蓝色部分为<strong>词汇映射（Lexicon）</strong>和<strong>构建（Composition）</strong>使用的操作，最后形成的语义解析树的根节点即语义解析结果。</p></li>
+</ul>
+<h2 id="训练分类器">3. 训练分类器</h2>
+<ul>
+<li><p>分类器的 任务是计算每一种语义解析结果<span class="math inline">\(d\)</span>（Derivation）的概率，作者通过discrimminative loglinear model进行modeling，使用Softmax进行概率归一化，公式如下</p>
+<figure>
+<img src="https://pic1.zhimg.com/v2-14c20c55d76c3b34edcc0a933615bd28_r.jpg" alt="img" /><figcaption aria-hidden="true">img</figcaption>
+</figure>
+<p>其中<span class="math inline">\(x\)</span>代表自然语言问题，<span class="math inline">\(\phi(x,d_i)\)</span>是一个从语义解析结果<span class="math inline">\(d_i\)</span>和<span class="math inline">\(x\)</span>中提取出来的b维特征向量（该特征向量包括了构造该语法树所有操作的对应特征）<span class="math inline">\(\theta\)</span>是b维的参数向量。</p>
+<p>对于训练数据 问题-答案对<span class="math inline">\((x_i,y_i)\)</span>，最大化log-likelihood损失函数，通过AdaGrad算法（一种动态调整学习率的随机梯度下降算法）进行参数更新。目标函数如下：</p>
+<figure>
+<img src="https://pic3.zhimg.com/v2-28e033572f6ccd29d0f9a9488adedb46_r.jpg" alt="img" /><figcaption aria-hidden="true">img</figcaption>
+</figure>
+<p>可以看出特征向量的训练实际上是一种弱监督训练（准确的说是一种远程监督，Distant Supervison）。</p>
+<ul>
+<li><p>AdaGrad算法[https://zhuanlan.zhihu.com/p/61955391]</p>
+<ul>
+<li><p>该算法的思想是<strong>独立地适应模型的每个参数：具有较大偏导的参数相应有一个较大的学习率，而具有小偏导的参数则对应一个较小的学习率</strong></p></li>
+<li><p>具体来说，每个参数的学习率会缩放各参数反比于其<strong>历史梯度平方值总和的平方根</strong></p></li>
+<li><p>算法描述</p>
+<figure>
+<img src="https://pic4.zhimg.com/v2-72891bc0e46a96e2aa07681e4df686c3_r.jpg" alt="img" /><figcaption aria-hidden="true">img</figcaption>
+</figure></li>
+<li><p>注意：全局学习率<span class="math inline">\(\epsilon\)</span>并没有更新，而是每次应用时被缩放</p></li>
+</ul></li>
+</ul></li>
+</ul>
+<h2 id="构建词汇表">4. 构建词汇表</h2>
+<ul>
+<li><p>词汇表即自然语言与知识库实体或知识库实体关系的单点映射，这一操作也被成为<strong>对齐（Alignment）</strong>。</p></li>
+<li><p>自然语言<strong>实体</strong>到知识库<strong>实体</strong>映射相对简单。比如将<em>“Obama was also born in Honolulu.”</em>中的实体<em>Obama</em>映射为知识库中的实体<em>BarackObama</em>，可以使用一些简单的字符串匹配方式进行映射。</p></li>
+<li><p>但<strong>自然语言短语</strong>到相应知识库实体<strong>关系</strong>的映射较难，如<em>“was also born in”</em>映射到<em>PlaceOfBirth</em>。则可以<strong>使用统计</strong>，在文档中，如果有较多的实体对（entity1, entity2）作为主语和宾语出现在was born in的两侧，并且，在知识库中，这些实体也同时出现在包含<em>PlaceOfBirth</em>的三元组中，那么我们可以认为<em>"was also born in"</em>这个短语可以和<em>PlaceOfBirth</em>建立映射。</p>
+<p>比如<em>（“Barack Obama”，“Honolulu”）,（“MichelleObama”，“Chicago”）</em>等实体对在文档中经常作为“was also <em>born in”</em>这个短语的主语和宾语，并且它们也都和实体关系<em>PlaceOfBirth</em>组成三元组出现在知识库中。</p></li>
+<li><p>本文构建的词汇表</p>
+<ul>
+<li><p>利用<a target="_blank" rel="noopener" href="http://reverb.cs.washington.edu">ReVerbopen IE system</a>在<a target="_blank" rel="noopener" href="http://lemurproject.org/clueweb09/FACC1/">ClueWeb09</a>（注：该数据集由卡耐基梅隆学校在09年构建，还有一个12年的版本，<a target="_blank" rel="noopener" href="http://lemurproject.org/clueweb12/">ClueWeb12</a>）上抽取15millions个三元组构成一个数据集，如<em>(“Obama”, “was also born in”, “<strong>August 1961</strong>”)，</em>可以看出三元组的实体和关系都是自然语言的形式，取出其中的一个三元组子集，<strong>对里面的每一个三元组的主语实体和宾语实体通过字符匹配的方式替换为知识库的实体，并使用<a target="_blank" rel="noopener" href="http://nlp.stanford.edu/pubs/lrec2012-sutime.pdf">SUTime</a>对数据进行归一化。</strong>如：<em>(“Obama”, “was also born in”, “August 1961”)</em> 经过预处理后转化为 <em>(BarackObama, “was also born in”, 1961-08)</em>。</p></li>
+<li><p>接着对每一个三元组中的自然语言短语<span class="math inline">\(r_1\)</span>两边的实体对（entity1, entity2）进行标注，同时需要注意，由于自然语言短语<span class="math inline">\(r_1\)</span>和知识库实体关系<span class="math inline">\(r_2\)</span>的对应关系是<strong>多对多</strong>的，比如<em>“was also born in”</em>可能对应<em>PlaceOfBirth</em>，也可能对应<em>DateOfBrith</em>，我们需要对每一个<span class="math inline">\(r_1\)</span>进行区分，我们可以通过知识库查询到每一个实体的<strong>类型（type），</strong>比如<em>1961-08</em>的类型是<em>date</em>而<em>honolulu</em>的类型是<em>place</em>，我们对<span class="math inline">\(r_1\)</span>两边的实体类型进行查询可以得到主语实体的类型<span class="math inline">\(t_1\)</span>和宾语实体的类型<span class="math inline">\(t_2\)</span>，因此<span class="math inline">\(r_1\)</span>可以进一步表示为<span class="math inline">\(r[t_1,t_2]\)</span>，我们对其所在三元组两边的实体进行统计，得到实体对集合<span class="math inline">\(F(r[t_1,t_2])\)</span>。</p>
+<p>同样的，通过对知识库进行统计，对每一个知识库三元组中的实体关系<span class="math inline">\(r_2\)</span>也统计其两边的实体，可以得到实体对集合<span class="math inline">\(F(r_2)\)</span>，通过比较集合<span class="math inline">\(F(r[t_1,t_2])\)</span>和集合<span class="math inline">\(F(r_2)\)</span>类似Jaccard距离（集合交集元素数目比集合并集元素个数）这样的特征来确定是否建立词汇映射，如下图所示</p>
+<figure>
+<img src="https://pic3.zhimg.com/v2-fffcd8fa43219bfe3aaa6fc19b384c72_r.jpg" alt="img" /><figcaption aria-hidden="true">img</figcaption>
+</figure>
+<p>图中绿色字体为<span class="math inline">\(r_1\)</span>，蓝色字体为<span class="math inline">\(r_2\)</span>。作者定义了词汇映射操作的三种特征（用于训练分类器），对齐特征（Alignment features），文本相似特征（Text similarity features），和词汇化特征（Lexicalized features），具体内容如下表<img src="https://pic2.zhimg.com/v2-663915191bcb3eb1e1717a2797ac27e1_r.jpg" alt="img" /></p>
+<p>其中文本相似度特征中的<span class="math inline">\(s_2\)</span>指<span class="math inline">\(r_2\)</span>的freebase name。</p>
+<p>在实际使用中，我们可以通过词性标注（POS）和命名实体识别（NER）来确定哪些短语和单词需要被词汇映射（Lexicon），从而忽略对一些skipped words进行词汇映射。并且，作者还建立了18种手工规则，对问题词（<em>question words</em>）进行逻辑形式的直接映射，如“<em>where，how many”</em>映射为<em>Type.Location</em> 和 <em>Count。</em></p></li>
+</ul></li>
+</ul>
+<h2 id="桥接操作bridging">5. 桥接操作(Bridging)</h2>
+<ul>
+<li><p>完成词汇表的构建后，仍然存在一些问题。比如，对于go, have, do 这样的轻动词(light verb)，难以直接映射到一个知识库实体关系上。其次，有些知识库实体关系极少出现，不容易通过统计的方式找到映射方式，还有一些词比如actress，实际上是两个知识库实体关系进行组合操作后的结果(<span class="math inline">\(actor\cap gender.female\)</span>)（作者最后提到这个问题有希望通过在知识库上进行随机游走Random walk或者使用马尔科夫逻辑Markov logic解决），因此我们需要找到一个额外的二元关系将当前的逻辑形式连接起来，就是桥接</p>
+<p>例：<em>“Which college did Obama go to?”</em></p>
+<p>假设“<em>Obama</em>” 和 “<em>college</em>” 可被词汇映射映射为 <em>BarackObama</em> 和 <em>Type.University</em>, 这里"go to" 却难以找到一个映射，事实上，这里我们需要去寻找一个中间二元关系<span class="math inline">\(b\)</span>(即<em>Education</em>)使得上面的句子可以被解析为<span class="math inline">\((Type.University\cap Education.BarackObama)\)</span>，如下图所示<img src="https://pic4.zhimg.com/v2-1db39b61fccb5447df696d4b6aab982b_r.jpg" alt="img" />具体来说，给定两个类型（tpye）分别是<span class="math inline">\(t_1\)</span>和<span class="math inline">\(t_2\)</span>的一元逻辑形式<span class="math inline">\(z_1\)</span>和<span class="math inline">\(z_2\)</span>，我们需要找到一个二元逻辑形式<span class="math inline">\(b\)</span>，在<span class="math inline">\(b\)</span>对应的实体对类型满足<span class="math inline">\((t_1,t_2)\)</span>的条件下生成逻辑形式<span class="math inline">\((z_1\cap b,z_2)\)</span>，<strong>这就是桥接</strong>，由于这里有类型限制，所以我们可以在知识库中相邻的逻辑关系中暴力搜索符合条件的二元关系<span class="math inline">\(b\)</span>。</p>
+<p>（注：在论文中还提到了另外两种需要进行桥接的场景，但不再详细写）</p>
+<p>同样的，作者也为桥接操作定义了相应的特征（为了分类器训练），定义如下表所示<img src="https://pic2.zhimg.com/v2-951fe5ee41549505d281310e904ae0cd_r.jpg" alt="img" /></p>
+<p>对于构建(composition)的其他三种操作：连接Join，求交集Intersection和聚合Aggregate，作者也定义了相应的特征（为了分类器的训练），如下表<img src="https://pic2.zhimg.com/v2-150278f7206e060eef59e7be580e5c15_r.jpg" alt="img" /></p></li>
+</ul>
+<h2 id="存在问题">6. 存在问题</h2>
+<ul>
+<li>词汇映射是整个算法有效（work）的基点，然而这里采用的词汇映射（尤其是关系映射）是基于<strong>比较简单的统计方式，对数据有较大依赖性</strong>。最重要的是，这种方式<strong>无法完成自然语言短语到复杂知识库关系组合的映射</strong>（如<em>actress</em> 映射为<span class="math inline">\(actor\cap gender.female\)</span>）。</li>
+<li>在答案获取的过程中，通过远程监督学习训练分类器对语义树进行评分，注意，这里的语义树实际的组合方式是很多的，要训练这样一个强大的语义解析分类器，需要大量的训练数据。但无论是Free917还是WebQuestion，这两个数据集的问题-答案对都比较少。</li>
+</ul>
+
+    </div>
+
+    
+	
+	
+
+	
+		<div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束 <i class="fa fa-heart"></i> 感谢阅读-------------</div>
+	<div class="post-widgets">
+      <div id="needsharebutton-postbottom">
+        <span class="btn">
+          <i class="fa fa-share-alt" aria-hidden="true"></i>
+        </span>
+      </div>
+    </div>
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/03/01/%E7%AC%AC%E4%BA%94%E5%91%A8/2.%20%E4%BF%A1%E6%81%AF%E6%8A%BD%E5%8F%96-Information%20Extraction%20over%20Structured%20Data_Question%20Answering%20with%20Freebase/" rel="prev" title="2. 信息抽取-Information Extraction over Structured Data_Question Answering with Freebase">
+      <i class="fa fa-chevron-left"></i> 2. 信息抽取-Information Extraction over Structured Data_Question Answering with Freebase
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AE%80%E4%BB%8B"><span class="nav-number">1.</span> <span class="nav-text">1. 简介</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AF%AD%E4%B9%89%E8%A7%A3%E6%9E%90kb-qa%E7%9A%84%E6%96%B9%E6%B3%95%E6%A1%86%E6%9E%B6"><span class="nav-number">2.</span> <span class="nav-text">2. 语义解析KB-QA的方法框架</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AE%AD%E7%BB%83%E5%88%86%E7%B1%BB%E5%99%A8"><span class="nav-number">3.</span> <span class="nav-text">3. 训练分类器</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9E%84%E5%BB%BA%E8%AF%8D%E6%B1%87%E8%A1%A8"><span class="nav-number">4.</span> <span class="nav-text">4. 构建词汇表</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A1%A5%E6%8E%A5%E6%93%8D%E4%BD%9Cbridging"><span class="nav-number">5.</span> <span class="nav-text">5. 桥接操作(Bridging)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AD%98%E5%9C%A8%E9%97%AE%E9%A2%98"><span class="nav-number">6.</span> <span class="nav-text">6. 存在问题</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Olivia"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Olivia</p>
+  <div class="site-description" itemprop="description">May All Your Troubles Be little Ones</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">17</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="/yajie.wang@mail.hfut.edu.cn" title="E-Mail → yajie.wang@mail.hfut.edu.cn"><i class="fa fa-envelope fa-fw"></i></a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-link fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="http://www.hfut.edu.cn/" title="http:&#x2F;&#x2F;www.hfut.edu.cn&#x2F;" rel="noopener" target="_blank">合肥工业大学</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2019 – 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">wyj-Olivia</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">111k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">1:41</span>
+</div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script color='0,0,255' opacity='0.5' zIndex='-1' count='99' src="/lib/canvas-nest/canvas-nest-nomobile.min.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+<div id="needsharebutton-float">
+      <span class="btn">
+        <i class="fa fa-share-alt" aria-hidden="true"></i>
+      </span>
+    </div>
+  <script src="//cdn.jsdelivr.net/gh/theme-next/theme-next-needmoreshare2@1/needsharebutton.min.js"></script>
+  <script>
+      pbOptions = {};
+        pbOptions.iconStyle = "box";
+        pbOptions.boxForm = "horizontal";
+        pbOptions.position = "bottomCenter";
+        pbOptions.networks = "Weibo,Wechat,Douban,QQZone,Twitter,Facebook";
+      new needShareButton('#needsharebutton-postbottom', pbOptions);
+      flOptions = {};
+        flOptions.iconStyle = "box";
+        flOptions.boxForm = "horizontal";
+        flOptions.position = "middleRight";
+        flOptions.networks = "Weibo,Wechat,Douban,QQZone,Twitter,Facebook";
+      new needShareButton('#needsharebutton-float', flOptions);
+  </script>
+</body>
+</html>
