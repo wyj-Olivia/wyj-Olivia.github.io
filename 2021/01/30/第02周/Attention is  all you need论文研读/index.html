@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="Attention Is All You Need Abstract ​ 之前好的序列模型是基于复杂的RNN或者CNN神经网络、拥有编码器和解码器的Seq2Seq模型，表现更佳的模型还可通过注意力机制来连接编码器和解码器。本文提出的新的网络架构，即Transformer，完全基于注意力机制而消除了RNN或CNN。并且效果更好。 1. Introduction  RNN，特别是LSTM及G">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Attention is  all you need">
+<meta property="og:url" content="http://example.com/2021/01/30/%E7%AC%AC02%E5%91%A8/Attention%20is%20%20all%20you%20need%E8%AE%BA%E6%96%87%E7%A0%94%E8%AF%BB/index.html">
+<meta property="og:site_name" content="Olivia的博客">
+<meta property="og:description" content="Attention Is All You Need Abstract ​ 之前好的序列模型是基于复杂的RNN或者CNN神经网络、拥有编码器和解码器的Seq2Seq模型，表现更佳的模型还可通过注意力机制来连接编码器和解码器。本文提出的新的网络架构，即Transformer，完全基于注意力机制而消除了RNN或CNN。并且效果更好。 1. Introduction  RNN，特别是LSTM及G">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://s3.ax1x.com/2021/02/01/yeBL5t.png">
+<meta property="og:image" content="https://s3.ax1x.com/2021/02/01/yZxogP.png">
+<meta property="og:image" content="https://s3.ax1x.com/2021/02/01/yeSwS1.png">
+<meta property="article:published_time" content="2021-01-29T16:00:00.000Z">
+<meta property="article:modified_time" content="2021-05-04T07:07:57.064Z">
+<meta property="article:author" content="Olivia">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://s3.ax1x.com/2021/02/01/yeBL5t.png">
+
+<link rel="canonical" href="http://example.com/2021/01/30/%E7%AC%AC02%E5%91%A8/Attention%20is%20%20all%20you%20need%E8%AE%BA%E6%96%87%E7%A0%94%E8%AF%BB/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+<link rel="stylesheet" href="//cdn.jsdelivr.net/gh/theme-next/theme-next-needmoreshare2@1/needsharebutton.min.css"><style>
+#needsharebutton-postbottom {
+  cursor: pointer;
+  height: 26px;
+  margin-top: 10px;
+  position: relative;
+}
+#needsharebutton-postbottom .btn {
+  border: 1px solid $btn-default-border-color;
+  border-radius: 3px;
+  display: initial;
+  padding: 1px 4px;
+}
+</style><style>
+#needsharebutton-float {
+  bottom: 88px;
+  cursor: pointer;
+  left: -8px;
+  position: fixed;
+  z-index: 9999;
+}
+#needsharebutton-float .btn {
+  border: 1px solid $btn-default-border-color;
+  border-radius: 4px;
+  padding: 0 10px 0 14px;
+}
+</style>
+  <title>Attention is  all you need | Olivia的博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Olivia的博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/01/30/%E7%AC%AC02%E5%91%A8/Attention%20is%20%20all%20you%20need%E8%AE%BA%E6%96%87%E7%A0%94%E8%AF%BB/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="Olivia">
+      <meta itemprop="description" content="May All Your Troubles Be little Ones">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Olivia的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Attention is  all you need
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-01-30 00:00:00" itemprop="dateCreated datePublished" datetime="2021-01-30T00:00:00+08:00">2021-01-30</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-05-04 15:07:57" itemprop="dateModified" datetime="2021-05-04T15:07:57+08:00">2021-05-04</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/NLP/" itemprop="url" rel="index"><span itemprop="name">NLP</span></a>
+                </span>
+                  >
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/NLP/paper-comprehension/" itemprop="url" rel="index"><span itemprop="name">paper comprehension</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>4.2k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>4 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="attention-is-all-you-need">Attention Is All You Need</h1>
+<h2 id="abstract">Abstract</h2>
+<p>​ 之前好的序列模型是基于复杂的RNN或者CNN神经网络、拥有编码器和解码器的Seq2Seq模型，表现更佳的模型还可通过注意力机制来连接编码器和解码器。本文提出的新的网络架构，即Transformer，<strong>完全基于注意力机制而消除了RNN或CNN</strong>。并且效果更好。</p>
+<h2 id="introduction">1. Introduction</h2>
+<ul>
+<li><p>RNN，特别是LSTM及GRU，是目前序列分析的最新方法，之后就一直致力于扩大RNN和Seq2Seq体系结构的界限。</p></li>
+<li><p>RNN是通过输入和输出序列的位置顺序来考虑计算，即将位置与时间步对齐，下个隐藏状态<span class="math inline">\(h_t\)</span>是上一层隐藏状态<span class="math inline">\(h_{t-1}\)</span>和这一层输入的函数。<strong>这种固有的顺序性质阻止了并行训练</strong>，尤其在较长序列上影响最为显著。最近的工作是通过<strong>分解技巧</strong>和<strong>条件计算</strong>使得在计算效率上取得了显著提高，同时后者还提高了模型性能。<strong>但是顺序计算的基本约束依然存在。</strong></p></li>
+<li><p>注意力机制变成序列模型不可或缺的一部分，<strong>综合考虑了整体依赖，而无需专注与在输入和输出序列中的距离</strong>，但注意力机制目前都是与RNN结合使用的。</p></li>
+<li><p>本文提出了Transformer，它是完全依赖于注意力机制来描述输入和输出序列之间的全局依赖关系。并且效果很好。</p></li>
+</ul>
+<h2 id="background">2. Background</h2>
+<ul>
+<li><p>【凡是可以并行计算的，学习上下文依赖关系不行】</p>
+<p>减少顺序计算的目标也推动了扩展神经网络GPU、ByteNet、ConvS2S的发展。这些都是用CNN作为基本构件，并行计算所有输入输出位置上的隐藏层。<strong>在这些模型中，关联前后文所需要的计算量在ConvS2S中是随距离增加线性增长的，而对于ByteNet则是随距离增加呈对数增长，从而难以学习到上下文之间的依赖关系。</strong>在Transformer中，<strong>这种操作可以被减少为恒定的操作次数</strong>，尽管是以平均注意力加权位置而导致的有效分辨率降低，但本文用3.2节中所述的Multi-Head Attention抵消了这种影响</p></li>
+<li><p>Self-Attention是一种<strong>与单个序列不同位置相关</strong>的注意力机制，目的是计算序列的representation。Self-Attention也被广泛应用</p></li>
+<li><p>End-to-end记忆网络是基于递归注意力的，而不是RNN[????]，并且已经被证明在简单语言问答和语言建模任务中表现良好。</p></li>
+<li><p>Transformer是第一个完全依赖self-attention的，而无需RNN或者CNN。</p></li>
+</ul>
+<h2 id="model-architecture">3. Model Architecture</h2>
+<ul>
+<li><p>encoder将输入序列<span class="math inline">\((x_1,...,x_n)\)</span>映射到连续表示形式<span class="math inline">\(z=(z_1,...z_n)\)</span>。给出<span class="math inline">\(z\)</span>，decoder一次性生成输出序列<span class="math inline">\((y_1,...y_m)\)</span>，每一步都是自回归的，生成下一个的时候都会把之前生成序列当成附加输入进行计算。</p>
+<figure>
+<img src="https://s3.ax1x.com/2021/02/01/yeBL5t.png" alt="yeBL5t.png" /><figcaption aria-hidden="true">yeBL5t.png</figcaption>
+</figure></li>
+</ul>
+<h3 id="encoder-and-decoder-stacks">3.1 Encoder and Decoder Stacks</h3>
+<ul>
+<li><p>Encoder：由6个Block堆叠而成。每一层有两个子层：multi-head self-attention层和全连接层。两个子层都采用残差连接的形式，然后进行层归一化。即每一层的输出为<span class="math inline">\(LayerNorm(x+Sublayer(x))\)</span>，其中<span class="math inline">\(Sublayer(x)\)</span>是由当前子层本身实现的功能。为了实现残差连接，<strong>模型中所有子层及嵌入层的输出均为512维。</strong></p></li>
+<li><p>Decoder：由6个Block堆叠而成。每层除了同Encoder层的两个子层外，还有针对encoder输出的multi-head attention的子层。每个子层也进行残差连接，然后进行层归一化。<strong>同时修改了self-attention子层来prevent positions from attending to subsequent positions。这种mask，加上output embeddings偏移一个位置，保证了位置i只能依赖于位置小于i的输出。</strong></p></li>
+</ul>
+<h3 id="attention">3.2 Attention</h3>
+<ul>
+<li><p>Attention为Query和一系列Key-Value对的映射输出。其中Q、K、V都是向量。</p>
+<p><strong>Attention的本质：</strong>The output is computed as a <strong>weighted sum of the Values</strong>, where <strong>the weight assigned to each value is computed by a compatibility function of the Query with the corresponding Key</strong></p>
+<p><img src="https://s3.ax1x.com/2021/02/01/yZxogP.png" alt="yeSwS1.png" /><img src="https://s3.ax1x.com/2021/02/01/yeSwS1.png" alt="yeSwS1.png" /></p></li>
+</ul>
+<h4 id="scaled-dot-product-attention">3.2.1 Scaled Dot-Product Attention</h4>
+<ul>
+<li><p>Input: <span class="math inline">\(Q(dim=d_k)\)</span>、<span class="math inline">\(K(dim=d_k)\)</span>、<span class="math inline">\(V(dim=d_v)\)</span></p>
+<p><strong>compute the dot products of the Query with all Keys, divide each by</strong> <span class="math inline">\(\sqrt {d_k}\)</span></p>
+<p><strong>and apply a softmax function to obtain the weights on the values.</strong></p></li>
+<li><p>the matrix of outputs: <span class="math display">\[
+Attention(Q,K,V)=softmax(\frac {QK^T}{\sqrt {d_k}})V
+\]</span></p></li>
+<li><p>two commonly used attention functions: additive attention; dot-product attention</p>
+<ul>
+<li>dot-product与我们算法相同，只是有个比例因子<span class="math inline">\(\sqrt {d_k}\)</span></li>
+<li>additive attention是利用一个具有单个隐藏层的前馈网络来计算compatibility的。</li>
+<li>二者理论上复杂度相似，但前者可以使用高度优化的矩阵乘法实现，故速度更快，空间效率更高。</li>
+</ul></li>
+<li><p>对于<span class="math inline">\(d_k\)</span>值较小的情况，以上两种机制表现相似。但对于较大值的<span class="math inline">\(d_k\)</span>，后者优于前者，可能是对于较大的<span class="math inline">\(d_k\)</span>，dot-products在数量级上增长很大，从而将<span class="math inline">\(softmax\)</span>函数推倒梯度非常小的区域。<strong>故为抵消这种影响，采用<span class="math inline">\(\frac {1}{\sqrt {d_k}}\)</span>缩放。</strong></p></li>
+</ul>
+<h4 id="multi-head-attention">3.2.2 Multi-Head Attention</h4>
+<ul>
+<li><p>并行执行多个Attention Function【多头 multi-head】将Q、K、V投影到不同<span class="math inline">\(d_v\)</span>维的输出值上，将其concatenate在一起再进行线性投影，得到最终值</p></li>
+<li><p>the matrix of outputs: <span class="math display">\[
+MultiHead(Q,K,V)=Concat(head_1,...head_h)W^O\\
+\qquad\qquad where\ head_i=Attention(QW_i^Q,KW_i^K,VW_i^V)
+\]</span> the dimension of each parameter matrices: <span class="math display">\[
+W_i^Q:d_{model}×d_k\\
+W_i^K:d_{model}×d_k\\
+W_i^Q:d_{model}×d_v\\
+W^O:hd_v×d_{model}
+\]</span> 在这项工作中，采用<span class="math inline">\(h=8\)</span>个平行的Attention Layers。由于输出维数【<span class="math inline">\(d_{model}\)</span>】固定为512【本文中假设的】，故<span class="math inline">\(d_k=d_v=d_{model}/h=64\)</span>。由于每个头部的维数减小，总的计算量与单头Attention计算量类似。</p></li>
+<li><p>Multi-head attention可以使得模型能够在不同的位置共同关注来自不同子空间的信息。</p></li>
+</ul>
+<h4 id="applications-of-attention-in-our-model">3.2.3 Applications of Attention in our Model</h4>
+<ul>
+<li>Transformer使用multi-head attention主要有三点不同：
+<ul>
+<li>在"encoder-decoder attention"层中，Query是来自前一层decoder层，Key和Value是来自encoder的输出。<strong>这使得decoder中每个位置都可以参考到输入序列中的所有位置</strong>。这种模仿了典型的encoder-decoder网络。</li>
+<li>encoder包含self-attention层。在self-attention层中，所有的K、V、Q都来自同一个地方，在本例中是encoder中前一层的输出。<strong>encoder中的每个位置都可以关注encoder前一层中的所有位置信息。</strong></li>
+<li>同样的，<strong>decoder中的self-attention层允许decoder中的每个位置关注到decoder中包含本位置在内的所有位置信息。</strong>为了防止decoder中的信息往左流动，已保证auto-regressive特性。通过[???????????]</li>
+</ul></li>
+</ul>
+<h3 id="position-wise-feed-forward-networks">3.3 Position-wise Feed-Forward Networks</h3>
+<ul>
+<li>除了attention子层外，encoder和decoder中的每一层都包含一个全连接的前馈网络，这个网络分别应用在每个位置，参数是一样的。包含两个线性变换，激活函数为ReLU【就是max那一部分】</li>
+</ul>
+<p><span class="math display">\[
+FFN(x)=max(0,xW_1+b_1)W_2+b_2
+\]</span></p>
+<h3 id="embeddings-and-softmax">3.4 Embeddings and Softmax</h3>
+<ul>
+<li>我们先使用embeddings把input和output转换为<span class="math inline">\(d_{model}\)</span>维的向量。我们也使用通常的线性变换和<span class="math inline">\(softmax\)</span>函数来将解码器的输出转换为下一个词的概率。</li>
+<li>不同词计算K、Q、V时共享<span class="math inline">\(W_K,W_Q,W_V\)</span>矩阵，同时在embedding层再把这些权重乘<span class="math inline">\(\sqrt {d_{model}}\)</span></li>
+</ul>
+<h3 id="positional-encoding">3.5 Positional Encoding</h3>
+<ul>
+<li><p>由于我们的网络不包含递归和卷积，为了使模型利用序列的顺序特性，我们必须注入一些关于序列的相对或绝对位置信息。</p></li>
+<li><p>The positional encodings have the same dimension <span class="math inline">\(d_{model}\)</span> as the embeddings, <strong>so that the two can be summed</strong>。有很多位置编码可以选择，learned和fixed</p></li>
+<li><p>公式： <span class="math display">\[
+PE_{(pos,2i)}=sin(pos/10000^{2i/d_{model}})\\
+PE_{(pos,2i+1)}=cos(pos/10000^{2i/d_{model}})
+\]</span> 位置编码的每个维度对应与一个正弦曲线。波长呈几何级数从<span class="math inline">\(2π\)</span>到<span class="math inline">\(10000·2π\)</span>。之所以选择这个函数是因为它可以让模型很容易的<strong>通过相对位置来学习</strong>，因为对于任意固定的偏移量<span class="math inline">\(k\)</span>，<span class="math inline">\(PE_{pos+k}\)</span>可以表示为<span class="math inline">\(PE_{pos}\)</span>的线性函数</p></li>
+</ul>
+
+    </div>
+
+    
+	
+	
+
+	
+		<div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束 <i class="fa fa-heart"></i> 感谢阅读-------------</div>
+	<div class="post-widgets">
+      <div id="needsharebutton-postbottom">
+        <span class="btn">
+          <i class="fa fa-share-alt" aria-hidden="true"></i>
+        </span>
+      </div>
+    </div>
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/01/30/%E7%AC%AC02%E5%91%A8/%E8%8E%AB%E7%83%A6/" rel="prev" title="NLP快速入门-莫烦">
+      <i class="fa fa-chevron-left"></i> NLP快速入门-莫烦
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2021/02/06/%E7%AC%AC04%E5%91%A8/%E8%AE%BA%E6%96%87%E7%A0%94%E8%AF%BB-A%20Survey%20on%20Knowledge%20Graphs%20Representation,%20Acquisition%20and%20Applications/" rel="next" title="A Survey on Knowledge Graphs Representation, Acquisition and Applications">
+      A Survey on Knowledge Graphs Representation, Acquisition and Applications <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#attention-is-all-you-need"><span class="nav-number">1.</span> <span class="nav-text">Attention Is All You Need</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#abstract"><span class="nav-number">1.1.</span> <span class="nav-text">Abstract</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#introduction"><span class="nav-number">1.2.</span> <span class="nav-text">1. Introduction</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#background"><span class="nav-number">1.3.</span> <span class="nav-text">2. Background</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#model-architecture"><span class="nav-number">1.4.</span> <span class="nav-text">3. Model Architecture</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#encoder-and-decoder-stacks"><span class="nav-number">1.4.1.</span> <span class="nav-text">3.1 Encoder and Decoder Stacks</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#attention"><span class="nav-number">1.4.2.</span> <span class="nav-text">3.2 Attention</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#scaled-dot-product-attention"><span class="nav-number">1.4.2.1.</span> <span class="nav-text">3.2.1 Scaled Dot-Product Attention</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#multi-head-attention"><span class="nav-number">1.4.2.2.</span> <span class="nav-text">3.2.2 Multi-Head Attention</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#applications-of-attention-in-our-model"><span class="nav-number">1.4.2.3.</span> <span class="nav-text">3.2.3 Applications of Attention in our Model</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#position-wise-feed-forward-networks"><span class="nav-number">1.4.3.</span> <span class="nav-text">3.3 Position-wise Feed-Forward Networks</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#embeddings-and-softmax"><span class="nav-number">1.4.4.</span> <span class="nav-text">3.4 Embeddings and Softmax</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#positional-encoding"><span class="nav-number">1.4.5.</span> <span class="nav-text">3.5 Positional Encoding</span></a></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Olivia"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Olivia</p>
+  <div class="site-description" itemprop="description">May All Your Troubles Be little Ones</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">30</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">10</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="/yajie.wang@mail.hfut.edu.cn" title="E-Mail → yajie.wang@mail.hfut.edu.cn"><i class="fa fa-envelope fa-fw"></i></a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-link fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="http://www.hfut.edu.cn/" title="http:&#x2F;&#x2F;www.hfut.edu.cn&#x2F;" rel="noopener" target="_blank">合肥工业大学</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2019 – 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">wyj-Olivia</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">145k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">2:12</span>
+</div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script color='0,0,255' opacity='0.5' zIndex='-1' count='99' src="/lib/canvas-nest/canvas-nest-nomobile.min.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+<div id="needsharebutton-float">
+      <span class="btn">
+        <i class="fa fa-share-alt" aria-hidden="true"></i>
+      </span>
+    </div>
+  <script src="//cdn.jsdelivr.net/gh/theme-next/theme-next-needmoreshare2@1/needsharebutton.min.js"></script>
+  <script>
+      pbOptions = {};
+        pbOptions.iconStyle = "box";
+        pbOptions.boxForm = "horizontal";
+        pbOptions.position = "bottomCenter";
+        pbOptions.networks = "Weibo,Wechat,Douban,QQZone,Twitter,Facebook";
+      new needShareButton('#needsharebutton-postbottom', pbOptions);
+      flOptions = {};
+        flOptions.iconStyle = "box";
+        flOptions.boxForm = "horizontal";
+        flOptions.position = "middleRight";
+        flOptions.networks = "Weibo,Wechat,Douban,QQZone,Twitter,Facebook";
+      new needShareButton('#needsharebutton-float', flOptions);
+  </script>
+</body>
+</html>

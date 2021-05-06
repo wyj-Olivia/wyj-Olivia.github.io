@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="论文地址：https:&#x2F;&#x2F;www.aclweb.org&#x2F;anthology&#x2F;N19-1270.pdf  Abstract  在给定有限的计算资源(只有一个预先训练的模型和固定数量的训练实例)的情况下，我们提出了三个通用策略——即时机器提取阅读理解(MRC):(1)考虑输入序列的原始顺序和反向顺序的前后阅读(BACK AND FORTH READING, BF)，(2)高亮显示(HIGH">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Improving Machine Reading Comprehension with General Reading Strategies">
+<meta property="og:url" content="http://example.com/2021/03/08/%E7%AC%AC06%E5%91%A8/1.%20Improving%20Machine%20Reading%20Comprehension%20with%20General%20Reading%20Strategies/index.html">
+<meta property="og:site_name" content="Olivia的博客">
+<meta property="og:description" content="论文地址：https:&#x2F;&#x2F;www.aclweb.org&#x2F;anthology&#x2F;N19-1270.pdf  Abstract  在给定有限的计算资源(只有一个预先训练的模型和固定数量的训练实例)的情况下，我们提出了三个通用策略——即时机器提取阅读理解(MRC):(1)考虑输入序列的原始顺序和反向顺序的前后阅读(BACK AND FORTH READING, BF)，(2)高亮显示(HIGH">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://s3.ax1x.com/2021/03/15/6rmHcq.png">
+<meta property="og:image" content="https://s3.ax1x.com/2021/03/16/6sfvMF.png">
+<meta property="article:published_time" content="2021-03-07T16:00:00.000Z">
+<meta property="article:modified_time" content="2021-05-06T03:48:00.273Z">
+<meta property="article:author" content="Olivia">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://s3.ax1x.com/2021/03/15/6rmHcq.png">
+
+<link rel="canonical" href="http://example.com/2021/03/08/%E7%AC%AC06%E5%91%A8/1.%20Improving%20Machine%20Reading%20Comprehension%20with%20General%20Reading%20Strategies/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+<link rel="stylesheet" href="//cdn.jsdelivr.net/gh/theme-next/theme-next-needmoreshare2@1/needsharebutton.min.css"><style>
+#needsharebutton-postbottom {
+  cursor: pointer;
+  height: 26px;
+  margin-top: 10px;
+  position: relative;
+}
+#needsharebutton-postbottom .btn {
+  border: 1px solid $btn-default-border-color;
+  border-radius: 3px;
+  display: initial;
+  padding: 1px 4px;
+}
+</style><style>
+#needsharebutton-float {
+  bottom: 88px;
+  cursor: pointer;
+  left: -8px;
+  position: fixed;
+  z-index: 9999;
+}
+#needsharebutton-float .btn {
+  border: 1px solid $btn-default-border-color;
+  border-radius: 4px;
+  padding: 0 10px 0 14px;
+}
+</style>
+  <title>Improving Machine Reading Comprehension with General Reading Strategies | Olivia的博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Olivia的博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/03/08/%E7%AC%AC06%E5%91%A8/1.%20Improving%20Machine%20Reading%20Comprehension%20with%20General%20Reading%20Strategies/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="Olivia">
+      <meta itemprop="description" content="May All Your Troubles Be little Ones">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Olivia的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Improving Machine Reading Comprehension with General Reading Strategies
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-03-08 00:00:00" itemprop="dateCreated datePublished" datetime="2021-03-08T00:00:00+08:00">2021-03-08</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-05-06 11:48:00" itemprop="dateModified" datetime="2021-05-06T11:48:00+08:00">2021-05-06</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Knowledge-Base-Qestion-Answering/" itemprop="url" rel="index"><span itemprop="name">Knowledge Base Qestion Answering</span></a>
+                </span>
+                  >
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Knowledge-Base-Qestion-Answering/paper-comprehension/" itemprop="url" rel="index"><span itemprop="name">paper comprehension</span></a>
+                </span>
+                  >
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Knowledge-Base-Qestion-Answering/paper-comprehension/%E7%9E%8E%E7%9C%8B%E7%9C%8B/" itemprop="url" rel="index"><span itemprop="name">瞎看看</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>2.9k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>3 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <ul>
+<li>论文地址：https://www.aclweb.org/anthology/N19-1270.pdf</li>
+</ul>
+<h2 id="abstract">Abstract</h2>
+<ul>
+<li>在给定有限的计算资源(只有一个预先训练的模型和固定数量的训练实例)的情况下，我们提出了三个通用策略——即时机器提取阅读理解(MRC):(1)考虑输入序列的原始顺序和反向顺序的<strong>前后阅读(BACK AND FORTH READING, BF)</strong>，(2)<strong>高亮显示(HIGHLIGHTING, HL)</strong>，这将可训练的嵌入添加到与问题和候选答案相关的标记的文本嵌入中，以及(3)自我评估(SELF-ASSESSMENT, SA)，这将直接从文本中以无监督的方式生成练习问题和候选答案。</li>
+</ul>
+<h2 id="introduction">1. Introduction</h2>
+<ul>
+<li><p><strong>本文主要关注于非提取型MRC，其中相当大比例的候选答案不限于参考文档或语料库的文本spans。</strong>与提取型MRC任务(第2.1节)相比，<strong>非提取型MRC(第2.2节)需要不同的阅读技能</strong>，因此，机器读者在这些任务上的表现更准确地表明了机器读者在现实环境(如考试)中的理解能力(赖等人，2017年)。</p></li>
+<li><p>在微调时提高机器阅读理解能力，而不是通过昂贵的预训练。提出了三个相应的领域独立地策略，以提高基于目前现有的pre-trained transformer模型的MRC(Sec 3.1)。</p>
+<ul>
+<li>BACK AND FORTH READING(“我在文本中前前后后寻找其中的想法之间的关系。”):<strong>考虑输入序列的原始顺序和反向顺序</strong>(第3.2节)</li>
+<li>HIGHLIGHTING(“我突出显示文本中的信息，以帮助我记住它。”)<strong>在与问题和候选答案相关的标记的文本嵌入中添加一个可训练的嵌入</strong>(第3.3节)</li>
+<li>自我评估(“我问自己想在文本中回答的问题，然后检查我对文本的猜测是对还是错。”):<strong>从现有参考文件中生成练习问题及其相关的基于范围的候选答案</strong>(第3.4节)</li>
+</ul></li>
+</ul>
+<h2 id="task-introduction">2. Task Introduction</h2>
+<ul>
+<li>根据<strong>预期的答案类型</strong>（其实是根据目前现有的数据集类型），将机器阅读理解分为两大类：提取型(extractive)(Sec 2.1)和非提取型(non-extractive)(Sec 2.2)</li>
+</ul>
+<h3 id="提取型mrc">2.1 提取型MRC</h3>
+<ul>
+<li>给定一个参考文档和一个问题，<strong>期望的答案是文档的一小段</strong>。</li>
+<li>另一种：在例如SearchQA和NarrativeQA等数据集上的答案则是基于给定文档的由人设置的自由形式的文本。然而<strong>由于注释者倾向于直接复制spans作为答案</strong>，所以大多数答案仍然是提取的。</li>
+</ul>
+<h3 id="非提取型mrc">2.2 非提取型MRC</h3>
+<ul>
+<li><p>主要讨论多选择MRC数据集，其中答案选项不限于提取的文本范围。<strong>给定一个问题和一个参考文档/语料库，提供多个答案选项，其中至少有一个是正确的。</strong></p></li>
+<li><p>与抽取式MRC任务中的问题相比，<strong>除了表面匹配之外，还有各种类型的复杂问题，</strong>如数学应用题、摘要、逻辑推理和情感分析，需要高级阅读技能和先验世界知识。此外，在大多数情况下，我们可以采用准确性等客观的评估标准来评估系统性能(克拉克等人，2016；Lai等人，2017)。</p></li>
+</ul>
+<h2 id="approach">3. Approach</h2>
+<h3 id="framework-overview">3.1 Framework Overview</h3>
+<ul>
+<li><p>遵循有区别地微调生成预训练transformer的框架(GPT)。它采用预先训练的多层transformer将语言模型转换为标记数据集<span class="math inline">\(C\)</span>，其中每一个实例由一系列输入标记<span class="math inline">\(x^1,...,x^n\)</span>及标签<span class="math inline">\(y\)</span>，最大化： <span class="math display">\[
+\sum_{x,y}logP(y|x^1,...,x^n)+\lambda \cdot L(C)
+\]</span> <span class="math inline">\(L\)</span>: 语言的似然函数</p>
+<p><span class="math inline">\(\lambda\)</span>: 语言模型的权重</p>
+<p><span class="math inline">\(P(y|x^1,...,x^n)\)</span>: 通过语言模型的最后transformer模块激活上的线性分类层得到的。</p>
+<p>对于多选择MRC，<span class="math inline">\(x_1,...x_n\)</span>来自开始标记、参考文档、问题、分隔符标记、答案选项和结束标记的连接</p>
+<p><span class="math inline">\(y\)</span>表示答案选项的正确性。</p></li>
+<li><p>下图为整体框架<img src="https://s3.ax1x.com/2021/03/15/6rmHcq.png" alt="6rmHcq.png" /></p></li>
+</ul>
+<h3 id="back-and-forth-readingbf">3.2 Back and Forth Reading(BF)</h3>
+<ul>
+<li>将GPT原始输入序列表示为<span class="math inline">\([dq\ \$\ o]\)</span>，其中<span class="math inline">\([\ ,\$\ \)</span>和<span class="math inline">\(]\ \)</span>分别表示开始标记(start token)，定界标记(delimiter token)和结束标记(end token)。</li>
+<li>考虑原始序列和反向序列<span class="math inline">\([o\ \$\ qd]\)</span>。<span class="math inline">\(d,q,o\)</span>中的token依旧保留。分别对两个分别使用<span class="math inline">\([dq\ \$\ o]\)</span>和<span class="math inline">\([o\ \$\ qd]\)</span>作为输入序列的GPT进行微调，然后将两个模型合在一起。</li>
+<li>同时还考虑了其他类似的输入序列对，例如<span class="math inline">\([qd\ \$\ o]\)</span>和<span class="math inline">\([o\ \$\ dq]\)</span>。【Sec. 4.3】</li>
+</ul>
+<h3 id="highlightinghl">3.3 Highlighting(HL)</h3>
+<ul>
+<li><p>文档的文本嵌入独立于其相关的问题和候选答案。旨在使文档编码了解相关的问答选项对<span class="math inline">\((q,o_i)\)</span>。专注于问题和答案选项中的内容词，我们通过其词性(POS)标签（例如：名词、动词、形容词、副词、数字、或外来词）来分辨内容词。</p></li>
+<li><p><span class="math inline">\(T\)</span>：POS标签集</p>
+<p><span class="math inline">\(d\)</span>：文档<span class="math inline">\(d\)</span>的文本嵌入顺序</p>
+<p><span class="math inline">\(d^j\)</span>：表示<span class="math inline">\(d\)</span>中第<span class="math inline">\(j\)</span>个token【对应文档<span class="math inline">\(d\)</span>】，表示<span class="math inline">\(d\)</span>中的第<span class="math inline">\(j\)</span>个文本embedding【对应embedding】</p>
+<p>给定文档<span class="math inline">\(d\)</span>和一个问题答案对<span class="math inline">\((q,o_i)\)</span>，我们将文档<span class="math inline">\(d\)</span>中第<span class="math inline">\(j\)</span>个token对应的<em>highlight embedding</em><span class="math inline">\(h_i^j\)</span>定义为<img src="https://s3.ax1x.com/2021/03/16/6sfvMF.png" alt="6sfvMF.png" /></p></li>
+<li><p>高亮嵌入<span class="math inline">\(h_i=h_i^1,h_i^2,...,h_i^n\)</span>的长度与<span class="math inline">\(d\)</span>相同。当对文档编码时，将<span class="math inline">\(d\)</span>替换成<span class="math inline">\(d_i=d+h_i\)</span>。更具体地说，我们在微调期间使用<span class="math inline">\(b,d_i,q,l,o_i\)</span>和<span class="math inline">\(e\)</span>的concatenation作为GPT的新输入【Sec. 3.1】，其中<span class="math inline">\(b,l\)</span>和<span class="math inline">\(e\)</span>分别表示开始token、分割符号token和结束符号token的embedding，<span class="math inline">\(q\)</span>和<span class="math inline">\(o_i\)</span>分别表示<span class="math inline">\(q\)</span>和<span class="math inline">\(o_i\)</span>的文本embedding序列。</p></li>
+</ul>
+<h3 id="self-assessmentsa">3.4. Self-Assessment(SA)</h3>
+<ul>
+<li><p>在自我评估阅读策略的启发下开发了一种微调方法。我们提出了一种简单的方法来生成问题及其关联的多个基于span的答案选项，这些选项涵盖了参考文档中多个句子的内容。目标是使得到的微调模型更了解输入结构，并根据回答给定问题可能需要的跨多个句子集成信息。</p></li>
+<li><p>基于结束任务（即本文中的RACE）的每个文档随机生成不超过<span class="math inline">\(n_q\)</span>个问题和相关的答案选项，步骤描述如下：</p>
+<ul>
+<li>输入：来自结束任务的参考文档</li>
+<li>输出：与参考文档相关联的一个问题和四个答案选项</li>
+</ul>
+<ol type="1">
+<li>从文档中随机选择不超过<span class="math inline">\(n_s\)</span>个句子，并将这些句子连接在一起。</li>
+<li>从连接的句子中随机选择不超过<span class="math inline">\(n_c\)</span>个不重复的span。每个span在单个句子中随机包含不超过<span class="math inline">\(n_t\)</span>个token。我们将选定的span连接起来，以形成正确的答案选项。我们从连接的句子中删除选定的span，并使用剩余的文本作为问题。</li>
+<li>通过将正确答案选项中的span随机替换为从文档中随机选出的span，生成三个干扰项（错误选项）</li>
+<li><span class="math inline">\(n_q,n_s,n_c,n_t\)</span>都是用于控制问题的数量和难度级别。</li>
+</ol></li>
+</ul>
+
+    </div>
+
+    
+	
+	
+
+	
+		<div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束 <i class="fa fa-heart"></i> 感谢阅读-------------</div>
+	<div class="post-widgets">
+      <div id="needsharebutton-postbottom">
+        <span class="btn">
+          <i class="fa fa-share-alt" aria-hidden="true"></i>
+        </span>
+      </div>
+    </div>
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/03/08/%E7%AC%AC06%E5%91%A8/2.%20LUKE-Deep%20Contextualized%20Entity%20Representations%20with%20Entity-aware%20Self-attention/" rel="prev" title="LUKE-Deep Contextualized Entity Representations with Entity-aware Self-attention">
+      <i class="fa fa-chevron-left"></i> LUKE-Deep Contextualized Entity Representations with Entity-aware Self-attention
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2021/03/15/%E7%AC%AC07%E5%91%A8/UHop%20An%20Unrestricted-Hop%20Relation%20Extraction%20Framework%20for%20Knowledge-Based%20Question%20Answering/" rel="next" title="UHop An Unrestricted-Hop Relation Extraction Framework for Knowledge-Based Question Answering">
+      UHop An Unrestricted-Hop Relation Extraction Framework for Knowledge-Based Question Answering <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#abstract"><span class="nav-number">1.</span> <span class="nav-text">Abstract</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#introduction"><span class="nav-number">2.</span> <span class="nav-text">1. Introduction</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#task-introduction"><span class="nav-number">3.</span> <span class="nav-text">2. Task Introduction</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8F%90%E5%8F%96%E5%9E%8Bmrc"><span class="nav-number">3.1.</span> <span class="nav-text">2.1 提取型MRC</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%9D%9E%E6%8F%90%E5%8F%96%E5%9E%8Bmrc"><span class="nav-number">3.2.</span> <span class="nav-text">2.2 非提取型MRC</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#approach"><span class="nav-number">4.</span> <span class="nav-text">3. Approach</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#framework-overview"><span class="nav-number">4.1.</span> <span class="nav-text">3.1 Framework Overview</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#back-and-forth-readingbf"><span class="nav-number">4.2.</span> <span class="nav-text">3.2 Back and Forth Reading(BF)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#highlightinghl"><span class="nav-number">4.3.</span> <span class="nav-text">3.3 Highlighting(HL)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#self-assessmentsa"><span class="nav-number">4.4.</span> <span class="nav-text">3.4. Self-Assessment(SA)</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Olivia"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Olivia</p>
+  <div class="site-description" itemprop="description">May All Your Troubles Be little Ones</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">30</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">10</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="/yajie.wang@mail.hfut.edu.cn" title="E-Mail → yajie.wang@mail.hfut.edu.cn"><i class="fa fa-envelope fa-fw"></i></a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-link fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="http://www.hfut.edu.cn/" title="http:&#x2F;&#x2F;www.hfut.edu.cn&#x2F;" rel="noopener" target="_blank">合肥工业大学</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2019 – 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">wyj-Olivia</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">145k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">2:12</span>
+</div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script color='0,0,255' opacity='0.5' zIndex='-1' count='99' src="/lib/canvas-nest/canvas-nest-nomobile.min.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+<div id="needsharebutton-float">
+      <span class="btn">
+        <i class="fa fa-share-alt" aria-hidden="true"></i>
+      </span>
+    </div>
+  <script src="//cdn.jsdelivr.net/gh/theme-next/theme-next-needmoreshare2@1/needsharebutton.min.js"></script>
+  <script>
+      pbOptions = {};
+        pbOptions.iconStyle = "box";
+        pbOptions.boxForm = "horizontal";
+        pbOptions.position = "bottomCenter";
+        pbOptions.networks = "Weibo,Wechat,Douban,QQZone,Twitter,Facebook";
+      new needShareButton('#needsharebutton-postbottom', pbOptions);
+      flOptions = {};
+        flOptions.iconStyle = "box";
+        flOptions.boxForm = "horizontal";
+        flOptions.position = "middleRight";
+        flOptions.networks = "Weibo,Wechat,Douban,QQZone,Twitter,Facebook";
+      new needShareButton('#needsharebutton-float', flOptions);
+  </script>
+</body>
+</html>

@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="论文：https:&#x2F;&#x2F;arxiv.org&#x2F;abs&#x2F;1606.00979  1. 简介  深度学习提升向量建模方法的大体框架都很接近：根据问题确定主题词，根据主题词确定候选答案，通过候选答案和问题的分布式表达相似度得分确定最终答案。而方法的核心在于学习问题和候选答案的分布式表达，其实相关的方法都是在这两个部分做文章。这篇文章的想法在于，对于不同的答案，我们关注问题的焦点是不同的，我们根据">
+<meta property="og:type" content="article">
+<meta property="og:title" content="7. 引入注意力机制-Question Answering over Knowledge Base with Neural Attention Combining Global Knowledge Information">
+<meta property="og:url" content="http://example.com/2021/03/01/%E7%AC%AC05%E5%91%A8/7.%20%E5%BC%95%E5%85%A5%E6%B3%A8%E6%84%8F%E5%8A%9B%E6%9C%BA%E5%88%B6-Question%20Answering%20over%20Knowledge%20Base%20with%20Neural%20Attention%20Combining%20Global%20Knowledge%20Information/index.html">
+<meta property="og:site_name" content="Olivia的博客">
+<meta property="og:description" content="论文：https:&#x2F;&#x2F;arxiv.org&#x2F;abs&#x2F;1606.00979  1. 简介  深度学习提升向量建模方法的大体框架都很接近：根据问题确定主题词，根据主题词确定候选答案，通过候选答案和问题的分布式表达相似度得分确定最终答案。而方法的核心在于学习问题和候选答案的分布式表达，其实相关的方法都是在这两个部分做文章。这篇文章的想法在于，对于不同的答案，我们关注问题的焦点是不同的，我们根据">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://pic3.zhimg.com/80/v2-802b38aa199f6d26e3a73283998105fa_720w.png">
+<meta property="og:image" content="https://pic2.zhimg.com/80/v2-d735558c648d7fc61ce4bd7744c56575_720w.png">
+<meta property="og:image" content="https://pic1.zhimg.com/v2-6992d087e8a1da5e3f6d620f0ab65bec_r.jpg">
+<meta property="og:image" content="https://pic2.zhimg.com/v2-e96c3293e5997acdd4b8676063248aed_r.jpg">
+<meta property="article:published_time" content="2021-02-28T16:00:00.000Z">
+<meta property="article:modified_time" content="2021-05-04T07:16:09.083Z">
+<meta property="article:author" content="Olivia">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://pic3.zhimg.com/80/v2-802b38aa199f6d26e3a73283998105fa_720w.png">
+
+<link rel="canonical" href="http://example.com/2021/03/01/%E7%AC%AC05%E5%91%A8/7.%20%E5%BC%95%E5%85%A5%E6%B3%A8%E6%84%8F%E5%8A%9B%E6%9C%BA%E5%88%B6-Question%20Answering%20over%20Knowledge%20Base%20with%20Neural%20Attention%20Combining%20Global%20Knowledge%20Information/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+<link rel="stylesheet" href="//cdn.jsdelivr.net/gh/theme-next/theme-next-needmoreshare2@1/needsharebutton.min.css"><style>
+#needsharebutton-postbottom {
+  cursor: pointer;
+  height: 26px;
+  margin-top: 10px;
+  position: relative;
+}
+#needsharebutton-postbottom .btn {
+  border: 1px solid $btn-default-border-color;
+  border-radius: 3px;
+  display: initial;
+  padding: 1px 4px;
+}
+</style><style>
+#needsharebutton-float {
+  bottom: 88px;
+  cursor: pointer;
+  left: -8px;
+  position: fixed;
+  z-index: 9999;
+}
+#needsharebutton-float .btn {
+  border: 1px solid $btn-default-border-color;
+  border-radius: 4px;
+  padding: 0 10px 0 14px;
+}
+</style>
+  <title>7. 引入注意力机制-Question Answering over Knowledge Base with Neural Attention Combining Global Knowledge Information | Olivia的博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Olivia的博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/03/01/%E7%AC%AC05%E5%91%A8/7.%20%E5%BC%95%E5%85%A5%E6%B3%A8%E6%84%8F%E5%8A%9B%E6%9C%BA%E5%88%B6-Question%20Answering%20over%20Knowledge%20Base%20with%20Neural%20Attention%20Combining%20Global%20Knowledge%20Information/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="Olivia">
+      <meta itemprop="description" content="May All Your Troubles Be little Ones">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Olivia的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          7. 引入注意力机制-Question Answering over Knowledge Base with Neural Attention Combining Global Knowledge Information
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-03-01 00:00:00" itemprop="dateCreated datePublished" datetime="2021-03-01T00:00:00+08:00">2021-03-01</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-05-04 15:16:09" itemprop="dateModified" datetime="2021-05-04T15:16:09+08:00">2021-05-04</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Knowledge-Base-Qestion-Answering/" itemprop="url" rel="index"><span itemprop="name">Knowledge Base Qestion Answering</span></a>
+                </span>
+                  >
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Knowledge-Base-Qestion-Answering/paper-comprehension/" itemprop="url" rel="index"><span itemprop="name">paper comprehension</span></a>
+                </span>
+                  >
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Knowledge-Base-Qestion-Answering/paper-comprehension/basis/" itemprop="url" rel="index"><span itemprop="name">basis</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>1.9k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>2 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <ul>
+<li>论文：https://arxiv.org/abs/1606.00979</li>
+</ul>
+<h2 id="简介">1. 简介</h2>
+<ul>
+<li>深度学习提升向量建模方法的大体框架都很接近：根据问题确定主题词，根据主题词确定候选答案，通过候选答案和问题的分布式表达相似度得分确定最终答案。<strong>而方法的核心在于学习问题和候选答案的分布式表达</strong>，其实相关的方法都是在这两个部分做文章。这篇文章的想法在于，<strong>对于不同的答案，我们关注问题的焦点是不同的，我们根据候选答案的信息，来引入注意力机制，对同一个问题提取出不同的分布式表达。</strong></li>
+<li>比如 对于问题 <em>"who is the president of France?"</em>，其中之一的答案是实体<em>“Francois Holland”</em>，我们通过知识库可以知道<em>Francois</em> <em>Holland</em> 是一个总统，因此我们会更加关注问句中的 <em>“president”</em> 和 <em>“France”</em> 单词，而根据<em>Francois</em> <em>Holland</em>的类型person，我们会更关注问句中的疑问词<em>who</em>。</li>
+</ul>
+<h2 id="过程">2. 过程</h2>
+<h3 id="将候选答案转化为分布式表达">2.1 将候选答案转化为分布式表达</h3>
+<ul>
+<li>我们从多个方面考虑答案的特征：答案实体、答案上下文环境（知识库中所有与答案实体直接相连的实体）、答案关系（答案与问题主题词之间的实体关系）、答案类型。每一种特征都可以用<span class="math inline">\(v_k\)</span>维的multi-hot向量表示，<span class="math inline">\(v_k\)</span>即知识库实体和实体关系的数量之和。我们通过Embedding矩阵<span class="math inline">\(E_k\)</span>将每一种特征转化为低维的分布式表达，我们就得到了四种关于答案的分布式表达<span class="math inline">\(e_e,e_c,e_r,e_t\)</span>（其中由于答案上下文环境涉及的实体较多，我们取这些实体的embedding均值作为上下文环境的embedding）。</li>
+</ul>
+<h3 id="将自然语言问题转化为分布式表达">2.2 将自然语言问题转化为分布式表达</h3>
+<ul>
+<li>将问句中的每一个单词经过Embedding矩阵<span class="math inline">\(E_w\)</span>转化为wrod-embedding，使用双向LSTM(bi-LSTM)提取问句特征。bi-LSTM第<span class="math inline">\(j\)</span>时刻的输出记作<span class="math inline">\(h_j\)</span>，使用bi-LSTM的好处在于<span class="math inline">\(h_j\)</span>既包含了第<span class="math inline">\(j\)</span>个单词之前的信息，又包含了该单词之后的信息。</li>
+</ul>
+<h3 id="在得分函数中引入注意力机制">2.3 在得分函数中引入注意力机制</h3>
+<ul>
+<li><p>我们希望我们问句的分布式表达对于四种不同的答案特征有不同的表达（根据答案特征对于问题有不同的关注点），第<span class="math inline">\(i\)</span>种答案的分布式表达<span class="math inline">\(e_i\)</span>对应的问句分布式表达记作<span class="math inline">\(q_i\)</span>，我们的得分函数定义为四种对应表达的点乘之和，即：<img src="https://pic3.zhimg.com/80/v2-802b38aa199f6d26e3a73283998105fa_720w.png" alt="img" /></p></li>
+<li><p>对于一般的LSTM，我们通常将最后一个时刻的输出<span class="math inline">\(h_T\)</span>作为句子的最终表达，而在这里，我们引入注意力机制，根据问题的特征，给予每一时刻的输出不同程度的关注（对bi-LSTM每一时刻的输出进行加权求和），即：</p>
+<figure>
+<img src="https://pic2.zhimg.com/80/v2-d735558c648d7fc61ce4bd7744c56575_720w.png" alt="img" /><figcaption aria-hidden="true">img</figcaption>
+</figure></li>
+<li><p>其中的权重系数<span class="math inline">\(a_{ij}\)</span>取决于bi-LSTM第<span class="math inline">\(j\)</span>时刻的输出<span class="math inline">\(h_j\)</span>和第<span class="math inline">\(i\)</span>种答案特征的分布式表达<span class="math inline">\(e_i\)</span>，因此可以使用一个单层的神经网络去学习这个权重，并通过Softmax对权重进行归一化，公式如下：<img src="https://pic1.zhimg.com/v2-6992d087e8a1da5e3f6d620f0ab65bec_r.jpg" alt="img" /></p></li>
+</ul>
+<h3 id="oov问题">2.3 OOV问题</h3>
+<ul>
+<li>在测试过程中，我们的候选答案可能从未在训练集中出现过，因此它对应的分布式表达是没有被我们的模型训练过的（这个问题称为<em>the problem of out of vocabulary, OOV</em>）。为了解决该问题，作者利用<a target="_blank" rel="noopener" href="https://www.utc.fr/~bordesan/dokuwiki/_media/en/transe_nips13.pdf">TransE</a>对知识库进行训练，训练实体和实体关系对应的Embedding矩阵<span class="math inline">\(E_k\)</span>（实际操作中，作者通过轮流训练KB-QA模型和TranE的方式训练并共用Embedding矩阵<span class="math inline">\(E_k\)</span>，每训练一个epoch的KB-QA就训练100个epoch的TransE)。这样，我们就利用了整个知识库的特性，预先对每一个知识库实体都进行了训练，使得相似实体的分布式表达也很相似。因此，即使遇到KB-QA训练集中未遇到的候选答案实体，KB-QA模型也能将它视作是在训练集中出现过的某个和它分布式表达相似的实体，这样就减轻了OOV问题所带来的破坏性。
+<ul>
+<li>关于TransE：<em>TransE是知识图谱补全的经典方法，它借鉴了word-embedding的思想，能够将知识库中的实体和实体关系用分布式向量表达。其主要思想是对于一个知识三元组（s,r,o），我们希望主语实体的分布式表达e(s)加上关系实体的分布式表达e(r)能够尽量接近宾语实体的分布式表达e(o)，因此我们可以构建类似的margin-rank损失函数通过正样本和采样负样本进行训练。TransE提出之后还出现了大量的改进算法，诸如TransH、TransR、TransG、TranSparse、TransD等等。</em></li>
+</ul></li>
+</ul>
+<h2 id="实验环节">3. 实验环节</h2>
+<ul>
+<li>注意力机制的好处：<strong>可视化</strong>，通过可视化每个单词的权重，可以得到一些可解释性，如下图：<img src="https://pic2.zhimg.com/v2-e96c3293e5997acdd4b8676063248aed_r.jpg" alt="img" /></li>
+</ul>
+
+    </div>
+
+    
+	
+	
+
+	
+		<div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束 <i class="fa fa-heart"></i> 感谢阅读-------------</div>
+	<div class="post-widgets">
+      <div id="needsharebutton-postbottom">
+        <span class="btn">
+          <i class="fa fa-share-alt" aria-hidden="true"></i>
+        </span>
+      </div>
+    </div>
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/03/01/%E7%AC%AC05%E5%91%A8/6.%20%E5%9F%BA%E4%BA%8E%E8%AE%B0%E5%BF%86%E7%BD%91%E7%BB%9C-Large-scale%20Simple%20Question%20Answering%20with%20Memory%20Networks/" rel="prev" title="6. 基于记忆网络-Large-scale Simple Question Answering with Memory Networks">
+      <i class="fa fa-chevron-left"></i> 6. 基于记忆网络-Large-scale Simple Question Answering with Memory Networks
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2021/03/01/%E7%AC%AC05%E5%91%A8/5.%20%E6%9F%A5%E8%AF%A2%E5%9B%BE-%E8%AF%AD%E4%B9%89%E8%A7%A3%E6%9E%90-Semantic%20Parsing%20via%20Staged%20Query%20Graph%20Generation_Question%20Answering%20with%20Knowledge%20Base/" rel="next" title="5. 查询图-语义解析-Semantic Parsing via Staged Query Graph Generation_Question Answering with Knowledge Base">
+      5. 查询图-语义解析-Semantic Parsing via Staged Query Graph Generation_Question Answering with Knowledge Base <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AE%80%E4%BB%8B"><span class="nav-number">1.</span> <span class="nav-text">1. 简介</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BF%87%E7%A8%8B"><span class="nav-number">2.</span> <span class="nav-text">2. 过程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B0%86%E5%80%99%E9%80%89%E7%AD%94%E6%A1%88%E8%BD%AC%E5%8C%96%E4%B8%BA%E5%88%86%E5%B8%83%E5%BC%8F%E8%A1%A8%E8%BE%BE"><span class="nav-number">2.1.</span> <span class="nav-text">2.1 将候选答案转化为分布式表达</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B0%86%E8%87%AA%E7%84%B6%E8%AF%AD%E8%A8%80%E9%97%AE%E9%A2%98%E8%BD%AC%E5%8C%96%E4%B8%BA%E5%88%86%E5%B8%83%E5%BC%8F%E8%A1%A8%E8%BE%BE"><span class="nav-number">2.2.</span> <span class="nav-text">2.2 将自然语言问题转化为分布式表达</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9C%A8%E5%BE%97%E5%88%86%E5%87%BD%E6%95%B0%E4%B8%AD%E5%BC%95%E5%85%A5%E6%B3%A8%E6%84%8F%E5%8A%9B%E6%9C%BA%E5%88%B6"><span class="nav-number">2.3.</span> <span class="nav-text">2.3 在得分函数中引入注意力机制</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#oov%E9%97%AE%E9%A2%98"><span class="nav-number">2.4.</span> <span class="nav-text">2.3 OOV问题</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%9E%E9%AA%8C%E7%8E%AF%E8%8A%82"><span class="nav-number">3.</span> <span class="nav-text">3. 实验环节</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Olivia"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Olivia</p>
+  <div class="site-description" itemprop="description">May All Your Troubles Be little Ones</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">30</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">10</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="/yajie.wang@mail.hfut.edu.cn" title="E-Mail → yajie.wang@mail.hfut.edu.cn"><i class="fa fa-envelope fa-fw"></i></a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-link fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="http://www.hfut.edu.cn/" title="http:&#x2F;&#x2F;www.hfut.edu.cn&#x2F;" rel="noopener" target="_blank">合肥工业大学</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2019 – 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">wyj-Olivia</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">145k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">2:12</span>
+</div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script color='0,0,255' opacity='0.5' zIndex='-1' count='99' src="/lib/canvas-nest/canvas-nest-nomobile.min.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+<div id="needsharebutton-float">
+      <span class="btn">
+        <i class="fa fa-share-alt" aria-hidden="true"></i>
+      </span>
+    </div>
+  <script src="//cdn.jsdelivr.net/gh/theme-next/theme-next-needmoreshare2@1/needsharebutton.min.js"></script>
+  <script>
+      pbOptions = {};
+        pbOptions.iconStyle = "box";
+        pbOptions.boxForm = "horizontal";
+        pbOptions.position = "bottomCenter";
+        pbOptions.networks = "Weibo,Wechat,Douban,QQZone,Twitter,Facebook";
+      new needShareButton('#needsharebutton-postbottom', pbOptions);
+      flOptions = {};
+        flOptions.iconStyle = "box";
+        flOptions.boxForm = "horizontal";
+        flOptions.position = "middleRight";
+        flOptions.networks = "Weibo,Wechat,Douban,QQZone,Twitter,Facebook";
+      new needShareButton('#needsharebutton-float', flOptions);
+  </script>
+</body>
+</html>

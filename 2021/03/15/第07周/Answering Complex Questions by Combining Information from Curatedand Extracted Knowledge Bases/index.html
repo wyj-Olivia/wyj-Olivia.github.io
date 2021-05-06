@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="论文：https:&#x2F;&#x2F;www.aclweb.org&#x2F;anthology&#x2F;2020.nli-1.1.pdf Abstract  在这项工作中，我们着眼于回答复杂的问题，这些问题往往需要结合来自多个来源的信息。提出了一种新颖的知识库问答系统MULTIQUE，它可以通过一系列针对特定知识库的简单查询将复杂问题映射为复杂查询模式。它使用基于神经网络的模型发现简单查询，该模型能够对抽取知识库中的文本关">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Answering Complex Questions by Combining Information from Curatedand Extracted Knowledge Bases">
+<meta property="og:url" content="http://example.com/2021/03/15/%E7%AC%AC07%E5%91%A8/Answering%20Complex%20Questions%20by%20Combining%20Information%20from%20Curatedand%20Extracted%20Knowledge%20Bases/index.html">
+<meta property="og:site_name" content="Olivia的博客">
+<meta property="og:description" content="论文：https:&#x2F;&#x2F;www.aclweb.org&#x2F;anthology&#x2F;2020.nli-1.1.pdf Abstract  在这项工作中，我们着眼于回答复杂的问题，这些问题往往需要结合来自多个来源的信息。提出了一种新颖的知识库问答系统MULTIQUE，它可以通过一系列针对特定知识库的简单查询将复杂问题映射为复杂查询模式。它使用基于神经网络的模型发现简单查询，该模型能够对抽取知识库中的文本关">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://i.loli.net/2021/03/21/kiUZOLudEWpFP6I.png">
+<meta property="og:image" content="https://i.loli.net/2021/03/21/6oFZhsmleQiwRPz.png">
+<meta property="og:image" content="https://i.loli.net/2021/03/21/VZbctA2Sfnu6OKl.png">
+<meta property="article:published_time" content="2021-03-14T16:00:00.000Z">
+<meta property="article:modified_time" content="2021-05-06T03:56:39.452Z">
+<meta property="article:author" content="Olivia">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.loli.net/2021/03/21/kiUZOLudEWpFP6I.png">
+
+<link rel="canonical" href="http://example.com/2021/03/15/%E7%AC%AC07%E5%91%A8/Answering%20Complex%20Questions%20by%20Combining%20Information%20from%20Curatedand%20Extracted%20Knowledge%20Bases/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+<link rel="stylesheet" href="//cdn.jsdelivr.net/gh/theme-next/theme-next-needmoreshare2@1/needsharebutton.min.css"><style>
+#needsharebutton-postbottom {
+  cursor: pointer;
+  height: 26px;
+  margin-top: 10px;
+  position: relative;
+}
+#needsharebutton-postbottom .btn {
+  border: 1px solid $btn-default-border-color;
+  border-radius: 3px;
+  display: initial;
+  padding: 1px 4px;
+}
+</style><style>
+#needsharebutton-float {
+  bottom: 88px;
+  cursor: pointer;
+  left: -8px;
+  position: fixed;
+  z-index: 9999;
+}
+#needsharebutton-float .btn {
+  border: 1px solid $btn-default-border-color;
+  border-radius: 4px;
+  padding: 0 10px 0 14px;
+}
+</style>
+  <title>Answering Complex Questions by Combining Information from Curatedand Extracted Knowledge Bases | Olivia的博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Olivia的博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/03/15/%E7%AC%AC07%E5%91%A8/Answering%20Complex%20Questions%20by%20Combining%20Information%20from%20Curatedand%20Extracted%20Knowledge%20Bases/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="Olivia">
+      <meta itemprop="description" content="May All Your Troubles Be little Ones">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Olivia的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Answering Complex Questions by Combining Information from Curatedand Extracted Knowledge Bases
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-03-15 00:00:00" itemprop="dateCreated datePublished" datetime="2021-03-15T00:00:00+08:00">2021-03-15</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-05-06 11:56:39" itemprop="dateModified" datetime="2021-05-06T11:56:39+08:00">2021-05-06</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Knowledge-Base-Qestion-Answering/" itemprop="url" rel="index"><span itemprop="name">Knowledge Base Qestion Answering</span></a>
+                </span>
+                  >
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Knowledge-Base-Qestion-Answering/paper-comprehension/" itemprop="url" rel="index"><span itemprop="name">paper comprehension</span></a>
+                </span>
+                  >
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Knowledge-Base-Qestion-Answering/paper-comprehension/latest/" itemprop="url" rel="index"><span itemprop="name">latest</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>4.3k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>4 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>论文：https://www.aclweb.org/anthology/2020.nli-1.1.pdf</p>
+<h2 id="abstract">Abstract</h2>
+<ul>
+<li>在这项工作中，我们着眼于回答复杂的问题，这些问题往往需要结合来自多个来源的信息。提出了一种新颖的知识库问答系统MULTIQUE，它<strong>可以通过一系列针对特定知识库的简单查询将复杂问题映射为复杂查询模式</strong>。它使用基于神经网络的模型发现简单查询，该模型能够对抽取知识库中的文本关系和精选知识库中的本体关系进行集体推理。</li>
+</ul>
+<h2 id="introduction">1. Introduction</h2>
+<ul>
+<li><p>利用<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/25735572">curated KB和extracted KB</a>一起回答，二者互为补充</p></li>
+<li><p>MULTIQUE构建查询路径来回答来自简单查询的复杂问题，每个查询都针对特定的知识库。</p></li>
+<li><p>在语义解析的基础上，遵循enumerate-encode-compare方法。首先收集候选查询并编码为语义向量，然后与问题向量进行比较。然后在知识库上执行具有最高语义相似度的候选。</p></li>
+<li><p>提出了两个关键修改：为了能够对知识库中的本体[curated KB]和文本关系[extracted KB]进行集体推理，首先对不同关系进行对齐，并学习了统一的语义表示。其次，由于缺乏完整注解的查询来训练模型，我们使用问题答案形式的隐式监督信号来学习。</p></li>
+</ul>
+<h2 id="task-and-overview">2. Task and Overview</h2>
+<ul>
+<li><p>Complex Question:</p>
+<ul>
+<li>问题Q对应的一个查询(query)G有不止一个关系，但只有一个查询焦点(query focus)。G是一个部分查询(partial queries)<span class="math inline">\(G=(G_1,G_2,...,G_O)\)</span>通过不同条件连接起来的序列。</li>
+<li>一个部分查询包含四个基本要素
+<ul>
+<li>a <em>seed</em> entity <span class="math inline">\(s^r\)</span> is the root of the query</li>
+<li>a <em>variable</em> node <span class="math inline">\(o^v\)</span> corresponds to an answer to the query</li>
+<li>a <em>main relation path</em> <span class="math inline">\((s^r,p,o^v)\)</span> is the path that links <span class="math inline">\(s^r\)</span> to <span class="math inline">\(o^v\)</span> by one or two edges from either <span class="math inline">\(R^o\)</span> or <span class="math inline">\(R^t\)</span>（两种知识库中的关系）</li>
+<li><em>constraints</em> take the form of an entity linked to the main relation by a relation <span class="math inline">\(c\)</span></li>
+</ul></li>
+<li>一个合成树(composition tree)<span class="math inline">\(C\)</span>描述如何在给定部分查询的情况下构造和评估查询<span class="math inline">\(G\)</span>，包含两个函数：
+<ul>
+<li><span class="math inline">\(simQA\)</span> 是用于查找简单查询的模型，它枚举简单查询的候选项，对其进行编码，并与问题表示进行比较，然后评估出最佳候选项</li>
+<li><span class="math inline">\(join\)</span>描述了如何连接两个部分查询，即它们是否共享查询焦点或另一个变量节点</li>
+</ul></li>
+</ul></li>
+<li><p><strong>方法总览</strong>：</p>
+<ul>
+<li><p>给定一个复杂的输入问题</p>
+<ol type="1">
+<li>首先计算一颗合成树，该树描述如何将推理分解为简单的部分查询</li>
+<li>从curated和extracted KBs中为每个部分查询收集候选查询</li>
+<li>对于每个候选，使用一个基于神经网络模型来衡量其与问题的语义相似性，该模型可对不同形式的关系进行推理</li>
+<li>联接不同的部分查询找到问题的复杂查询</li>
+<li>将派生出的几个完整的查询根据它们部分查询的语义相似分数(semantic similarity of their partial queries)、查询结构(query structure)和实体链接分数(entity linking scores)对其进行排序，在多个KB上寻找最佳推导。下图为MULTIQUE的体系结构：</li>
+</ol>
+<p><img src="https://i.loli.net/2021/03/21/kiUZOLudEWpFP6I.png" alt="image-20210321172428400.png" style="zoom:150%;" /></p></li>
+</ul></li>
+</ul>
+<h2 id="partial-query-candidate-generation">3. Partial Query Candidate Generation</h2>
+<figure>
+<img src="https://i.loli.net/2021/03/21/6oFZhsmleQiwRPz.png" alt="image-20210321173056774.png" /><figcaption aria-hidden="true">image-20210321173056774.png</figcaption>
+</figure>
+<h3 id="identify-seed-entity">3.1 Identify seed entity</h3>
+<ul>
+<li>部分查询的seed <span class="math inline">\(s^r\)</span> 是问题中的链接实体或先前评估的部分查询的答案。</li>
+</ul>
+<h3 id="identify-main-relation-path">3.2 Identify main relation path</h3>
+<ul>
+<li>给定一个种子实体，考虑所有1跳和2跳路径<span class="math inline">\(p\)</span>，包括ontological and textual relations，路径的另一端是变量结点<span class="math inline">\(o^v\)</span>。</li>
+</ul>
+<h3 id="identify-constraints">3.3 Identify constraints</h3>
+<ul>
+<li>上一步确认的那些要给个实体和类型约束(<em>entity and type constraints</em>)。在例子中，我们考虑利用约束关系<em>is_a</em>来查找变量结点<span class="math inline">\(o^v\)</span>。我们还考虑通过单个关系连接到路径上的实体。我们还考虑约束的子集，以支持具有多个约束的查询。</li>
+</ul>
+<h3 id="transition-to-next-partial-query">3.4 Transition to next partial query</h3>
+<ul>
+<li>一旦收集到部分查询<span class="math inline">\(G_i\)</span>的候选，我们就参考合成树来确定下一部分查询<span class="math inline">\(G_{i+1}\)</span>的开始状态。</li>
+<li>如果下一个操作是simQA，我们使用语义匹配模型来计算<span class="math inline">\(G_i\)</span>候选的语义相似度，并评估K个最好的候选。否则，继续生成<span class="math inline">\(G_i\)</span>中不重叠的实体链接候选。</li>
+</ul>
+<h2 id="semantic-matching">4. Semantic Matching</h2>
+<figure>
+<img src="https://i.loli.net/2021/03/21/VZbctA2Sfnu6OKl.png" alt="image-20210321200753591.png" /><figcaption aria-hidden="true">image-20210321200753591.png</figcaption>
+</figure>
+<h3 id="model-architecture">4.1 Model Architecture</h3>
+<h4 id="encoding-question">4.1.1 Encoding question</h4>
+<ul>
+<li>使用令牌序列(token sequence)和依存结构(dependency structure)。</li>
+<li><span class="math inline">\(&lt;w_1,w_2,...,w_n&gt;\)</span>是<span class="math inline">\(Q\)</span>中的令牌，其中，seed(constraint)已经被替换为<span class="math inline">\(w_E,w_C\)</span></li>
+<li>利用embedding矩阵<span class="math inline">\(E_w\)</span>将token转换成向量<span class="math inline">\(&lt;q_1^w,q_2^w,...,q_n^w&gt;\)</span></li>
+<li>再利用LSTM将序列编码为一个潜在向量<span class="math inline">\(q^w\)</span></li>
+<li>类似地，将依存数编码为一个潜在向量<span class="math inline">\(q^{dep}\)</span></li>
+</ul>
+<h4 id="encoding-main-relation-path">4.1.2 Encoding main relation path</h4>
+<ul>
+<li><p>主关系路径可能是来自<span class="math inline">\(K_o\)</span>的textual relation，也可能来自<span class="math inline">\(K_c\)</span>的ontological relation，为在同一空间推断，需进行关系对齐</p></li>
+<li><p>在关系对齐的情况下，对 对齐中的每个关系形式编码为潜在向量<span class="math inline">\(r_i\)</span>。然后对不同关系的潜在向量进行最大合并，以获得不同关系形式上的统一语义表示。</p></li>
+<li><p>为了将每种关系形式编码成向量<span class="math inline">\(r_i\)</span>，考虑<strong>符号序列和id序列</strong>(Luo et al., 2018)。</p>
+<p>For instance, the id sequence of the relation in Fig. 5 is {book_author}, while its token sequence is {‘book’, author’}.</p>
+<ul>
+<li>符号序列：将token编码成向量利用embedding矩阵，最后将average embedding记作token层的表示<span class="math inline">\(r^w\)</span>。</li>
+<li>id序列：直接利用embedding矩阵<span class="math inline">\(E_r\)</span>计算id层的表示<span class="math inline">\(r_i^{id}\)</span></li>
+</ul></li>
+<li><p>一条路径的向量最终表示为<span class="math inline">\(r_i=[r_i^w;r_i^{id}]\)</span></p></li>
+</ul>
+<h4 id="encoding-constraints">4.1.3 Encoding constraints</h4>
+<ul>
+<li>同样的方法利用token级的表示<span class="math inline">\(c_i^w\)</span>和id级的表示<span class="math inline">\(c_i^{id}\)</span>编码约束关系<span class="math inline">\(c_i\)</span>。</li>
+<li><strong>给定关系路径和约束路径的向量表示，我们通过应用max pooling来获得查询语句的组合语义表示(compositional semantic representation)<span class="math inline">\(g\)</span>。</strong></li>
+</ul>
+<h4 id="attention-mechanism">4.1.4 Attention mechanism</h4>
+<ul>
+<li><p>利用查询向量<span class="math inline">\(g\)</span>学习问句中的emphasize parts。</p></li>
+<li><p>给定token层表示中的各隐藏层<span class="math inline">\(h_t,\ t\in \{1,2,...,n\}\)</span>，定义上下文向量[context vector]<span class="math inline">\(c\)</span>作为所有隐藏状态的加权和： <span class="math display">\[
+c=\sum_{t=1}^n\alpha_th_t
+\]</span> <span class="math inline">\(\alpha\)</span>是注意力权重，计算公式为： <span class="math display">\[
+\alpha=softmax(Wtanh(W_qq^w+W_gg))
+\]</span></p>
+<p>其中<span class="math inline">\(W,W_g,W_q\)</span>是网络的参数矩阵。注意力权重表示给定部分查询，模型对各个token的关注度。</p></li>
+</ul>
+<h4 id="objective-function">4.1.5 Objective function</h4>
+<ul>
+<li><p>将上下文向量<span class="math inline">\(c\)</span>、问题依存向量<span class="math inline">\(q^{dep}\)</span>和查询向量<span class="math inline">\(g\)</span>连接起来，一起送到多层感知机(MLP)中。输出为一个标量，表示语义相似度分数<span class="math inline">\(S_{sem}(q,G_i)\)</span>。使用交叉熵损失函数来训练模型。 <span class="math display">\[
+loss=ylog(S_{sem})+(1-y)log(1-S_{sem})
+\]</span> <span class="math inline">\(y\in \{0,1\}\)</span>表示<span class="math inline">\(G_i\)</span>是否正确。</p></li>
+<li><p>训练模型需要对等关系表单的对齐和(question, partial query)对。我们描述如何在给定QA对的情况下生成它们。</p></li>
+</ul>
+<h3 id="relation-alignment">4.2 Relation Alignment</h3>
+<ul>
+<li>首先学习textual嵌入然后对其进行聚类以获得规范化(canonicalized)关系蔟(Vashishth et al., 2018)。例如，一个聚类可以包含"is author of"和"authored"。</li>
+<li>使用规范化的文本关系(canonicalized textual relations)来推导出与本体论关系(ontological relations)的对齐。</li>
+<li>基于一对 本体关系 和 规范化文本关系 的 支持实体对<span class="math inline">\((s,o)\)</span> 来实现这种对齐。</li>
+<li>以我们的示例问题为例，关系<em>"is author of"</em>和<em>book.author</em>一定比关系<em>"is author of"</em>和<em>education.institution</em>有更多关联实体。</li>
+<li>该对齐基于支持阀值，即一对关系的最小数量的支持实体对，本文中设置为5.</li>
+</ul>
+<h3 id="implicit-supervision">4.3 Implicit Supervision</h3>
+<ul>
+<li><p>候选查询的质量可以通过计算其对标签答案的<span class="math inline">\(F_1\)</span>分数间接获得(Peng et al., 2017a)。但是对于复杂问题，候选查询的答案可能与标签答案几乎没有重叠。</p></li>
+<li><p>因此采用另一种评分策略，将部分查询的质量估计为其所有完整查询派生的最佳<span class="math inline">\(F_1\)</span>分数。计算部分查询的分数<span class="math inline">\(V(G_i^{(k)})\)</span>为： <span class="math display">\[
+V(G_i^{(k)})=\max_{i\leq t \leq n-1}F_1(D_{t+1}^{k})
+\]</span> 其中<span class="math inline">\(D_t\)</span>表示级别<span class="math inline">\(t\)</span>的派生，<span class="math inline">\(n\)</span>表示部分查询的数量。</p></li>
+<li><p>这种隐含监督可能收到虚假推导的影响，恰好评估出了正确答案，却没有捕捉到问题的语义含义，所以还需要考虑额外的先验来促进训练数据中的真阳性和假阴性的示例。</p></li>
+<li><p>我们使用<span class="math inline">\(L(Q,G_i^{(k)})\)</span>作为问题<span class="math inline">\(Q\)</span>中提到<span class="math inline">\(G_i^{(k)}\)</span>的关系中的词数之比。也使用<span class="math inline">\(C(Q,G_i^{(k)})\)</span></p></li>
+</ul>
+
+    </div>
+
+    
+	
+	
+
+	
+		<div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束 <i class="fa fa-heart"></i> 感谢阅读-------------</div>
+	<div class="post-widgets">
+      <div id="needsharebutton-postbottom">
+        <span class="btn">
+          <i class="fa fa-share-alt" aria-hidden="true"></i>
+        </span>
+      </div>
+    </div>
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/03/15/%E7%AC%AC07%E5%91%A8/Query%20Graph%20Generation%20for%20Answering%20Multi-hop%20Complex%20Questions%20from%20Knowledge%20Bases/" rel="prev" title="Query Graph Generation for Answering Multi-hop Complex Questions from Knowledge Bases">
+      <i class="fa fa-chevron-left"></i> Query Graph Generation for Answering Multi-hop Complex Questions from Knowledge Bases
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2021/03/29/%E7%AC%AC08%E5%91%A8/%E6%80%BB%E7%BB%93/" rel="next" title="Summary(1)-to 2021.3.29">
+      Summary(1)-to 2021.3.29 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#abstract"><span class="nav-number">1.</span> <span class="nav-text">Abstract</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#introduction"><span class="nav-number">2.</span> <span class="nav-text">1. Introduction</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#task-and-overview"><span class="nav-number">3.</span> <span class="nav-text">2. Task and Overview</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#partial-query-candidate-generation"><span class="nav-number">4.</span> <span class="nav-text">3. Partial Query Candidate Generation</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#identify-seed-entity"><span class="nav-number">4.1.</span> <span class="nav-text">3.1 Identify seed entity</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#identify-main-relation-path"><span class="nav-number">4.2.</span> <span class="nav-text">3.2 Identify main relation path</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#identify-constraints"><span class="nav-number">4.3.</span> <span class="nav-text">3.3 Identify constraints</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#transition-to-next-partial-query"><span class="nav-number">4.4.</span> <span class="nav-text">3.4 Transition to next partial query</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#semantic-matching"><span class="nav-number">5.</span> <span class="nav-text">4. Semantic Matching</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#model-architecture"><span class="nav-number">5.1.</span> <span class="nav-text">4.1 Model Architecture</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#encoding-question"><span class="nav-number">5.1.1.</span> <span class="nav-text">4.1.1 Encoding question</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#encoding-main-relation-path"><span class="nav-number">5.1.2.</span> <span class="nav-text">4.1.2 Encoding main relation path</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#encoding-constraints"><span class="nav-number">5.1.3.</span> <span class="nav-text">4.1.3 Encoding constraints</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#attention-mechanism"><span class="nav-number">5.1.4.</span> <span class="nav-text">4.1.4 Attention mechanism</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#objective-function"><span class="nav-number">5.1.5.</span> <span class="nav-text">4.1.5 Objective function</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#relation-alignment"><span class="nav-number">5.2.</span> <span class="nav-text">4.2 Relation Alignment</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#implicit-supervision"><span class="nav-number">5.3.</span> <span class="nav-text">4.3 Implicit Supervision</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Olivia"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Olivia</p>
+  <div class="site-description" itemprop="description">May All Your Troubles Be little Ones</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">30</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">10</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="/yajie.wang@mail.hfut.edu.cn" title="E-Mail → yajie.wang@mail.hfut.edu.cn"><i class="fa fa-envelope fa-fw"></i></a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-link fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="http://www.hfut.edu.cn/" title="http:&#x2F;&#x2F;www.hfut.edu.cn&#x2F;" rel="noopener" target="_blank">合肥工业大学</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2019 – 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">wyj-Olivia</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">145k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">2:12</span>
+</div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script color='0,0,255' opacity='0.5' zIndex='-1' count='99' src="/lib/canvas-nest/canvas-nest-nomobile.min.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+<div id="needsharebutton-float">
+      <span class="btn">
+        <i class="fa fa-share-alt" aria-hidden="true"></i>
+      </span>
+    </div>
+  <script src="//cdn.jsdelivr.net/gh/theme-next/theme-next-needmoreshare2@1/needsharebutton.min.js"></script>
+  <script>
+      pbOptions = {};
+        pbOptions.iconStyle = "box";
+        pbOptions.boxForm = "horizontal";
+        pbOptions.position = "bottomCenter";
+        pbOptions.networks = "Weibo,Wechat,Douban,QQZone,Twitter,Facebook";
+      new needShareButton('#needsharebutton-postbottom', pbOptions);
+      flOptions = {};
+        flOptions.iconStyle = "box";
+        flOptions.boxForm = "horizontal";
+        flOptions.position = "middleRight";
+        flOptions.networks = "Weibo,Wechat,Douban,QQZone,Twitter,Facebook";
+      new needShareButton('#needsharebutton-float', flOptions);
+  </script>
+</body>
+</html>

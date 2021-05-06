@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="NLP [[MLE+MAP+贝叶斯+n-gram#3 3 1 贝叶斯的应用|N-garm]]  贝叶斯公式： \[ P(A | B)&#x3D; \frac {P(B|A)P(A)}{P(B)} \] 马科夫假设：句子中一个词的出现概率仅仅依赖于它前面的若干个词。此假设即可在一定程度上解决维度灾难(curse of dimensionality)问题。由此引入Bi-gram与Tri-gram。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="基本NLP模型整理(NNM+Word2Vec+RNN)">
+<meta property="og:url" content="http://example.com/2021/01/23/%E7%AC%AC01%E5%91%A8/%E5%9F%BA%E6%9C%ACNLP%E6%A8%A1%E5%9E%8B%E6%95%B4%E7%90%86(NNM+Word2Vec+RNN)/index.html">
+<meta property="og:site_name" content="Olivia的博客">
+<meta property="og:description" content="NLP [[MLE+MAP+贝叶斯+n-gram#3 3 1 贝叶斯的应用|N-garm]]  贝叶斯公式： \[ P(A | B)&#x3D; \frac {P(B|A)P(A)}{P(B)} \] 马科夫假设：句子中一个词的出现概率仅仅依赖于它前面的若干个词。此假设即可在一定程度上解决维度灾难(curse of dimensionality)问题。由此引入Bi-gram与Tri-gram。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://s3.ax1x.com/2021/01/29/yiyo0x.png">
+<meta property="og:image" content="https://pic1.zhimg.com/50/v2-0f439e1bb44c71c8e694cc65cb509263_hd.jpg?source=1940ef5c">
+<meta property="og:image" content="http://www.ai-start.com/dl2017/images/19cbb2d356a2a6e0f35aa2a946b23a2a.png">
+<meta property="og:image" content="http://www.ai-start.com/dl2017/images/27afdd27f45ad8ddf78677af2a3eeaf8.png">
+<meta property="og:image" content="http://www.ai-start.com/dl2017/images/rnn-f.png">
+<meta property="og:image" content="http://www.ai-start.com/dl2017/images/rnn_cell_backprop.png">
+<meta property="og:image" content="http://www.ai-start.com/dl2017/images/1daa38085604dd04e91ebc5e609d1179.png">
+<meta property="og:image" content="https://s3.ax1x.com/2021/01/27/sxDrCV.png">
+<meta property="og:image" content="http://www.ai-start.com/dl2017/images/LSTM.png">
+<meta property="og:image" content="https://s3.ax1x.com/2021/01/27/sxD2DJ.png">
+<meta property="og:image" content="http://www.ai-start.com/dl2017/images/053831ff43d039bd5e734df96d8794cb.png">
+<meta property="og:image" content="http://www.ai-start.com/dl2017/images/455863a3c8c2dfaa0e5474bfa2c6824d.png">
+<meta property="article:published_time" content="2021-01-23T12:50:03.000Z">
+<meta property="article:modified_time" content="2021-05-04T06:47:08.182Z">
+<meta property="article:author" content="Olivia">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://s3.ax1x.com/2021/01/29/yiyo0x.png">
+
+<link rel="canonical" href="http://example.com/2021/01/23/%E7%AC%AC01%E5%91%A8/%E5%9F%BA%E6%9C%ACNLP%E6%A8%A1%E5%9E%8B%E6%95%B4%E7%90%86(NNM+Word2Vec+RNN)/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+<link rel="stylesheet" href="//cdn.jsdelivr.net/gh/theme-next/theme-next-needmoreshare2@1/needsharebutton.min.css"><style>
+#needsharebutton-postbottom {
+  cursor: pointer;
+  height: 26px;
+  margin-top: 10px;
+  position: relative;
+}
+#needsharebutton-postbottom .btn {
+  border: 1px solid $btn-default-border-color;
+  border-radius: 3px;
+  display: initial;
+  padding: 1px 4px;
+}
+</style><style>
+#needsharebutton-float {
+  bottom: 88px;
+  cursor: pointer;
+  left: -8px;
+  position: fixed;
+  z-index: 9999;
+}
+#needsharebutton-float .btn {
+  border: 1px solid $btn-default-border-color;
+  border-radius: 4px;
+  padding: 0 10px 0 14px;
+}
+</style>
+  <title>基本NLP模型整理(NNM+Word2Vec+RNN) | Olivia的博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Olivia的博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/01/23/%E7%AC%AC01%E5%91%A8/%E5%9F%BA%E6%9C%ACNLP%E6%A8%A1%E5%9E%8B%E6%95%B4%E7%90%86(NNM+Word2Vec+RNN)/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="Olivia">
+      <meta itemprop="description" content="May All Your Troubles Be little Ones">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Olivia的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          基本NLP模型整理(NNM+Word2Vec+RNN)
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-01-23 20:50:03" itemprop="dateCreated datePublished" datetime="2021-01-23T20:50:03+08:00">2021-01-23</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-05-04 14:47:08" itemprop="dateModified" datetime="2021-05-04T14:47:08+08:00">2021-05-04</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/NLP/" itemprop="url" rel="index"><span itemprop="name">NLP</span></a>
+                </span>
+                  >
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/NLP/notes/" itemprop="url" rel="index"><span itemprop="name">notes</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>5.5k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>5 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="nlp">NLP</h1>
+<h2 id="mlemap贝叶斯n-gram3-3-1-贝叶斯的应用n-garm">[[MLE+MAP+贝叶斯+n-gram#3 3 1 贝叶斯的应用|N-garm]]</h2>
+<ul>
+<li><p>贝叶斯公式： <span class="math display">\[
+P(A | B)= \frac {P(B|A)P(A)}{P(B)}
+\]</span></p></li>
+<li><p>马科夫假设：句子中一个词的出现概率仅仅依赖于它前面的若干个词。此假设即可在一定程度上解决<strong>维度灾难(curse of dimensionality)</strong>问题。由此引入<strong>Bi-gram</strong>与<strong>Tri-gram</strong>。</p></li>
+<li><p><strong>Bi-gram</strong>：只依赖它前面出现的一个词 <span class="math display">\[
+p(S)=p(w_1w_2w_3...w_n)=p(w_1)p(w_2|w_1)...p(w_n|w_{n-1})
+\]</span> <strong>Tri-gram</strong>：只依赖于它前面出现的两个词 <span class="math display">\[
+p(S)=p(w_1w_2...w_3)=p(w_1)p(w_2|w_1)...p(w_n|w_{n-1}w_{n-2})
+\]</span></p></li>
+<li><p><strong>数据平滑(data Smoothing)</strong>：理论上N越大效果越好，但是N过大会出现<strong>稀疏问题（Sparsity）</strong>。故需进行数据平滑，目的有两个：使所有N-gram概率之和为1，使所有的N-gram概率都不为0。<strong>本质其实就是重新分配整个概率空间，使已经出现过的n-gram的概率降低，补充给未曾出现过的n-gram。</strong>常见平滑方法有<strong>插值平滑（Interpolation）与回溯法（backoff）</strong>，具体核心思想不再赘述。</p></li>
+<li><p><strong>存在问题</strong>：不考虑超过1个或者2个单词的上下文（n），无法计算词汇间的相似度。</p></li>
+</ul>
+<h2 id="nnlm">NNLM</h2>
+<ul>
+<li><p>创新：提出词向量、引入神经网络。</p></li>
+<li><p>模型结构：</p>
+<figure>
+<img src="https://s3.ax1x.com/2021/01/29/yiyo0x.png" alt="yiyo0x.png" /><figcaption aria-hidden="true">yiyo0x.png</figcaption>
+</figure>
+<ul>
+<li><p>输入层：</p>
+<p><strong>one-hot vector</strong>形式的编码，对于每个one-hot vector<span class="math inline">\((1 × |V|)\)</span>，与Embedding size为<span class="math inline">\(m\)</span>的<strong>矩阵<span class="math inline">\(C (|V| × m)\)</span>相乘</strong>，得到一个<strong>distribution vector</strong><span class="math inline">\((1 × m)\)</span>（此处即选择C中相应对应词向量的那一行）。<span class="math inline">\(m\)</span>比|V|小很多，从而达到了降维的目的，同时 <span class="math inline">\(C\)</span> 可由神经网络的Back propagation训练不断优化。</p></li>
+<li><p>隐藏层：</p>
+<p>得到所有词的词向量后（即一个 <span class="math inline">\(( n - 1) × m\)</span> 的矩阵），进行处理得到一个 <span class="math inline">\((n - 1)m×1\)</span>的<strong>向量<span class="math inline">\(x\)</span></strong>。</p>
+<p>隐含层为一个简单的tanh激活层，公式为 <span class="math display">\[
+hidden=tanh(Hx+d)
+\]</span> 其维度信息为： <span class="math display">\[
+H：h×(n-1)m\\
+d:h×1\\
+x:(n-1)m×1
+\]</span></p></li>
+<li><p>输出层</p>
+<p><strong>利用了隐藏层的输出及原始词向量</strong>，最后还需用<span class="math inline">\(softmax\)</span>，具体公式如下： <span class="math display">\[
+y=b+Wx+Utanh(Hx+d)
+\]</span> 其维度信息为： <span class="math display">\[
+U:|V|×h\\
+W:|V|×(n-1)m\\
+b:|V|×1
+\]</span> 若不想利用原始词向量信息则将<span class="math inline">\(W\)</span>设置为零矩阵</p></li>
+<li><p>损失函数为 <span class="math display">\[
+L=\frac {1}{T}\sum_{t}log\tilde{P}(w_t|w_{t-1},...w_{t-1+n})+R(\theta)
+\]</span> <span class="math inline">\(R(\theta)\)</span>为正则化项 <span class="math display">\[
+\theta=(b,d,W,U,H,C)\\
+\theta\leftarrow\theta+\epsilon\frac{\partial{log\tilde{P}(w_t|w_{t-1},...,w_{t-n+1})}}{\partial\theta}
+\]</span></p></li>
+</ul></li>
+<li><p>存在问题</p>
+<ul>
+<li><p>NNML只用了左边的n-1个词，不能利用更多的上下文信息（如2010年Mikolov提出RNNLM）</p></li>
+<li><p>NNML的输出层计算量太大，需减少计算量使得大规模语料上的训练变得可行（如Minh和Hinton提出的LBL以及后续的一系列模型）</p></li>
+<li><p>优化（简要）：</p>
+<ul>
+<li><p>2007年Mnih和Hinton提出的<strong>LBL以及后续的一系列相关模型，省去了NNLM中的激活函数，直接把模型变成了一个线性变换</strong>，尤其是后来将Hierarchical Softmax引入到LBL后，训练效率进一步增强，但是表达能力不如NNLM这种神经网络的结构；</p></li>
+<li><p>2008年Collobert和Weston提出的<strong>C&amp;W模型不再利用语言模型的结构，而是将目标文本片段整体当做输入，然后预测这个片段是真实文本的概率</strong>，所以它的工作主要是改变了目标输出，由于输出只是一个概率大小，不再是词典大小，因此训练效率大大提升，但由于使用了这种比较“别致”的目标输出，使得它的词向量表征能力有限；</p></li>
+<li><p>2010年Mikolov提出的<strong>RNNLM</strong>主要是为了解决长程依赖关系，时间复杂度问题依然存在。</p></li>
+</ul></li>
+</ul></li>
+</ul>
+<h2 id="word2vec">Word2vec</h2>
+<ul>
+<li><p>两种模型and两种优化算法</p>
+<ul>
+<li><span class="math inline">\(CBOW\)</span>（连续词袋模型）：利用上下文预测中心词</li>
+<li><span class="math inline">\(Skip-gram\)</span>（跳字模型）：利用中心词预测上下文</li>
+<li><span class="math inline">\(hierarchical\ softmax\)</span>（层次<span class="math inline">\(softmax\)</span>）</li>
+<li><span class="math inline">\(negative\ sampling\)</span>（负采样）</li>
+</ul></li>
+<li><p>与NNLM的区别</p>
+<p>​ 不涉及两个优化算法的角度讲，word2vec本质上是描述从自然语言到词向量转换的技术，同时<strong>蕴含语义信息：语义相近的词映射到欧式空间后具有较高的余弦相似度</strong>。NNML是把上下文词的向量进行拼接，word2vec是进行sum，<strong>求平均值来转换成低维词向量</strong>。</p>
+<p>​ 涉及的<strong>两个优化算法</strong>可在一定程度上<strong>解决</strong>NNLM模型中出现的从隐藏层到输出到<span class="math inline">\(softmax\)</span>层的<strong>计算量很大的问题</strong>，因为NNLM要计算所有词的<span class="math inline">\(softmax\)</span>概率，再去寻找最大值。而word2vec<strong>采用了哈夫曼树</strong>来代替从隐藏层到输出<span class="math inline">\(softmax\)</span>层的映射从而避免计算所有词的<span class="math inline">\(softmax\)</span>概率。在实际计算中，只需沿着哈夫曼树从根结点走到叶节点即可。<strong>时间复杂度从<span class="math inline">\(O(n)\)</span>降低到<span class="math inline">\(O(logN)\)</span></strong></p></li>
+<li><p>利用$ CBOW $模型理解流程</p>
+<figure>
+<img src="https://pic1.zhimg.com/50/v2-0f439e1bb44c71c8e694cc65cb509263_hd.jpg?source=1940ef5c" alt="img" /><figcaption aria-hidden="true">img</figcaption>
+</figure>
+<ul>
+<li>输入层：上下文单词的one-hot【假设单词向量空间dim为V，上下文单词个数为C，组合起来维度信息即为：C×V，图中输入层的三个分别为三个单词的one-hot表示】</li>
+<li>输入的one-hot矩阵乘以共享的输入权重矩阵W【V × N矩阵，N为自己设定的数，初始化权重矩阵W】</li>
+<li>**隐藏层：所得到的向量相加求平均作为隐藏层向量，size为1*N**</li>
+<li>乘以输出权重矩阵<span class="math inline">\(W&#39;\)</span>【N×V】</li>
+<li>输出层：经过<span class="math inline">\(softmax\)</span>可得到向量【1×V】激活函数处理得到的V-dim概率分布，概率最大的即为预测出的中心词（target word）</li>
+<li>代价函数：交叉熵代价函数</li>
+<li>任何单词的one-hot乘以这个矩阵都将得到自己的词向量（Word Embedding）</li>
+</ul></li>
+<li><p>两个优化算法的具体过程</p>
+<p>详见：http://flyrie.top/2018/10/31/Word2vec_Hierarchical_Softmax/</p>
+<p>https://blog.csdn.net/itplus/article/details/37998797</p></li>
+</ul>
+<h2 id="rnn">RNN</h2>
+<ul>
+<li><p>循环神经网络相较于普通神经网络，可结合上下文去训练模型。</p></li>
+<li><p><strong>Forward Propagation</strong>【此部分来自吴恩达深度学习网课】</p>
+<ul>
+<li><p>循环神经网络隐藏层常用的激活函数是<span class="math inline">\(tanh\)</span>，输出层的激活函数采用为<span class="math inline">\(sigmoid\)</span>函数（根据实际需要）</p></li>
+<li><p>公式推导详解</p>
+<figure>
+<img src="http://www.ai-start.com/dl2017/images/19cbb2d356a2a6e0f35aa2a946b23a2a.png" alt="img" /><figcaption aria-hidden="true">img</figcaption>
+</figure>
+<p>在<span class="math inline">\(t\)</span>时刻</p></li>
+</ul>
+<p><span class="math display">\[
+a^{&lt;t&gt;}=g_1(W_{aa}a^{&lt;t-1&gt;}+W_{ax}x^{&lt;t&gt;}+b_a)\\
+\hat y=g_2(W_{ya}a^{&lt;t&gt;}+b_y)
+\]</span></p>
+<p>​ 上标表示时间步，第一个字符表示将要求解的变量，第二个字符表示使用的变量</p>
+<ul>
+<li><p>公式简化</p>
+<figure>
+<img src="http://www.ai-start.com/dl2017/images/27afdd27f45ad8ddf78677af2a3eeaf8.png" alt="img" /><figcaption aria-hidden="true">img</figcaption>
+</figure>
+<p>说明：为了简化将<span class="math inline">\(W_{aa}\)</span>与<span class="math inline">\(W_{ax}\)</span>水平放置组成<span class="math inline">\(W_a\)</span>；将<span class="math inline">\(a^{&lt;t-1&gt;}\)</span>与<span class="math inline">\(x^{&lt;t&gt;}\)</span>叠在一起；</p></li>
+<li><p>更形象的总体说明：</p>
+<figure>
+<img src="http://www.ai-start.com/dl2017/images/rnn-f.png" alt="nn-" /><figcaption aria-hidden="true">nn-</figcaption>
+</figure></li>
+</ul></li>
+<li><p><strong>Backpropagation through time</strong></p>
+<p>交叉熵损失函数： <span class="math display">\[
+L^{&lt;t&gt;}(\hat y^{&lt;t&gt;},y^{&lt;t&gt;})=-y^{&lt;t&gt;}log\hat y^{&lt;t&gt;}-(1-y^{&lt;t&gt;})log(1-\hat y^{&lt;t&gt;})
+\]</span> 整个序列的损失函数<span class="math inline">\(L\)</span> <span class="math display">\[
+L(\hat y, y)=\sum_{t=1}^{T_x}L^{&lt;t&gt;}(\hat y^{&lt;t&gt;},y^{&lt;t&gt;})
+\]</span></p>
+<ul>
+<li><p>更具体公式</p>
+<figure>
+<img src="http://www.ai-start.com/dl2017/images/rnn_cell_backprop.png" alt="nn_cell_backpro" /><figcaption aria-hidden="true">nn_cell_backpro</figcaption>
+</figure></li>
+</ul></li>
+<li><p>分类</p></li>
+</ul>
+<figure>
+<img src="http://www.ai-start.com/dl2017/images/1daa38085604dd04e91ebc5e609d1179.png" alt="img" /><figcaption aria-hidden="true">img</figcaption>
+</figure>
+<ul>
+<li><p>存在问题</p>
+<ul>
+<li>梯度消失问题（Vanishing gradients with RNNs）：对于很深的神经网络后面层的输出误差很难影响到前面层的计算，梯度被近距离梯度主导，导致模型很难学习到远距离的依关系，故<strong>RNN不擅长处理长期依赖问题</strong></li>
+<li>梯度爆炸问题：一般可通过梯度修剪处理</li>
+</ul></li>
+</ul>
+<h2 id="gru">GRU</h2>
+<p>Gated Recurrent Unit（门控循环单元）</p>
+<ul>
+<li><p>增加新变量<span class="math inline">\(c\)</span>，即代表记忆细胞<span class="math inline">\((cell)\)</span></p>
+<p><span class="math inline">\(c^{&lt;t&gt;}=a^{&lt;t&gt;}\)</span>（与LSTMs的区别）</p></li>
+<li><p><span class="math inline">\(c\)</span>的更新过程</p>
+<hr />
+<p><span class="math inline">\(\tilde c^{&lt;t&gt;} = tanh(W_c[\Gamma_r*c^{&lt;t-1&gt;},x^{&lt;t&gt;}]+b_c)\)</span></p>
+<p><span class="math inline">\(\Gamma_u=\sigma(W_u[c^{&lt;t-1&gt;},x^{&lt;t&gt;}]+b_u)\)</span>【<strong><span class="math inline">\(sigmoid\)</span>函数，大部分情况下非常接近0或1</strong>】</p>
+<p><span class="math inline">\(\Gamma_r=\sigma(W_r[c^{&lt;t-1&gt;},x^{&lt;t&gt;}]+b_r)\)</span></p>
+<p><span class="math inline">\(c^{&lt;t&gt;}=\Gamma_u*\tilde c^{&lt;t&gt;}+(1-\Gamma_u)*c^{&lt;t-1&gt;}\)</span>【为0则不更新】</p>
+<hr />
+<p><span class="math inline">\(u\)</span>：update</p>
+<p><span class="math inline">\(r\)</span>：relevance</p>
+<p>*：每个元素相乘，而非矩阵乘法</p>
+<p><strong>相关门</strong><span class="math inline">\(\Gamma_r\)</span>门表示计算出的下一个<span class="math inline">\(c^{&lt;t&gt;}\)</span>的候选值<span class="math inline">\(\tilde c^{&lt;t&gt;}\)</span>与<span class="math inline">\(c^{&lt;t-1&gt;}\)</span>的相关性</p>
+<p><strong>更新门</strong><span class="math inline">\(\Gamma_u\)</span>门表示更新，并且十分容易取0值，这个更新式子就会变为<span class="math inline">\(c^{&lt;t&gt;}=c^{&lt;t-1&gt;}\)</span>，<strong>有利于维持细胞的值，从而缓解梯度消失的问题，允许神经网络运行在非常庞大的依赖词上。</strong></p></li>
+</ul>
+<h2 id="lstm">LSTM</h2>
+<p>long short term memory unit（长短期记忆）</p>
+<ul>
+<li><p><span class="math inline">\(c\)</span>的更新过程</p>
+<hr />
+<p><span class="math inline">\(\tilde c^{&lt;t&gt;}=tanh(W_c[a^{&lt;t-1&gt;},x^{&lt;t&gt;}]+b_c)\)</span></p>
+<p><span class="math inline">\(\Gamma_u=\sigma(W_u[a^{&lt;t-1&gt;},x^{&lt;t&gt;}]+ b_u)\)</span></p>
+<p><span class="math inline">\(\Gamma_f=\sigma(W_f[a^{&lt;t-1&gt;},x^{&lt;t&gt;}]+ b_f)\)</span></p>
+<p><span class="math inline">\(\Gamma_o=\sigma(W_o[a^{&lt;t-1&gt;},x^{&lt;t&gt;}]+ b_o)\)</span></p>
+<p><span class="math inline">\(c^{&lt;t&gt;}=\Gamma_u*\tilde c^{&lt;t&gt;}+\Gamma_f*c^{&lt;t-1&gt;}\)</span></p>
+<p><span class="math inline">\(a^{&lt;t&gt;}=\Gamma_o*tanh(c^{&lt;t&gt;})\)</span></p>
+<hr />
+<p><span class="math inline">\(\Gamma u\)</span>：更新门</p>
+<p><span class="math inline">\(\Gamma_f\)</span>：遗忘门</p>
+<p><span class="math inline">\(\Gamma_o\)</span>：输出门</p>
+<p>图片表述</p>
+<figure>
+<img src="https://s3.ax1x.com/2021/01/27/sxDrCV.png" alt="image-20210125201411508" /><figcaption aria-hidden="true">image-20210125201411508</figcaption>
+</figure>
+<p>​ 看公式可得，各门值只取决于<span class="math inline">\(a^{&lt;t-1&gt;}\)</span>与<span class="math inline">\(x^{&lt;t&gt;}\)</span>，但有时也可以偷窥一下<span class="math inline">\(c^{&lt;t-1&gt;}\)</span>的值，这叫做“窥视孔连接”<span class="math inline">\((peephole\ connection)\)</span>。故有时说<span class="math inline">\(c^{&lt;t-1&gt;}\)</span>也能影响门值。</p></li>
+<li><p>前向传递</p>
+<figure>
+<img src="http://www.ai-start.com/dl2017/images/LSTM.png" alt="ST" /><figcaption aria-hidden="true">ST</figcaption>
+</figure></li>
+<li><p>反向传播</p>
+<figure>
+<img src="https://s3.ax1x.com/2021/01/27/sxD2DJ.png" alt="image-20210125204542244" /><figcaption aria-hidden="true">image-20210125204542244</figcaption>
+</figure>
+<p>具体推导过程见：https://zybuluo.com/hanbingtao/note/581764</p></li>
+</ul>
+<h2 id="bi-directional-rnn">Bi-directional RNN</h2>
+<p>双向循环神经网络，单元可使用标准的RNN或者GRU、LSTM单元都可，一个有LSTM单元的双向RNN模型是最常用的</p>
+<figure>
+<img src="http://www.ai-start.com/dl2017/images/053831ff43d039bd5e734df96d8794cb.png" alt="img" /><figcaption aria-hidden="true">img</figcaption>
+</figure>
+<p>此处为标准的RNN单元<span class="math inline">\(\hat y^{&lt;t&gt;}=g(W_g[\vec a^{&lt;t&gt;}, \overleftarrow a^{&lt;t&gt;}]+b_y)\)</span></p>
+<p><span class="math inline">\(\overleftarrow a\)</span>只是从右到左，也是在计算激活值</p>
+<ul>
+<li>缺点为需要完整的数据序列</li>
+</ul>
+<h2 id="deep-rnns">Deep RNNs</h2>
+<p>深层循环神经网络</p>
+<figure>
+<img src="http://www.ai-start.com/dl2017/images/455863a3c8c2dfaa0e5474bfa2c6824d.png" alt="img" /><figcaption aria-hidden="true">img</figcaption>
+</figure>
+<p>计算方法：例<span class="math inline">\(a^{[2]&lt;3&gt;}\)</span>有两个输入，下面的和右面的，故可写为下式：</p>
+<p><span class="math inline">\(a^{[2]&lt;3&gt;}=g(W_a^{[2]}[a^{[2]&lt;2&gt;}, a^{[1]&lt;3&gt;}]+b_a^{[2]})\)</span></p>
+<p>一般RNN不会特别深，更多会将输出去掉而换成一些深的层，这些层并不水平相连，而只是一个深层的往来，用来预测<span class="math inline">\(y\)</span>。</p>
+<h2 id="todo">TODO</h2>
+<ul>
+<li>ELMo(Embeddings from Language Models)
+<ul>
+<li>为了利用无标记数据使用了<strong>语言模型</strong></li>
+<li>双向LSTM</li>
+</ul></li>
+<li>OpenAI GPT(<strong>Generative Pre-training Transformer</strong>)</li>
+<li>BERT(<strong>Bidirectional Encoder Representations from Transformers</strong>)</li>
+</ul>
+
+    </div>
+
+    
+	
+	
+
+	
+		<div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束 <i class="fa fa-heart"></i> 感谢阅读-------------</div>
+	<div class="post-widgets">
+      <div id="needsharebutton-postbottom">
+        <span class="btn">
+          <i class="fa fa-share-alt" aria-hidden="true"></i>
+        </span>
+      </div>
+    </div>
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2019/09/14/JS-jQuery-2048%E5%B0%8F%E6%B8%B8%E6%88%8F/" rel="prev" title="JS-jQuery-2048小游戏">
+      <i class="fa fa-chevron-left"></i> JS-jQuery-2048小游戏
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2021/01/23/%E7%AC%AC01%E5%91%A8/MLE+MAP+%E8%B4%9D%E5%8F%B6%E6%96%AF+n-gram/" rel="next" title="MLE+MAP+贝叶斯+n-gram">
+      MLE+MAP+贝叶斯+n-gram <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#nlp"><span class="nav-number">1.</span> <span class="nav-text">NLP</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#mlemap%E8%B4%9D%E5%8F%B6%E6%96%AFn-gram3-3-1-%E8%B4%9D%E5%8F%B6%E6%96%AF%E7%9A%84%E5%BA%94%E7%94%A8n-garm"><span class="nav-number">1.1.</span> <span class="nav-text">[[MLE+MAP+贝叶斯+n-gram#3 3 1 贝叶斯的应用|N-garm]]</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#nnlm"><span class="nav-number">1.2.</span> <span class="nav-text">NNLM</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#word2vec"><span class="nav-number">1.3.</span> <span class="nav-text">Word2vec</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#rnn"><span class="nav-number">1.4.</span> <span class="nav-text">RNN</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#gru"><span class="nav-number">1.5.</span> <span class="nav-text">GRU</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#lstm"><span class="nav-number">1.6.</span> <span class="nav-text">LSTM</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#bi-directional-rnn"><span class="nav-number">1.7.</span> <span class="nav-text">Bi-directional RNN</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#deep-rnns"><span class="nav-number">1.8.</span> <span class="nav-text">Deep RNNs</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#todo"><span class="nav-number">1.9.</span> <span class="nav-text">TODO</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Olivia"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Olivia</p>
+  <div class="site-description" itemprop="description">May All Your Troubles Be little Ones</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">30</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">10</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="/yajie.wang@mail.hfut.edu.cn" title="E-Mail → yajie.wang@mail.hfut.edu.cn"><i class="fa fa-envelope fa-fw"></i></a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-link fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="http://www.hfut.edu.cn/" title="http:&#x2F;&#x2F;www.hfut.edu.cn&#x2F;" rel="noopener" target="_blank">合肥工业大学</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2019 – 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">wyj-Olivia</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">145k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">2:12</span>
+</div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script color='0,0,255' opacity='0.5' zIndex='-1' count='99' src="/lib/canvas-nest/canvas-nest-nomobile.min.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+<div id="needsharebutton-float">
+      <span class="btn">
+        <i class="fa fa-share-alt" aria-hidden="true"></i>
+      </span>
+    </div>
+  <script src="//cdn.jsdelivr.net/gh/theme-next/theme-next-needmoreshare2@1/needsharebutton.min.js"></script>
+  <script>
+      pbOptions = {};
+        pbOptions.iconStyle = "box";
+        pbOptions.boxForm = "horizontal";
+        pbOptions.position = "bottomCenter";
+        pbOptions.networks = "Weibo,Wechat,Douban,QQZone,Twitter,Facebook";
+      new needShareButton('#needsharebutton-postbottom', pbOptions);
+      flOptions = {};
+        flOptions.iconStyle = "box";
+        flOptions.boxForm = "horizontal";
+        flOptions.position = "middleRight";
+        flOptions.networks = "Weibo,Wechat,Douban,QQZone,Twitter,Facebook";
+      new needShareButton('#needsharebutton-float', flOptions);
+  </script>
+</body>
+</html>

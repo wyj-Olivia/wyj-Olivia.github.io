@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="贝叶斯模型 1. 最大似然估计(MLE) 概率是已知模型和参数，推数据。统计是已知数据，推模型和参数 最大似然估计是求参数θ，使似然函数P(x|θ)最大。 例：抛硬币，设正反面出现的概率记为θ，如图   2. 最大后验概率估计(MAP) 最大似然估计是求参数θ, 使似然函数P(x|θ)最大。 最大后验概率 (MAP) 估计则是求参数θ，使后验概率P(θ|x)最大。即使得P(x|θ">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MLE+MAP+贝叶斯+n-gram">
+<meta property="og:url" content="http://example.com/2021/01/23/%E7%AC%AC01%E5%91%A8/MLE+MAP+%E8%B4%9D%E5%8F%B6%E6%96%AF+n-gram/index.html">
+<meta property="og:site_name" content="Olivia的博客">
+<meta property="og:description" content="贝叶斯模型 1. 最大似然估计(MLE) 概率是已知模型和参数，推数据。统计是已知数据，推模型和参数 最大似然估计是求参数θ，使似然函数P(x|θ)最大。 例：抛硬币，设正反面出现的概率记为θ，如图   2. 最大后验概率估计(MAP) 最大似然估计是求参数θ, 使似然函数P(x|θ)最大。 最大后验概率 (MAP) 估计则是求参数θ，使后验概率P(θ|x)最大。即使得P(x|θ">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://s3.ax1x.com/2021/01/23/s7PE01.png">
+<meta property="og:image" content="https://s3.ax1x.com/2021/01/27/sxdHTx.png">
+<meta property="og:image" content="https://s3.ax1x.com/2021/01/23/s7Vg41.png">
+<meta property="og:image" content="https://s3.ax1x.com/2021/01/27/sxdHTx.png">
+<meta property="og:image" content="https://s3.ax1x.com/2021/01/27/sxdOfO.png">
+<meta property="og:image" content="https://s3.ax1x.com/2021/01/27/sxw90I.png">
+<meta property="og:image" content="https://s3.ax1x.com/2021/01/27/sxweXj.png">
+<meta property="og:image" content="https://s3.ax1x.com/2021/01/27/sxwG3F.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20181106114819625.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20181106114849983.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20181106115021655.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20181106115041788.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20181106115100469.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20181112172320454.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20181106130029659.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20181106130121525.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20181106125452850.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3UwMTM4NTAyNzc=,size_16,color_FFFFFF,t_70">
+<meta property="article:published_time" content="2021-01-23T12:50:03.000Z">
+<meta property="article:modified_time" content="2021-05-04T06:47:31.097Z">
+<meta property="article:author" content="Olivia">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://s3.ax1x.com/2021/01/23/s7PE01.png">
+
+<link rel="canonical" href="http://example.com/2021/01/23/%E7%AC%AC01%E5%91%A8/MLE+MAP+%E8%B4%9D%E5%8F%B6%E6%96%AF+n-gram/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+<link rel="stylesheet" href="//cdn.jsdelivr.net/gh/theme-next/theme-next-needmoreshare2@1/needsharebutton.min.css"><style>
+#needsharebutton-postbottom {
+  cursor: pointer;
+  height: 26px;
+  margin-top: 10px;
+  position: relative;
+}
+#needsharebutton-postbottom .btn {
+  border: 1px solid $btn-default-border-color;
+  border-radius: 3px;
+  display: initial;
+  padding: 1px 4px;
+}
+</style><style>
+#needsharebutton-float {
+  bottom: 88px;
+  cursor: pointer;
+  left: -8px;
+  position: fixed;
+  z-index: 9999;
+}
+#needsharebutton-float .btn {
+  border: 1px solid $btn-default-border-color;
+  border-radius: 4px;
+  padding: 0 10px 0 14px;
+}
+</style>
+  <title>MLE+MAP+贝叶斯+n-gram | Olivia的博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Olivia的博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/01/23/%E7%AC%AC01%E5%91%A8/MLE+MAP+%E8%B4%9D%E5%8F%B6%E6%96%AF+n-gram/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="Olivia">
+      <meta itemprop="description" content="May All Your Troubles Be little Ones">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Olivia的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          MLE+MAP+贝叶斯+n-gram
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-01-23 20:50:03" itemprop="dateCreated datePublished" datetime="2021-01-23T20:50:03+08:00">2021-01-23</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-05-04 14:47:31" itemprop="dateModified" datetime="2021-05-04T14:47:31+08:00">2021-05-04</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/NLP/" itemprop="url" rel="index"><span itemprop="name">NLP</span></a>
+                </span>
+                  >
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/NLP/notes/" itemprop="url" rel="index"><span itemprop="name">notes</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>2.9k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>3 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="贝叶斯模型">贝叶斯模型</h1>
+<h2 id="最大似然估计mle">1. 最大似然估计(MLE)</h2>
+<p>概率是已知模型和参数，推数据。<strong>统计</strong>是已知数据，推模型和参数</p>
+<p>最大似然估计是求参数θ，使似然函数P(x|θ)最大。</p>
+<p>例：抛硬币，设正反面出现的概率记为θ，如图</p>
+<p><a target="_blank" rel="noopener" href="https://imgchr.com/i/s7PE01"><img src="https://s3.ax1x.com/2021/01/23/s7PE01.png" alt="s7PE01.png" /></a></p>
+<hr />
+<h2 id="最大后验概率估计map">2. 最大后验概率估计(MAP)</h2>
+<p>最大似然估计是求参数<em>θ</em>, 使似然函数<strong><em>P</em>(<em>x</em>|<em>θ</em>)</strong>最大。</p>
+<p>最大后验概率 (<strong><em>MAP</em></strong>) 估计则是求参数θ，使后验概率<strong><em>P</em>(<em>θ</em>|<em>x</em>)</strong>最大。即使得<strong><em>P</em>(<em>x</em>|<em>θ</em>)P(<em>θ</em>)</strong>最大(贝叶斯公式)。(<em>x</em>一般是一个确定的值，故一般<em>P</em>(<em>x</em>)也是一个确定值而省略)</p>
+<figure>
+<img src="https://s3.ax1x.com/2021/01/27/sxdHTx.png" alt="image-20210123150853576" /><figcaption aria-hidden="true">image-20210123150853576</figcaption>
+</figure>
+<p>例：抛硬币</p>
+<p><a target="_blank" rel="noopener" href="https://imgchr.com/i/s7Vg41"><img src="https://s3.ax1x.com/2021/01/23/s7Vg41.png" alt="s7Vg41.png" /></a></p>
+<hr />
+<h2 id="贝叶斯分类">3. 贝叶斯分类</h2>
+<h3 id="基本术语">3.1 基本术语</h3>
+<ul>
+<li><p><em>P</em>(<em>A</em>)是A的<strong>先验概率</strong>或边缘概率</p></li>
+<li><p><em>P</em>(<em>A</em>|<em>B</em>)是条件概率，A的<strong>后验概率</strong></p></li>
+<li><p><em>P</em>(<em>B</em>|<em>A</em>)是条件概率，B的<strong>后验概率</strong></p></li>
+<li><p><em>P</em>(<em>B</em>)是B的<strong>先验概率</strong>或边缘概率，也作标准化常量</p>
+<p>​ <strong>Bayes定理</strong>可表述为：A的后验概率=(类似度*先验概率)/标准化常量，也就是说，<strong>后验概率与先验概率和类似度的乘积成正比</strong>。另外，比例P(B|A)/P(B)也有时被称作标准类似度（standardised likelihood），Bayes定理可表述为：<strong>后验概率 = 标准类似度*先验概率</strong>。</p></li>
+</ul>
+<h3 id="贝叶斯公式推导">3.2 贝叶斯公式推导</h3>
+<figure>
+<img src="https://s3.ax1x.com/2021/01/27/sxdHTx.png" alt="image-20210123150853576" /><figcaption aria-hidden="true">image-20210123150853576</figcaption>
+</figure>
+<h3 id="贝叶斯的应用">3.3 贝叶斯的应用</h3>
+<h4 id="贝叶斯的应用-1">3.3.1 贝叶斯的应用</h4>
+<ul>
+<li><p>拼写纠正</p>
+<p><strong>P(我们推測他想输入的单词 (h#)| 他实际输入的单词(D))</strong></p>
+<p>即对于不同的推测h1、h2、h3，计算：</p>
+<p><strong>P(h#|D) = P(h#) * P(D|h#) / P(D)</strong></p>
+<p>对于不同h#，P(D)都是一样的，故比较时可省略，即</p>
+<p><strong>P(h# | D) ∝ P(h#) * P(D | h#)</strong> 。</p>
+<p>例：想打the，打成了thew。用户实际是想输入 the 的可能性大小取决于 the 本身在词汇表中被使用的可能性（<strong>频繁程度</strong>）大小（先验概率）和 想打 the 却打成 thew 的可能性大小（似然）的乘积。</p></li>
+<li><p><strong>中文分词</strong></p>
+<p>令X为字串(句子)，Y为词串(分词结果)</p>
+<p>即寻找最大的**P(Y|X) ∝ P(Y)*P(X|Y)<strong>，可表述为：</strong>这样的分词方式（词串）的可能性 乘 这个词串生成句子的可能性**。</p>
+<p>一般分词是肯定能组成句子的，所以近似将P(X|Y)看作是恒等于1的。故问题转化为最大化<strong>P(Y)</strong>，即寻找一种分词使得这个词串（句子）的概率最大化。</p>
+<p>计算方法：对于词串中不同分词W#，依据联合概率的公式展开：P(W1, W2, W3, W4 ..) = P(W1) * P(W2|W1) * P(W3|W2, W1) * P(W4|W1,W2,W3) * ..，通过计算一系列条件概率来计算。</p>
+<p><strong>存在问题：随着条件数目的增加（例最后一项的条件数目有n-1项），数据稀疏问题会越来越严重（维度灾难），即便语料库再大也无法统计出一个靠谱的P来。故根据马尔科夫假设（Markov Assumption）：句子中一个词的出现概率仅仅依赖于它前面的n个词（一般n不超过3），提出了N-gram模型（以下开小差讲解N-gram）。</strong></p>
+<ul>
+<li><p>N-gram的用途：</p>
+<ul>
+<li>词性标注（将词性标注看成一个多分类问题，计算每个词性的概率）</li>
+<li>垃圾短信分类（给短信的每个句子断句，用N-gram判断每个句子是否是垃圾短信中的敏感句子，若敏感句子个数超过一定阀值，认定整个邮件是垃圾短信）</li>
+<li>分词器</li>
+</ul></li>
+<li><p>N-gram中N的确定</p>
+<p>​ 使用Perplexity指标，该指标越小表示一个语言模型的效果越好。针对不同的N-gram，计算各自的Perplexity。</p>
+<figure>
+<img src="https://s3.ax1x.com/2021/01/27/sxdOfO.png" alt="image-20210123202827817" /><figcaption aria-hidden="true">image-20210123202827817</figcaption>
+</figure></li>
+<li><p>N-gram中的数据平滑方法</p>
+<p>​ 当N变大时，会出现<strong>稀疏问题</strong>。故需要进行<strong>数据平滑</strong>。数据平滑的目的有两个：一个是使所有的N-gram概率之和为1，并且使所有的n-gram概率都不为0。本质是重新分配整个概率空间，使已经出现过的n-gram的概率降低，补充给未曾出现过的n-gram。</p>
+<ul>
+<li><p>拉普拉斯平滑</p>
+<figure>
+<img src="https://s3.ax1x.com/2021/01/27/sxw90I.png" alt="image-20210123203434955" /><figcaption aria-hidden="true">image-20210123203434955</figcaption>
+</figure></li>
+<li><p>内插与回溯</p>
+<figure>
+<img src="https://s3.ax1x.com/2021/01/27/sxweXj.png" alt="image-20210123203612932" /><figcaption aria-hidden="true">image-20210123203612932</figcaption>
+</figure>
+<figure>
+<img src="https://s3.ax1x.com/2021/01/27/sxwG3F.png" alt="image-20210123203705637" /><figcaption aria-hidden="true">image-20210123203705637</figcaption>
+</figure></li>
+</ul></li>
+</ul>
+<p>与朴素贝叶斯算法思想上一致。有了这个假设，复杂的乘积可改写为： P(W1) * P(W2|W1) * P(W3|W2) * P(W4|W3) .. （n=1时）。</p>
+<p>例：一个字串X为：“南京市长江大桥”。对于不同分词结果：“南京市长/江大桥”或者“南京市/长江大桥”，由于“南京市长”和“江大桥”在语料库中一起出现的频率为 0 ，这个整句的概率便会被判定为 0 。 从而使得“南京市/长江大桥”这一分词方式胜出。</p></li>
+</ul>
+<h3 id="朴素贝叶斯模型naive-bayesian-model-nbc">3.3.2 朴素贝叶斯模型(Naive Bayesian Model, NBC)</h3>
+<p>比较广泛使用的两种分类模型时<strong>决策树模型</strong>(Decision Tree Model)和<strong>朴素贝叶斯模型</strong>(Naive Bayesian Model, NBC)</p>
+<p>当影响事情的因素有多个时，公式可写做：</p>
+<figure>
+<img src="https://img-blog.csdnimg.cn/20181106114819625.png" alt="img" /><figcaption aria-hidden="true">img</figcaption>
+</figure>
+<p>式中P(A)和多个因素的联合概率P都是可以单独计算的，与A和bi之间的关系无关，故此两项可看作常数。<strong>对于求解P(A|b1, b2,..., bn)，最关键的是P(b1, b2,..., bn)。</strong>根据链式法则可得：</p>
+<figure>
+<img src="https://img-blog.csdnimg.cn/20181106114849983.png" alt="img" /><figcaption aria-hidden="true">img</figcaption>
+</figure>
+<p>若b1到b2这些特征之间是条件独立的，则<strong>P(bi | A, bj)=P(bi | A)</strong>，就有</p>
+<figure>
+<img src="https://img-blog.csdnimg.cn/20181106115021655.png" alt="img" /><figcaption aria-hidden="true">img</figcaption>
+</figure>
+<p><em>(Z对应P(b1, b2,..., bn))</em></p>
+<p>上式中的b1到bn是特征，A是最终的类别，所以可惜而为如下公式：</p>
+<figure>
+<img src="https://img-blog.csdnimg.cn/20181106115041788.png" alt="img" /><figcaption aria-hidden="true">img</figcaption>
+</figure>
+<p>这个公式也就是我们的<strong>朴素贝叶斯分类器的模型函数</strong>。其中因为公式Z对应的P(b1, b2,..., bn)永远都是固定不变的，<strong>因此可直接省去分母部分</strong></p>
+<p><strong>用法如下：</strong></p>
+<ul>
+<li><p>有一个朴素贝叶斯分类器，能够区分出k个类（c1, c2,..., ck），用来分类的特征有n个：（F1, F2,..., Fn）</p></li>
+<li><p>现有个样本s，我们要用NB分类器对它进行预测，则需要先提取出这个样本的所有特征值F1到Fn，将其代入下式（因为对应不同分类的分母为固定值，所以公式可简化为如下形式）中进行k次运算：</p>
+<figure>
+<img src="https://img-blog.csdnimg.cn/20181106115100469.png" alt="img" /><figcaption aria-hidden="true">img</figcaption>
+</figure></li>
+<li><p>然后比较这k次的结果，选出使得运算结果最大的那个cj（j=1, 2,..., k）——这个cj对应的类别就是预测值。求上式的最大值也可以用如下公式表示：</p>
+<figure>
+<img src="https://img-blog.csdnimg.cn/20181112172320454.png" alt="img" /><figcaption aria-hidden="true">img</figcaption>
+</figure></li>
+<li><p>设我们当前有一个模型，总共只有两个类别：c1 和 c2；有三个 Feature：F1，F2和F3。F1 有两种可能性取值：f11 和 f12；F2 有三种可能性取值：f21，f22，f23；F3 也有两种可能性取值：f31，f32。</p>
+<p>则对于此模型，我们要做的是通过训练过程，获得下面这些值：</p>
+<p><img src="https://img-blog.csdnimg.cn/20181106130029659.png" alt="img" style="zoom:50%;" /></p>
+<p><img src="https://img-blog.csdnimg.cn/20181106130121525.png" alt="img" style="zoom:50%;" /></p>
+<p>之后即可进行预测：</p>
+<figure>
+<img src="https://img-blog.csdnimg.cn/20181106125452850.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3UwMTM4NTAyNzc=,size_16,color_FFFFFF,t_70" alt="img" /><figcaption aria-hidden="true">img</figcaption>
+</figure>
+<p>注：<strong>符号“∝”表示成正比例</strong>，值得注意的是P(C=c1|x)与P(C=c2|x)这两个值之和不为1是因为这里的计算并没有带入分母，这也是主里引入正比符号的原因，但是不引入分母对于实际分类的对比是没有影响的。</p></li>
+</ul>
+<p>参考博文：</p>
+<p>&lt;从决策树学习谈到贝叶斯分类算法、EM、HMM&gt;:</p>
+<p>https://www.cnblogs.com/bhlsheji/p/4185608.htmlx</p>
+<p>&lt;朴素贝叶斯分类模型（一）&gt;:</p>
+<p>https://blog.csdn.net/u013850277/article/details/83996358</p>
+
+    </div>
+
+    
+	
+	
+
+	
+		<div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束 <i class="fa fa-heart"></i> 感谢阅读-------------</div>
+	<div class="post-widgets">
+      <div id="needsharebutton-postbottom">
+        <span class="btn">
+          <i class="fa fa-share-alt" aria-hidden="true"></i>
+        </span>
+      </div>
+    </div>
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/01/23/%E7%AC%AC01%E5%91%A8/%E5%9F%BA%E6%9C%ACNLP%E6%A8%A1%E5%9E%8B%E6%95%B4%E7%90%86(NNM+Word2Vec+RNN)/" rel="prev" title="基本NLP模型整理(NNM+Word2Vec+RNN)">
+      <i class="fa fa-chevron-left"></i> 基本NLP模型整理(NNM+Word2Vec+RNN)
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2021/01/30/%E7%AC%AC02%E5%91%A8/%E8%BF%9B%E9%98%B6NLP%E6%A8%A1%E5%9E%8B%E6%95%B4%E7%90%86(Seq2Seq+Attention+pre_transformer+pre_BERT)/" rel="next" title="进阶NLP模型整理(Seq2Seq+Attention+pre_transformer+pre_BERT)">
+      进阶NLP模型整理(Seq2Seq+Attention+pre_transformer+pre_BERT) <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%B4%9D%E5%8F%B6%E6%96%AF%E6%A8%A1%E5%9E%8B"><span class="nav-number">1.</span> <span class="nav-text">贝叶斯模型</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9C%80%E5%A4%A7%E4%BC%BC%E7%84%B6%E4%BC%B0%E8%AE%A1mle"><span class="nav-number">1.1.</span> <span class="nav-text">1. 最大似然估计(MLE)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9C%80%E5%A4%A7%E5%90%8E%E9%AA%8C%E6%A6%82%E7%8E%87%E4%BC%B0%E8%AE%A1map"><span class="nav-number">1.2.</span> <span class="nav-text">2. 最大后验概率估计(MAP)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%B4%9D%E5%8F%B6%E6%96%AF%E5%88%86%E7%B1%BB"><span class="nav-number">1.3.</span> <span class="nav-text">3. 贝叶斯分类</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E6%9C%AF%E8%AF%AD"><span class="nav-number">1.3.1.</span> <span class="nav-text">3.1 基本术语</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%B4%9D%E5%8F%B6%E6%96%AF%E5%85%AC%E5%BC%8F%E6%8E%A8%E5%AF%BC"><span class="nav-number">1.3.2.</span> <span class="nav-text">3.2 贝叶斯公式推导</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%B4%9D%E5%8F%B6%E6%96%AF%E7%9A%84%E5%BA%94%E7%94%A8"><span class="nav-number">1.3.3.</span> <span class="nav-text">3.3 贝叶斯的应用</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%B4%9D%E5%8F%B6%E6%96%AF%E7%9A%84%E5%BA%94%E7%94%A8-1"><span class="nav-number">1.3.3.1.</span> <span class="nav-text">3.3.1 贝叶斯的应用</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%9C%B4%E7%B4%A0%E8%B4%9D%E5%8F%B6%E6%96%AF%E6%A8%A1%E5%9E%8Bnaive-bayesian-model-nbc"><span class="nav-number">1.3.4.</span> <span class="nav-text">3.3.2 朴素贝叶斯模型(Naive Bayesian Model, NBC)</span></a></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Olivia"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Olivia</p>
+  <div class="site-description" itemprop="description">May All Your Troubles Be little Ones</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">30</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">10</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="/yajie.wang@mail.hfut.edu.cn" title="E-Mail → yajie.wang@mail.hfut.edu.cn"><i class="fa fa-envelope fa-fw"></i></a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-link fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="http://www.hfut.edu.cn/" title="http:&#x2F;&#x2F;www.hfut.edu.cn&#x2F;" rel="noopener" target="_blank">合肥工业大学</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2019 – 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">wyj-Olivia</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">145k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">2:12</span>
+</div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script color='0,0,255' opacity='0.5' zIndex='-1' count='99' src="/lib/canvas-nest/canvas-nest-nomobile.min.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+<div id="needsharebutton-float">
+      <span class="btn">
+        <i class="fa fa-share-alt" aria-hidden="true"></i>
+      </span>
+    </div>
+  <script src="//cdn.jsdelivr.net/gh/theme-next/theme-next-needmoreshare2@1/needsharebutton.min.js"></script>
+  <script>
+      pbOptions = {};
+        pbOptions.iconStyle = "box";
+        pbOptions.boxForm = "horizontal";
+        pbOptions.position = "bottomCenter";
+        pbOptions.networks = "Weibo,Wechat,Douban,QQZone,Twitter,Facebook";
+      new needShareButton('#needsharebutton-postbottom', pbOptions);
+      flOptions = {};
+        flOptions.iconStyle = "box";
+        flOptions.boxForm = "horizontal";
+        flOptions.position = "middleRight";
+        flOptions.networks = "Weibo,Wechat,Douban,QQZone,Twitter,Facebook";
+      new needShareButton('#needsharebutton-float', flOptions);
+  </script>
+</body>
+</html>

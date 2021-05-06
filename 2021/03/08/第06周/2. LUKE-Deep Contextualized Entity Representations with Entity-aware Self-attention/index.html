@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="论文地址：https:&#x2F;&#x2F;www.aclweb.org&#x2F;anthology&#x2F;2020.emnlp-main.523&#x2F; Abstract  新的基于BERT的单词和实体的预处理上下文化表示，所提出的模型将给定文本中的单词和实体视为独立的标记，并输出它们的上下文化表示。我们还提出了一种实体感知的自我注意机制，它是transformer中自我注意机制的扩展，并在计算注意力分数时考虑了标记(单词或实">
+<meta property="og:type" content="article">
+<meta property="og:title" content="LUKE-Deep Contextualized Entity Representations with Entity-aware Self-attention">
+<meta property="og:url" content="http://example.com/2021/03/08/%E7%AC%AC06%E5%91%A8/2.%20LUKE-Deep%20Contextualized%20Entity%20Representations%20with%20Entity-aware%20Self-attention/index.html">
+<meta property="og:site_name" content="Olivia的博客">
+<meta property="og:description" content="论文地址：https:&#x2F;&#x2F;www.aclweb.org&#x2F;anthology&#x2F;2020.emnlp-main.523&#x2F; Abstract  新的基于BERT的单词和实体的预处理上下文化表示，所提出的模型将给定文本中的单词和实体视为独立的标记，并输出它们的上下文化表示。我们还提出了一种实体感知的自我注意机制，它是transformer中自我注意机制的扩展，并在计算注意力分数时考虑了标记(单词或实">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://s3.ax1x.com/2021/03/17/66bu2d.png">
+<meta property="og:image" content="https://s1.imagehub.cc/images/2021/03/17/image-20210317165507977.png">
+<meta property="og:image" content="https://s1.imagehub.cc/images/2021/03/17/image-20210317170448320.png">
+<meta property="og:image" content="c:/Users/Olivia~/AppData/Roaming/Typora/typora-user-images/image-20210317172031283.png">
+<meta property="article:published_time" content="2021-03-07T16:00:00.000Z">
+<meta property="article:modified_time" content="2021-05-06T03:48:24.858Z">
+<meta property="article:author" content="Olivia">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://s3.ax1x.com/2021/03/17/66bu2d.png">
+
+<link rel="canonical" href="http://example.com/2021/03/08/%E7%AC%AC06%E5%91%A8/2.%20LUKE-Deep%20Contextualized%20Entity%20Representations%20with%20Entity-aware%20Self-attention/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+<link rel="stylesheet" href="//cdn.jsdelivr.net/gh/theme-next/theme-next-needmoreshare2@1/needsharebutton.min.css"><style>
+#needsharebutton-postbottom {
+  cursor: pointer;
+  height: 26px;
+  margin-top: 10px;
+  position: relative;
+}
+#needsharebutton-postbottom .btn {
+  border: 1px solid $btn-default-border-color;
+  border-radius: 3px;
+  display: initial;
+  padding: 1px 4px;
+}
+</style><style>
+#needsharebutton-float {
+  bottom: 88px;
+  cursor: pointer;
+  left: -8px;
+  position: fixed;
+  z-index: 9999;
+}
+#needsharebutton-float .btn {
+  border: 1px solid $btn-default-border-color;
+  border-radius: 4px;
+  padding: 0 10px 0 14px;
+}
+</style>
+  <title>LUKE-Deep Contextualized Entity Representations with Entity-aware Self-attention | Olivia的博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Olivia的博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/03/08/%E7%AC%AC06%E5%91%A8/2.%20LUKE-Deep%20Contextualized%20Entity%20Representations%20with%20Entity-aware%20Self-attention/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="Olivia">
+      <meta itemprop="description" content="May All Your Troubles Be little Ones">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Olivia的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          LUKE-Deep Contextualized Entity Representations with Entity-aware Self-attention
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-03-08 00:00:00" itemprop="dateCreated datePublished" datetime="2021-03-08T00:00:00+08:00">2021-03-08</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-05-06 11:48:24" itemprop="dateModified" datetime="2021-05-06T11:48:24+08:00">2021-05-06</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Knowledge-Base-Qestion-Answering/" itemprop="url" rel="index"><span itemprop="name">Knowledge Base Qestion Answering</span></a>
+                </span>
+                  >
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Knowledge-Base-Qestion-Answering/paper-comprehension/" itemprop="url" rel="index"><span itemprop="name">paper comprehension</span></a>
+                </span>
+                  >
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Knowledge-Base-Qestion-Answering/paper-comprehension/%E7%9E%8E%E7%9C%8B%E7%9C%8B/" itemprop="url" rel="index"><span itemprop="name">瞎看看</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>2.8k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>3 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>论文地址：https://www.aclweb.org/anthology/2020.emnlp-main.523/</p>
+<h2 id="abstract">Abstract</h2>
+<ul>
+<li>新的基于BERT的单词和实体的预处理上下文化表示，<strong>所提出的模型将给定文本中的单词和实体视为独立的标记，并输出它们的上下文化表示</strong>。我们还提出了一种实体感知的自我注意机制，它是transformer中自我注意机制的扩展，并在计算注意力分数时考虑了标记(单词或实体)的类型。</li>
+</ul>
+<h2 id="introduction">1. Introduction</h2>
+<ul>
+<li>之前的知识库(KB)需要实体链接来表示文本中的实体，并且不能表示知识库中不存在的实体。</li>
+<li>基于transformer的<strong>语境化单词表征(CWR, contextualized word representations)</strong>，如BRET和Roberta，提供了利用基于语言建模的无监督预训练模型训练的有效的通用单词表征。但是CWR体系结构不太适合表示实体，因为
+<ul>
+<li><strong>CWR不输出实体的span级别的表示</strong>，它们通常需要学习如何基于通常较小的下游数据集来计算这样的表示。</li>
+<li>许多实体相关任务，如关系分类、问答等，都涉及到实体间关系的推理。尽管transformer可以通过使用自我注意机制将单词相互关联来捕捉单词之间的复杂关系，但很难<strong>在实体之间执行这样的推理，因为许多实体在模型中被分成多个token</strong>。</li>
+<li><strong>CWR的基于单词的预训练任务不适合于学习实体表示</strong>，因为预测实体中给出其他单词的掩蔽单词，例如给出"The Lord Of [MASK]"预测"Rings"显然比预测整个实体更容易。</li>
+</ul></li>
+<li><strong>LUKE(Language Understanding with Knowledge-based Embedding)</strong>【基于知识的嵌入式语言理解】，基于一个transformer，使用从维基百科获得的大量实体注释语料库进行训练。与现有CWR的一个重要区别是，<strong>不仅将单词视为一个独立的token，还将实体视为独立的token，并使用transformer计算所有令牌的中间和输出表示，如图1。由于实体可被视为token，因此LUKE可以直接对实体之间的关系建模。</strong><img src="https://s3.ax1x.com/2021/03/17/66bu2d.png" alt="66bu2d.png" /></li>
+</ul>
+<h2 id="related-work">2. Related Work</h2>
+<h3 id="静态实体表示static-entity-representations">2.1 静态实体表示(Static Entity Representations)</h3>
+<ul>
+<li>常规实体表示为KB中的每个实体分配固定嵌入。<strong>包括在知识图上训练的知识嵌入，以及使用从知识库检索到的实体的文本上下文或描述来训练的嵌入</strong></li>
+<li>NTEE(Yamada等人，2017年)和Relic(Ling等人，2020年)使用一种方法，<strong>通过预测从知识库获得的实体的文本上下文来训练实体嵌入</strong>。当用文本表示实体时，这一行的主要缺点是(1)它们需要将文本中的实体解析为相应的知识库条目来表示实体，以及(2)它们不能表示知识库中不存在的实体。</li>
+</ul>
+<h3 id="语境化的词表示contextualized-word-representations">2.2 语境化的词表示(Contextualized Word Representations)</h3>
+<ul>
+<li>最近都是基于使用CWR的</li>
+</ul>
+<h2 id="luke">3. LUKE</h2>
+<ul>
+<li>图一显示了LUKE的架构，采用多层bidirectional transformer。将文档中的单词和实体视为输入令牌，并计算每个令牌的表现形式。形式上，给定<span class="math inline">\(m\)</span>个词<span class="math inline">\(w_1,w_2,...w_m\)</span>和<span class="math inline">\(n\)</span>个实体<span class="math inline">\(e_1,e_2,...,e_n\)</span>组成的序列，我们的模型计算<span class="math inline">\(D\)</span>维子表示<span class="math inline">\(h_{w_1},h_{w_2},...,h_{w_m}\)</span>和实体表示<span class="math inline">\(h_{e_1},h_{e_2},...h_{e_n}\)</span>。这些实体可以是维基百科实体（例如Beyonce in Figure 1）或者特殊实体（例如[MASK]）</li>
+</ul>
+<h3 id="输入表示input-representation">3.1 输入表示(Input Representation)</h3>
+<ul>
+<li>使用以下三个embeddings计算令牌(单词或实体)的输入表示</li>
+</ul>
+<h4 id="token-embedding">3.1.1 Token embedding</h4>
+<ul>
+<li>word token embedding: <span class="math inline">\(A \in R^{V_w×D}\)</span>,<span class="math inline">\(V_w\)</span>是词汇表中的单词数量</li>
+<li>entity token embedding: 为提高计算效率，将entity token embedding分解为两个小矩阵<span class="math inline">\(B\in R^{V_e×H}\)</span>和<span class="math inline">\(U\in R^{H×D}\)</span>，<span class="math inline">\(V_e\)</span>是词汇表中所有实体数量。故entity token embedding可以计算为<span class="math inline">\(BU\)</span>。</li>
+</ul>
+<h4 id="position-embedding">3.1.2 Position embedding</h4>
+<ul>
+<li>表示token在单词序列中的位置。</li>
+<li>出现在序列中第<span class="math inline">\(i\)</span>个位置的单词和实体分别表示为<span class="math inline">\(C_i\in R^D\)</span>和<span class="math inline">\(D_i\in R^D\)</span>。</li>
+<li>如果实体名称包含多个单词，则通过平均相应位置的embedding来计算其位置嵌入。</li>
+</ul>
+<h4 id="entity-type-embedding">3.1.3 Entity type embedding</h4>
+<ul>
+<li>表示token是一个entity</li>
+<li>是由<span class="math inline">\(e\in R^D\)</span>表示的单个向量。</li>
+</ul>
+<h4 id="combination">3.1.4 Combination</h4>
+<ul>
+<li>单词的输入表示：Token embedding+Position embedding</li>
+<li>实体的输入表示：Token embedding+Position embedding+Entity type embedding</li>
+<li>将特殊标记<strong>[CLS]</strong>和<strong>[SEP]</strong>分别作为第一个和最后一个单词插入到单词序列中。</li>
+</ul>
+<h3 id="entity-aware-self-attention">3.2 Entity-aware Self-attention</h3>
+<ul>
+<li><p>自注意力机制基于每对标记之间的注意分数将标记彼此关联。给定输入向量序列<span class="math inline">\(x_1,x_2,...,x_k,x_i\in R^D\)</span>。每个输出向量序列<span class="math inline">\(y_1,y_2,...,y_k,y_i\in R^L\)</span>都是基于transformer的输入向量的加权和来计算的。这里，每个输入和输出向量对应于我们模型中的一个令牌（一个单词或一个实体），所以<span class="math inline">\(k=m+n\)</span>，第<span class="math inline">\(i\)</span>个输出向量<span class="math inline">\(y_i\)</span>的计算公式为：<img src="https://s1.imagehub.cc/images/2021/03/17/image-20210317165507977.png" alt="image-20210317165507977.png" /></p></li>
+<li><p>以上为正常计算方法，但因LUKE处理两种类型的标记（单词和实体），因此我们假设在计算注意力得分(<span class="math inline">\(e_{ij}\)</span>)时使用目标标记的类型信息时有益的。故通过引入<em>实体感知(entity-aware)</em>查询机制来增强该机制，该机制对每对可能的令牌类型<span class="math inline">\(x_i\)</span>和<span class="math inline">\(x_j\)</span>采用不同的查询矩阵，注意力得分(<span class="math inline">\(e_{ij}\)</span>)计算方法如下：<img src="https://s1.imagehub.cc/images/2021/03/17/image-20210317170448320.png" alt="image-20210317170448320.png" /></p>
+<p>其中<span class="math inline">\(Q_{w2e},Q_{e2w},Q_{e2e} \in R^{L×D}\)</span>都是查询矩阵</p></li>
+<li><p>除了在训练时计算梯度和更新附加查询矩阵的参数的额外开销之外，原始机制和我们提出的机制的计算成本是相同的。</p></li>
+</ul>
+<h3 id="pretraining-task">3.3 Pretraining Task</h3>
+<ul>
+<li><p>对LUKE进行预训练，使用传统的掩码语言模型(Masked Language Model, MML)和MML的扩展来学习实体表示。</p></li>
+<li><p>通过用特殊的[MASK]实体来替换特定百分比的实体，然后训练模型来预测被掩码的实体。</p></li>
+<li><p>通过在我们的词汇表中的所有实体上应用Softmax函数来预测与屏蔽实体相对应的原始实体：</p>
+<figure>
+<img src="C:\Users\Olivia~\AppData\Roaming\Typora\typora-user-images\image-20210317172031283.png" alt="image-20210317172031283" /><figcaption aria-hidden="true">image-20210317172031283</figcaption>
+</figure></li>
+</ul>
+
+    </div>
+
+    
+	
+	
+
+	
+		<div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束 <i class="fa fa-heart"></i> 感谢阅读-------------</div>
+	<div class="post-widgets">
+      <div id="needsharebutton-postbottom">
+        <span class="btn">
+          <i class="fa fa-share-alt" aria-hidden="true"></i>
+        </span>
+      </div>
+    </div>
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/03/01/%E7%AC%AC05%E5%91%A8/1.%20%E8%AF%AD%E4%B9%89%E8%A7%A3%E6%9E%90-Semantic%20Parsing%20on%20Freebase%20from%20Question-Answer%20Pairs/" rel="prev" title="1. 语义解析-Semantic Parsing on Freebase from Question-Answer Pairs">
+      <i class="fa fa-chevron-left"></i> 1. 语义解析-Semantic Parsing on Freebase from Question-Answer Pairs
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2021/03/08/%E7%AC%AC06%E5%91%A8/1.%20Improving%20Machine%20Reading%20Comprehension%20with%20General%20Reading%20Strategies/" rel="next" title="Improving Machine Reading Comprehension with General Reading Strategies">
+      Improving Machine Reading Comprehension with General Reading Strategies <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#abstract"><span class="nav-number">1.</span> <span class="nav-text">Abstract</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#introduction"><span class="nav-number">2.</span> <span class="nav-text">1. Introduction</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#related-work"><span class="nav-number">3.</span> <span class="nav-text">2. Related Work</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%9D%99%E6%80%81%E5%AE%9E%E4%BD%93%E8%A1%A8%E7%A4%BAstatic-entity-representations"><span class="nav-number">3.1.</span> <span class="nav-text">2.1 静态实体表示(Static Entity Representations)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AF%AD%E5%A2%83%E5%8C%96%E7%9A%84%E8%AF%8D%E8%A1%A8%E7%A4%BAcontextualized-word-representations"><span class="nav-number">3.2.</span> <span class="nav-text">2.2 语境化的词表示(Contextualized Word Representations)</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#luke"><span class="nav-number">4.</span> <span class="nav-text">3. LUKE</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%BE%93%E5%85%A5%E8%A1%A8%E7%A4%BAinput-representation"><span class="nav-number">4.1.</span> <span class="nav-text">3.1 输入表示(Input Representation)</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#token-embedding"><span class="nav-number">4.1.1.</span> <span class="nav-text">3.1.1 Token embedding</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#position-embedding"><span class="nav-number">4.1.2.</span> <span class="nav-text">3.1.2 Position embedding</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#entity-type-embedding"><span class="nav-number">4.1.3.</span> <span class="nav-text">3.1.3 Entity type embedding</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#combination"><span class="nav-number">4.1.4.</span> <span class="nav-text">3.1.4 Combination</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#entity-aware-self-attention"><span class="nav-number">4.2.</span> <span class="nav-text">3.2 Entity-aware Self-attention</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#pretraining-task"><span class="nav-number">4.3.</span> <span class="nav-text">3.3 Pretraining Task</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Olivia"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Olivia</p>
+  <div class="site-description" itemprop="description">May All Your Troubles Be little Ones</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">30</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">10</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="/yajie.wang@mail.hfut.edu.cn" title="E-Mail → yajie.wang@mail.hfut.edu.cn"><i class="fa fa-envelope fa-fw"></i></a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-link fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="http://www.hfut.edu.cn/" title="http:&#x2F;&#x2F;www.hfut.edu.cn&#x2F;" rel="noopener" target="_blank">合肥工业大学</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2019 – 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">wyj-Olivia</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">145k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">2:12</span>
+</div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script color='0,0,255' opacity='0.5' zIndex='-1' count='99' src="/lib/canvas-nest/canvas-nest-nomobile.min.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+<div id="needsharebutton-float">
+      <span class="btn">
+        <i class="fa fa-share-alt" aria-hidden="true"></i>
+      </span>
+    </div>
+  <script src="//cdn.jsdelivr.net/gh/theme-next/theme-next-needmoreshare2@1/needsharebutton.min.js"></script>
+  <script>
+      pbOptions = {};
+        pbOptions.iconStyle = "box";
+        pbOptions.boxForm = "horizontal";
+        pbOptions.position = "bottomCenter";
+        pbOptions.networks = "Weibo,Wechat,Douban,QQZone,Twitter,Facebook";
+      new needShareButton('#needsharebutton-postbottom', pbOptions);
+      flOptions = {};
+        flOptions.iconStyle = "box";
+        flOptions.boxForm = "horizontal";
+        flOptions.position = "middleRight";
+        flOptions.networks = "Weibo,Wechat,Douban,QQZone,Twitter,Facebook";
+      new needShareButton('#needsharebutton-float', flOptions);
+  </script>
+</body>
+</html>

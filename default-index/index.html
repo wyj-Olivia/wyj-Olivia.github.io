@@ -176,7 +176,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/03/01/%E7%AC%AC%E4%BA%94%E5%91%A8/1.%20%E8%AF%AD%E4%B9%89%E8%A7%A3%E6%9E%90-Semantic%20Parsing%20on%20Freebase%20from%20Question-Answer%20Pairs/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/04/15/%E7%AC%AC09%E5%91%A8/Graph%20Convolution%20over%20Pruned%20Dependency%20Trees%20Improves%20Relation%20Extraction/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.jpg">
@@ -190,7 +190,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2021/03/01/%E7%AC%AC%E4%BA%94%E5%91%A8/1.%20%E8%AF%AD%E4%B9%89%E8%A7%A3%E6%9E%90-Semantic%20Parsing%20on%20Freebase%20from%20Question-Answer%20Pairs/" class="post-title-link" itemprop="url">1. 语义解析-Semantic Parsing on Freebase from Question-Answer Pairs</a>
+            <a href="/2021/04/15/%E7%AC%AC09%E5%91%A8/Graph%20Convolution%20over%20Pruned%20Dependency%20Trees%20Improves%20Relation%20Extraction/" class="post-title-link" itemprop="url">Graph Convolution over Pruned Dependency Trees Improves Relation Extraction</a>
         </h2>
 
         <div class="post-meta">
@@ -200,14 +200,14 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2021-03-01 00:00:00" itemprop="dateCreated datePublished" datetime="2021-03-01T00:00:00+08:00">2021-03-01</time>
+              <time title="创建时间：2021-04-15 00:00:00" itemprop="dateCreated datePublished" datetime="2021-04-15T00:00:00+08:00">2021-04-15</time>
             </span>
               <span class="post-meta-item">
                 <span class="post-meta-item-icon">
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-05-04 15:15:37" itemprop="dateModified" datetime="2021-05-04T15:15:37+08:00">2021-05-04</time>
+                <time title="修改时间：2021-05-06 14:42:01" itemprop="dateModified" datetime="2021-05-06T14:42:01+08:00">2021-05-06</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -223,348 +223,7 @@
                 </span>
                   >
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Knowledge-Base-Qestion-Answering/paper-comprehension/basis/" itemprop="url" rel="index"><span itemprop="name">basis</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>4.7k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>4 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <ul>
-<li>论文原文：https://nlp.stanford.edu/pubs/semparseEMNLP13.pdf</li>
-</ul>
-<h2 id="简介">1. 简介</h2>
-<ul>
-<li><p>经典的语义解析，baseline方法</p></li>
-<li><p><strong>语义解析（Semantic Parsing）</strong>KB-QA的思路是通过对自然语言进行语义上的分析，转化为一种在知识库中的语义表示，进而通过知识库中的知识，进行<strong>推理（Inference）查询（Query）</strong>，得出最终答案，这种语义表示即<strong>逻辑形式（Logic Form）</strong></p></li>
-<li><p>逻辑形式</p>
-<ul>
-<li><p>Lambda Dependency-Based Compositional Semantics ( Lambda-DCS)是一种经典的逻辑语言，它用于处理逻辑形式（在实际操作中，逻辑形式会转化SPARQL query，可以在Virtuoso engine上对Freebase进行查询）</p></li>
-<li><p>用<span class="math inline">\(z\)</span>表示一个逻辑形式，用<span class="math inline">\(K\)</span>表示知识库，<span class="math inline">\(e\)</span>表示实体，<span class="math inline">\(p\)</span>表示实体关系（谓词或属性）。逻辑形式分为一元形式（unary）和二元形式（binary）。对于一个一元实体<span class="math inline">\(e\)</span>，我们可以查询出对应知识库中的实体，给定一个二元关系<span class="math inline">\(p\)</span>，可以查到它在知识库中所有与该实体关系<span class="math inline">\(p\)</span>相关的三元组中的实体对。并且我们可以像数据库语言一样，进行连接Join，并求交集Intersection和聚合Aggregate（如计数，求最大值等等）操作。具体来说，逻辑形式有以下形式和操作</p>
-<figure>
-<img src="https://pic1.zhimg.com/v2-9e277da14c5756f74b97cc36c626e69c_r.jpg" alt="img" /><figcaption aria-hidden="true">img</figcaption>
-</figure>
-<p>有了上面的定义，就可将一个自然语言问题表示为一个可以在知识库中进行查询的逻辑形式，比如问句</p>
-<p>"Number of dramas starring Tom Cruise"</p>
-<p>它对应的逻辑形式是</p>
-<p><span class="math inline">\(count(Genre.Drama\cap Performance.Actor.TomCruise)\)</span></p>
-<p>当自然语言问题转化为逻辑形式后，通过相应的逻辑语言（转化为SPARQL query）查询知识库就可以得到答案。</p></li>
-</ul></li>
-</ul>
-<h2 id="语义解析kb-qa的方法框架">2. 语义解析KB-QA的方法框架</h2>
-<ul>
-<li><p>语义解析的过程可以看作是自底向上构造语法树的过程，树的根节点，就是该自然语言问题最终的逻辑形式表达。整个流程可以分为两部分</p>
-<ul>
-<li><strong>词汇映射</strong>：即构造底层的语法树节点。将单个自然语言短语或单词映射到知识库实体或知识库实体关系所对应的逻辑形式。我们可以通过构造一个<strong>词汇表(Lexicon)</strong>来完成这样的映射。</li>
-<li><strong>构建(Composition)</strong>：即自底向上对树的节点进行两两合并，最后生成根节点，完成语法树的构建。这一步有很多方法，诸如构造大量手工规则，组合范畴语法（Combinatory Categorical Grammars，CCG），本文采用了最暴力的方法，即对于两个节点都可以执行上面所谈到的连接Join，求交Intersection，聚合Aggregate三种操作，以及本文独创的桥接Bridging操作进行结点合并。显然，这种合并方式复杂程度是指数级的，最终会生成许多棵语法树，我们需要通过对训练数据进行训练，训练一个分类器，对语法树进行筛选。</li>
-</ul></li>
-<li><p>自然语言转化为逻辑形式的流程如下图所示：</p>
-<figure>
-<img src="https://pic1.zhimg.com/v2-30043234fb15d3c23f1739fdaffb9278_r.jpg" alt="img" /><figcaption aria-hidden="true">img</figcaption>
-</figure>
-<p>红色部分即<strong>逻辑形式</strong>，绿色部分where was Obama born为自然语言问题，蓝色部分为<strong>词汇映射（Lexicon）</strong>和<strong>构建（Composition）</strong>使用的操作，最后形成的语义解析树的根节点即语义解析结果。</p></li>
-</ul>
-<h2 id="训练分类器">3. 训练分类器</h2>
-<ul>
-<li><p>分类器的 任务是计算每一种语义解析结果<span class="math inline">\(d\)</span>（Derivation）的概率，作者通过discrimminative loglinear model进行modeling，使用Softmax进行概率归一化，公式如下</p>
-<figure>
-<img src="https://pic1.zhimg.com/v2-14c20c55d76c3b34edcc0a933615bd28_r.jpg" alt="img" /><figcaption aria-hidden="true">img</figcaption>
-</figure>
-<p>其中<span class="math inline">\(x\)</span>代表自然语言问题，<span class="math inline">\(\phi(x,d_i)\)</span>是一个从语义解析结果<span class="math inline">\(d_i\)</span>和<span class="math inline">\(x\)</span>中提取出来的b维特征向量（该特征向量包括了构造该语法树所有操作的对应特征）<span class="math inline">\(\theta\)</span>是b维的参数向量。</p>
-<p>对于训练数据 问题-答案对<span class="math inline">\((x_i,y_i)\)</span>，最大化log-likelihood损失函数，通过AdaGrad算法（一种动态调整学习率的随机梯度下降算法）进行参数更新。目标函数如下：</p>
-<figure>
-<img src="https://pic3.zhimg.com/v2-28e033572f6ccd29d0f9a9488adedb46_r.jpg" alt="img" /><figcaption aria-hidden="true">img</figcaption>
-</figure>
-<p>可以看出特征向量的训练实际上是一种弱监督训练（准确的说是一种远程监督，Distant Supervison）。</p>
-<ul>
-<li><p>AdaGrad算法[https://zhuanlan.zhihu.com/p/61955391]</p>
-<ul>
-<li><p>该算法的思想是<strong>独立地适应模型的每个参数：具有较大偏导的参数相应有一个较大的学习率，而具有小偏导的参数则对应一个较小的学习率</strong></p></li>
-<li><p>具体来说，每个参数的学习率会缩放各参数反比于其<strong>历史梯度平方值总和的平方根</strong></p></li>
-<li><p>算法描述</p>
-<figure>
-<img src="https://pic4.zhimg.com/v2-72891bc0e46a96e2aa07681e4df686c3_r.jpg" alt="img" /><figcaption aria-hidden="true">img</figcaption>
-</figure></li>
-<li><p>注意：全局学习率<span class="math inline">\(\epsilon\)</span>并没有更新，而是每次应用时被缩放</p></li>
-</ul></li>
-</ul></li>
-</ul>
-<h2 id="构建词汇表">4. 构建词汇表</h2>
-<ul>
-<li><p>词汇表即自然语言与知识库实体或知识库实体关系的单点映射，这一操作也被成为<strong>对齐（Alignment）</strong>。</p></li>
-<li><p>自然语言<strong>实体</strong>到知识库<strong>实体</strong>映射相对简单。比如将<em>“Obama was also born in Honolulu.”</em>中的实体<em>Obama</em>映射为知识库中的实体<em>BarackObama</em>，可以使用一些简单的字符串匹配方式进行映射。</p></li>
-<li><p>但<strong>自然语言短语</strong>到相应知识库实体<strong>关系</strong>的映射较难，如<em>“was also born in”</em>映射到<em>PlaceOfBirth</em>。则可以<strong>使用统计</strong>，在文档中，如果有较多的实体对（entity1, entity2）作为主语和宾语出现在was born in的两侧，并且，在知识库中，这些实体也同时出现在包含<em>PlaceOfBirth</em>的三元组中，那么我们可以认为<em>"was also born in"</em>这个短语可以和<em>PlaceOfBirth</em>建立映射。</p>
-<p>比如<em>（“Barack Obama”，“Honolulu”）,（“MichelleObama”，“Chicago”）</em>等实体对在文档中经常作为“was also <em>born in”</em>这个短语的主语和宾语，并且它们也都和实体关系<em>PlaceOfBirth</em>组成三元组出现在知识库中。</p></li>
-<li><p>本文构建的词汇表</p>
-<ul>
-<li><p>利用<a target="_blank" rel="noopener" href="http://reverb.cs.washington.edu">ReVerbopen IE system</a>在<a target="_blank" rel="noopener" href="http://lemurproject.org/clueweb09/FACC1/">ClueWeb09</a>（注：该数据集由卡耐基梅隆学校在09年构建，还有一个12年的版本，<a target="_blank" rel="noopener" href="http://lemurproject.org/clueweb12/">ClueWeb12</a>）上抽取15millions个三元组构成一个数据集，如<em>(“Obama”, “was also born in”, “<strong>August 1961</strong>”)，</em>可以看出三元组的实体和关系都是自然语言的形式，取出其中的一个三元组子集，<strong>对里面的每一个三元组的主语实体和宾语实体通过字符匹配的方式替换为知识库的实体，并使用<a target="_blank" rel="noopener" href="http://nlp.stanford.edu/pubs/lrec2012-sutime.pdf">SUTime</a>对数据进行归一化。</strong>如：<em>(“Obama”, “was also born in”, “August 1961”)</em> 经过预处理后转化为 <em>(BarackObama, “was also born in”, 1961-08)</em>。</p></li>
-<li><p>接着对每一个三元组中的自然语言短语<span class="math inline">\(r_1\)</span>两边的实体对（entity1, entity2）进行标注，同时需要注意，由于自然语言短语<span class="math inline">\(r_1\)</span>和知识库实体关系<span class="math inline">\(r_2\)</span>的对应关系是<strong>多对多</strong>的，比如<em>“was also born in”</em>可能对应<em>PlaceOfBirth</em>，也可能对应<em>DateOfBrith</em>，我们需要对每一个<span class="math inline">\(r_1\)</span>进行区分，我们可以通过知识库查询到每一个实体的<strong>类型（type），</strong>比如<em>1961-08</em>的类型是<em>date</em>而<em>honolulu</em>的类型是<em>place</em>，我们对<span class="math inline">\(r_1\)</span>两边的实体类型进行查询可以得到主语实体的类型<span class="math inline">\(t_1\)</span>和宾语实体的类型<span class="math inline">\(t_2\)</span>，因此<span class="math inline">\(r_1\)</span>可以进一步表示为<span class="math inline">\(r[t_1,t_2]\)</span>，我们对其所在三元组两边的实体进行统计，得到实体对集合<span class="math inline">\(F(r[t_1,t_2])\)</span>。</p>
-<p>同样的，通过对知识库进行统计，对每一个知识库三元组中的实体关系<span class="math inline">\(r_2\)</span>也统计其两边的实体，可以得到实体对集合<span class="math inline">\(F(r_2)\)</span>，通过比较集合<span class="math inline">\(F(r[t_1,t_2])\)</span>和集合<span class="math inline">\(F(r_2)\)</span>类似Jaccard距离（集合交集元素数目比集合并集元素个数）这样的特征来确定是否建立词汇映射，如下图所示</p>
-<figure>
-<img src="https://pic3.zhimg.com/v2-fffcd8fa43219bfe3aaa6fc19b384c72_r.jpg" alt="img" /><figcaption aria-hidden="true">img</figcaption>
-</figure>
-<p>图中绿色字体为<span class="math inline">\(r_1\)</span>，蓝色字体为<span class="math inline">\(r_2\)</span>。作者定义了词汇映射操作的三种特征（用于训练分类器），对齐特征（Alignment features），文本相似特征（Text similarity features），和词汇化特征（Lexicalized features），具体内容如下表<img src="https://pic2.zhimg.com/v2-663915191bcb3eb1e1717a2797ac27e1_r.jpg" alt="img" /></p>
-<p>其中文本相似度特征中的<span class="math inline">\(s_2\)</span>指<span class="math inline">\(r_2\)</span>的freebase name。</p>
-<p>在实际使用中，我们可以通过词性标注（POS）和命名实体识别（NER）来确定哪些短语和单词需要被词汇映射（Lexicon），从而忽略对一些skipped words进行词汇映射。并且，作者还建立了18种手工规则，对问题词（<em>question words</em>）进行逻辑形式的直接映射，如“<em>where，how many”</em>映射为<em>Type.Location</em> 和 <em>Count。</em></p></li>
-</ul></li>
-</ul>
-<h2 id="桥接操作bridging">5. 桥接操作(Bridging)</h2>
-<ul>
-<li><p>完成词汇表的构建后，仍然存在一些问题。比如，对于go, have, do 这样的轻动词(light verb)，难以直接映射到一个知识库实体关系上。其次，有些知识库实体关系极少出现，不容易通过统计的方式找到映射方式，还有一些词比如actress，实际上是两个知识库实体关系进行组合操作后的结果(<span class="math inline">\(actor\cap gender.female\)</span>)（作者最后提到这个问题有希望通过在知识库上进行随机游走Random walk或者使用马尔科夫逻辑Markov logic解决），因此我们需要找到一个额外的二元关系将当前的逻辑形式连接起来，就是桥接</p>
-<p>例：<em>“Which college did Obama go to?”</em></p>
-<p>假设“<em>Obama</em>” 和 “<em>college</em>” 可被词汇映射映射为 <em>BarackObama</em> 和 <em>Type.University</em>, 这里"go to" 却难以找到一个映射，事实上，这里我们需要去寻找一个中间二元关系<span class="math inline">\(b\)</span>(即<em>Education</em>)使得上面的句子可以被解析为<span class="math inline">\((Type.University\cap Education.BarackObama)\)</span>，如下图所示<img src="https://pic4.zhimg.com/v2-1db39b61fccb5447df696d4b6aab982b_r.jpg" alt="img" />具体来说，给定两个类型（tpye）分别是<span class="math inline">\(t_1\)</span>和<span class="math inline">\(t_2\)</span>的一元逻辑形式<span class="math inline">\(z_1\)</span>和<span class="math inline">\(z_2\)</span>，我们需要找到一个二元逻辑形式<span class="math inline">\(b\)</span>，在<span class="math inline">\(b\)</span>对应的实体对类型满足<span class="math inline">\((t_1,t_2)\)</span>的条件下生成逻辑形式<span class="math inline">\((z_1\cap b,z_2)\)</span>，<strong>这就是桥接</strong>，由于这里有类型限制，所以我们可以在知识库中相邻的逻辑关系中暴力搜索符合条件的二元关系<span class="math inline">\(b\)</span>。</p>
-<p>（注：在论文中还提到了另外两种需要进行桥接的场景，但不再详细写）</p>
-<p>同样的，作者也为桥接操作定义了相应的特征（为了分类器训练），定义如下表所示<img src="https://pic2.zhimg.com/v2-951fe5ee41549505d281310e904ae0cd_r.jpg" alt="img" /></p>
-<p>对于构建(composition)的其他三种操作：连接Join，求交集Intersection和聚合Aggregate，作者也定义了相应的特征（为了分类器的训练），如下表<img src="https://pic2.zhimg.com/v2-150278f7206e060eef59e7be580e5c15_r.jpg" alt="img" /></p></li>
-</ul>
-<h2 id="存在问题">6. 存在问题</h2>
-<ul>
-<li>词汇映射是整个算法有效（work）的基点，然而这里采用的词汇映射（尤其是关系映射）是基于<strong>比较简单的统计方式，对数据有较大依赖性</strong>。最重要的是，这种方式<strong>无法完成自然语言短语到复杂知识库关系组合的映射</strong>（如<em>actress</em> 映射为<span class="math inline">\(actor\cap gender.female\)</span>）。</li>
-<li>在答案获取的过程中，通过远程监督学习训练分类器对语义树进行评分，注意，这里的语义树实际的组合方式是很多的，要训练这样一个强大的语义解析分类器，需要大量的训练数据。但无论是Free917还是WebQuestion，这两个数据集的问题-答案对都比较少。</li>
-</ul>
-
-      
-    </div>
-
-    
-	
-	
-
-	
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/03/01/%E7%AC%AC%E4%BA%94%E5%91%A8/2.%20%E4%BF%A1%E6%81%AF%E6%8A%BD%E5%8F%96-Information%20Extraction%20over%20Structured%20Data_Question%20Answering%20with%20Freebase/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpg">
-      <meta itemprop="name" content="Olivia">
-      <meta itemprop="description" content="May All Your Troubles Be little Ones">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Olivia的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/03/01/%E7%AC%AC%E4%BA%94%E5%91%A8/2.%20%E4%BF%A1%E6%81%AF%E6%8A%BD%E5%8F%96-Information%20Extraction%20over%20Structured%20Data_Question%20Answering%20with%20Freebase/" class="post-title-link" itemprop="url">2. 信息抽取-Information Extraction over Structured Data_Question Answering with Freebase</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-03-01 00:00:00" itemprop="dateCreated datePublished" datetime="2021-03-01T00:00:00+08:00">2021-03-01</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-05-04 15:15:42" itemprop="dateModified" datetime="2021-05-04T15:15:42+08:00">2021-05-04</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Knowledge-Base-Qestion-Answering/" itemprop="url" rel="index"><span itemprop="name">Knowledge Base Qestion Answering</span></a>
-                </span>
-                  >
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Knowledge-Base-Qestion-Answering/paper-comprehension/" itemprop="url" rel="index"><span itemprop="name">paper comprehension</span></a>
-                </span>
-                  >
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Knowledge-Base-Qestion-Answering/paper-comprehension/basis/" itemprop="url" rel="index"><span itemprop="name">basis</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>3.1k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>3 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <ul>
-<li>论文原文：http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.650.469&amp;rep=rep1&amp;type=pdf</li>
-</ul>
-<h2 id="简介">1. 简介</h2>
-<ul>
-<li>本论文中的方法通过提取问题中的实体，通过在知识库中查询该实体可以得到以该实体节点为中心的知识库子图，子图中的每一个节点或边都可以作为候选答案。通过观察问题，依据某些规则或模版进行信息抽取，得到表征问题和候选答案特征的特征向量，建立分类器，通过输入特征向量对候选答案进行筛选，从而得出最终答案。</li>
-<li>导入
-<ul>
-<li>如何回答问题？
-<ul>
-<li>问题： <em>“what is the name of Justin Bieber brother?”</em></li>
-<li>主题词(topic)是<em>Justin Bieber</em>，因此我们会去知识库中搜索<em>Justin Bieber</em>这个实体，寻找与该实体相关的知识(此时相当于我们确定了答案的范围，得到了一些候选答案)。接下来我们去寻找和实体关系 brother相关的实体(事实上freebase里没有brother这个实体关系，而是sibling，我们需要进行一个简单的推理），最后得到答案。)</li>
-</ul></li>
-<li>如何确定候选答案
-<ul>
-<li>根据主题词，结合知识库，确定候选答案。如果我们把知识库中的实体看作是图节点，把实体关系看作是边，那么知识库就是一个庞大的图，通过主题词对应图节点的相邻几跳(hop)范围内的节点和边抽取出来得到一个知识库的子图，这个子图本文称为<strong>主题图(Topic graph)</strong>，一般来说，这里的跳数一般为一跳或两跳，即与主题词对应的图节点在一条或两条边之内的距离。主题图中的节点，即是<strong>候选答案</strong>。接下来，需要继续观察问题，对问题进行信息抽取，获取能帮助我们在候选答案中筛选出正确答案的信息。</li>
-</ul></li>
-<li>如何对问题进行信息抽取
-<ul>
-<li>结合人的理解，先对句子结构进行分析，下图是<em>"what is the name of Justin Bieber brother"</em>语句的语法依存树(Dependency tree)。 <img src="https://i.loli.net/2021/03/02/xRJiksfuWL7zNd4.jpg" alt="0D3EEADC-95E5-4EB4-9061-1213A4E0B287.jpeg" /></li>
-<li>首先通过依存关系nsubj(what,name)和prep_of(name, brother)这两条信息知道答案是一个名字，并且这个名字和brother有关，当然我们此时还不能判断是否是人名。进一步，通过nn(brother, Justin Bieber)这条信息我们可以根据Justin Bieber 是个人，推导出他的brother也是个人，综合前面的信息，可以推理出我们最终的答案应该是个人命。(注：nsubj代表名词性主语，prep_of代表of介词修饰，nn 代表名词组合)，当确定了最终答案是个人名，就很容易在候选答案中筛选出正确答案了。</li>
-<li>本质上是对问题进行<strong>信息抽取</strong></li>
-</ul></li>
-</ul></li>
-</ul>
-<h2 id="论文中的处理">2. 论文中的处理</h2>
-<h3 id="信息抽取">3.1 信息抽取</h3>
-<ul>
-<li>首先提取的第一个信息就是<strong>问题词</strong>(question word, 记作<strong><em>qword</em></strong>)，例如 who, when, what, where, how, which, why, whom, whose，它是问题的一个明显特征 。</li>
-<li>第二个关键信息，就是<strong>问题焦点</strong>(question focus, 记作<strong><em>qfocus</em></strong>)这个词暗示了答案的类型，比如name/time/place，我们直接将问题词<strong><em>qword</em></strong>相关的那个名词抽取出来作为<strong><em>qfocus</em></strong>，在这个例子中，what name中的name就是<strong><em>qfocus</em></strong></li>
-<li>第三个需要的信息，就是这个问题的主题词(word topic，记作<strong><em>qtopic</em></strong>)，在这个句子里Justin Bieber就是<strong><em>qtopic</em></strong>，这个词能够帮助我们找到freebase中相关的知识，<strong>我们可以通过命名实体识别（Named Entity Recognition，NER）来确定主题词</strong>，需要注意的是，一个问题中可能存在多个主题词。</li>
-<li>最后需要提取的特征是问题的中心动词(question verb，记作<strong><em>qverb</em></strong>)，词能够给我们提供很多和答案相关的信息，比如play，那么答案有可能是某种球类或者乐器。<strong>我们可以通过词性标注（Part-of-Speech，POS）确定qverb。</strong></li>
-<li>总结：通过对问题提取 <strong>问题词<em>qword</em></strong>，<strong>问题焦点<em>qfocus</em></strong>，<strong>问题主题词<em>qtopic</em></strong>和<strong>问题中心动词<em>qverb</em></strong>这四个问题特征，我们可以将该问题的依存树转化为<strong>问题图（Question Graph）</strong>，如下图所示 <img src="https://i.loli.net/2021/03/02/mZt6IX4HYFWkLne.png" alt="0239E2A3-F15A-48E3-ABD1-19B907664289.png" /></li>
-<li>总结来说，将依存树转化为问题图进行了三个操作：
-<ol type="1">
-<li>将问题词qword，问题焦点qfocus，问题主题词qtopic和问题中心动词qverb加入相对应的节点中，如what -&gt; qword=what。</li>
-<li>如果该节点是命名实体，那就把该节点变为命名实体形式，如justin -&gt; qtopic=person （justin对应的命名实体形式是person）。这一步的目的是因为数据中涉及到的命名实体名字太多了，这里我们只需要区分它是人名 地名 还是其他类型的名字即可。</li>
-<li>删除掉一些不重要的叶子节点，如限定词（determiner，如a/the/some/this/each等），介词（preposition）和标点符号（punctuation）。</li>
-<li><strong>从依存树到问题图的转换，实质上就是对问题进行信息抽取，提取出有利于寻找答案的问题特征，删减掉不重要的信息</strong></li>
-</ol></li>
-</ul>
-<h3 id="构建特征向量对候选答案进行分类">3.2 构建特征向量对候选答案进行分类</h3>
-<ul>
-<li>在候选答案中找出正确答案，实际上是一个<strong>二分类问题</strong>（判断每个候选答案是否是正确答案），我们使用训练数据问题-答案对，训练一个分类器来找到正确答案。分类器的输入特征向量中的每一维，对应一个问题-候选答案特征。每一个问题-候选答案特征由问题特征中的一个特征，和候选答案特征的一个特征，<strong>组合（combine）而成</strong>。
-<ul>
-<li><strong>问题特征</strong>：我们从问题图中的每一条边e(s,t)，抽取4种问题特征：s，t，s|t，和s|e|t。如对于边prep_of(qfocus=name，brother)，我们可以抽取这样四个特征：qfocus=name，brother，qfocus=name|brother 和 qfoc us=name|prep_of|brother。</li>
-<li><strong>候选答案特征</strong>：对于主题图中的每一个节点，我们都可以抽取出以下特征：该节点的所有<strong>关系</strong>（relation，记作rel），和该节点的所有<strong>属性</strong>（property，如type/gender/age）。对于Justin Bieber 这个topic我们可以在知识库找到它对应的主题图，如下图所示：
-<ul>
-<li><img src="https://i.loli.net/2021/03/02/GvSs1l4iO2gTeJR.png" title="fig:" alt="9DCE247B-50AA-47E6-AD93-A43A320D4071.png" /></li>
-<li>(注：图中虚线表示属性，实线表示关系，虚线框即属性值，实现框为topic node。在知识库中，如果同一个topic节点的同一个关系对应了多个实体，如Justin Bieber的preon.sibing_s关系可能对应多个实体，那freebase中会设置一个<em>虚拟的dummy node</em>，来连接所有相关的实体）</li>
-<li>例如，对于Jaxon Bieber这个topic节点，我们可以提取出这些特征：gender=male，type=person，rel=sibling 。可以看出关系和属性都刻画了这个候选答案的特征，对判断它是否是正确答案有很大的帮助。</li>
-</ul></li>
-<li><strong>问题-候选答案特征</strong>：每一个问题-候选答案特征由问题特征中的一个特征和候选答案特征中的一个特征，组合（combine）而成（组合记作 | ）。我们希望一个<strong>关联度较高</strong>的问题-候选答案特征有较高的权重，比如对于问题-候选答案特征 qfocus=money|node type=currency（注意，这里qfocus=money是来自问题的特征，而node type=currency则是来自候选答案的特征），我们希望它的权重较高，而对于问题-候选答案特征qfocus=money|node type=person我们希望它的权重较低。</li>
-</ul></li>
-</ul>
-
-      
-    </div>
-
-    
-	
-	
-
-	
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/03/01/%E7%AC%AC%E4%BA%94%E5%91%A8/3.%20%E5%90%91%E9%87%8F%E5%BB%BA%E6%A8%A1-Question%20Answering%20with%20Subgraph%20Embeddings/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpg">
-      <meta itemprop="name" content="Olivia">
-      <meta itemprop="description" content="May All Your Troubles Be little Ones">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Olivia的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/03/01/%E7%AC%AC%E4%BA%94%E5%91%A8/3.%20%E5%90%91%E9%87%8F%E5%BB%BA%E6%A8%A1-Question%20Answering%20with%20Subgraph%20Embeddings/" class="post-title-link" itemprop="url">3. 向量建模-Question Answering with Subgraph Embeddings</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-03-01 00:00:00" itemprop="dateCreated datePublished" datetime="2021-03-01T00:00:00+08:00">2021-03-01</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-05-04 15:15:49" itemprop="dateModified" datetime="2021-05-04T15:15:49+08:00">2021-05-04</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Knowledge-Base-Qestion-Answering/" itemprop="url" rel="index"><span itemprop="name">Knowledge Base Qestion Answering</span></a>
-                </span>
-                  >
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Knowledge-Base-Qestion-Answering/paper-comprehension/" itemprop="url" rel="index"><span itemprop="name">paper comprehension</span></a>
-                </span>
-                  >
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Knowledge-Base-Qestion-Answering/paper-comprehension/basis/" itemprop="url" rel="index"><span itemprop="name">basis</span></a>
+                  <a href="/categories/Knowledge-Base-Qestion-Answering/paper-comprehension/latest/" itemprop="url" rel="index"><span itemprop="name">latest</span></a>
                 </span>
             </span>
 
@@ -594,198 +253,51 @@
 
       
           <ul>
-<li>论文原文：https://arxiv.org/abs/1406.3676</li>
+<li>论文及代码：https://github.com/qipeng/gcn-over-pruned-trees</li>
 </ul>
-<h2 id="向量建模核心思想">1. 向量建模核心思想</h2>
+<h2 id="abstract-intro">Abstract &amp; Intro</h2>
 <ul>
-<li>首先根据问题中的主题词在知识库中确定候选答案。把问题和候选答案都映射到一个低维空间，得到它们的<strong>分布式表达</strong>(Distributed Embedding)，通过训练数据对该分布式表达进行训练，使得问题向量和它对应的正确答案在低维空间的关联得分(通常以点乘为形式)尽量高。当模型训练完成后，则可根据候选答案的向量表达和问题表达的得分进行筛选，找出得分最高的作为最终答案。</li>
-<li>需解决两个问题：
-<ul>
-<li>如何将问题和答案映射到低维空间。不能仅仅将自然语言的问题和答案进行映射，还要将知识库里的知识也映射到这个低维空间</li>
-<li>这种方法需要<strong>大量数据</strong>去训练，而 KB-QA中的benchmark数据集WebQuestion只含有5800多个问题答案对，这样的数据是难以训练好这种表达的。</li>
-</ul></li>
+<li>提出了一种基于图卷积网络的关系提取神经模型，使得它能够有效地并行汇集任意依赖结构上的信息</li>
+<li>对输入树应用了一种新的剪枝策略，即两个实体之间可能存在关系的最短路径附近保持单词。帮助基于依赖的模型在不破坏关键内容的情况下最大限度地去除无关信息，以提高其鲁棒性</li>
+<li>证明了基于依赖的模型与序列模型具有互补的优点。</li>
+<li>通过图卷积运算<strong>对输入句子上的依存结构进行编码</strong>，然后提取以实体为中心的表示以做出稳健的关系预测。还<strong>应用了一种新的以路径为中心的剪枝技术</strong>，在最大限度地保留相关内容的同时从树中删除不相关的信息。</li>
 </ul>
-<h2 id="如何用分布式表达表示答案和问题">2. 如何用分布式表达表示答案和问题</h2>
+<h2 id="models">2. Models</h2>
+<h3 id="依赖树上的图卷积网络graph-convolutional-networks-over-dependency-trees">2.1 依赖树上的图卷积网络(Graph Convolutional Networks over Dependency Trees)</h3>
+<figure>
+<img src="https://i.loli.net/2021/04/05/JQWgHKUC3DeX4uf.png" alt="image-20210405145405426.png" /><figcaption aria-hidden="true">image-20210405145405426.png</figcaption>
+</figure>
 <ul>
-<li><strong>问题的分布式表达</strong>：
-<ul>
-<li>首先把自然语言问题进行向量化，作者将输入空间的<strong>维度N设置为字典大小+知识库实体数目+知识库实体关系数目</strong>，<strong>对于输入向量每一维的值设置为该维所代表的单词</strong>(当然这一维也可能代表的是某个实体数目或实体关系，对于问题的向量化，这些维数都设置为 0)<strong>在问题中的出现次数</strong>(一般为 0 或 1 次)，可以看出这是一种multi-hot的稀疏表达，是一种简化版的词袋模型(Bag-of-words model)</li>
-<li>我们用q代表问题，用<span class="math inline">\(\phi (q)\)</span>代表N维的问题向量，用矩阵<span class="math inline">\(W\)</span>将N维的问题向量映射到<span class="math inline">\(k\)</span>维的低维空间，那么问题的分布式表达即<span class="math inline">\(f(q)=W\phi (q)\)</span></li>
-</ul></li>
-<li><strong>答案的分布式表达</strong>
-<ul>
-<li>最简单的方式就是像对问题一样的向量化方式，使用一个简化版的词袋模型。由于答案都是一个知识库实体，那么这种表达就是一个 one-hot 的表达，显然，并没有把知识库的知识引入到我们的输入空间中。</li>
-<li>第二种方式，我们把知识库想象成一个图，图的节点代表实体，边代表实体关系。通过问题中的主题词可以定位到图中的一个节点，该节点到答案节点有一条路径，我们把该路径上的所有边（实体关系）和点（实体）都以multi-hot的形式存下来作为答案的输入向量。我们这里只考虑一跳（hop）或者两跳的路径，如路径(barack obama, place of birth, honolulu)是一跳，路径(barack obama, people.person.place of birth, location.location.containedby, hawaii) 是两跳。因此这种表示是一种3-hot或4-hot的表示。</li>
-<li>第三种方式
-<ul>
-<li>在信息抽取篇介绍的信息抽取办法中，对于每一个候选答案，该答案所对应的属性（type/gender等）和关系都是能够帮助我们判断它是否是正确答案的重要信息，因此我们可以把每个候选答案对应的知识库子图（1跳或2跳范围）也加入到输入向量中，假设该子图包含C个实体和D个关系，那么我们最终的表达是一种3+C+D-hot或者4+C+D-hot的表达。和信息抽取方法一样，我们也对关系的方向进行区分，因此我们**输入向量的大小变为字典的大小+2*(知识库实体数目+知识库实体关系数目)。**</li>
-<li>同样的，我们用<span class="math inline">\(a\)</span>表示答案，用<span class="math inline">\(\psi (a)\)</span>表示答案的输入向量，用矩阵<span class="math inline">\(W\)</span>将答案向量映射到<span class="math inline">\(k\)</span>维的低维空间，答案的分布式表达即<span class="math inline">\(g(a)=W\psi (a)\)</span>。</li>
-</ul></li>
-</ul></li>
+<li><p>将每棵树转换为其对应的邻接矩阵<span class="math inline">\(A\)</span>(图表示)使得图卷积操作适合于建模依赖树，其中如果标记<span class="math inline">\(i\)</span>和<span class="math inline">\(j\)</span>之间如果存在依赖边，则<span class="math inline">\(A_{ij}=1\)</span>。</p></li>
+<li><p>因为token的度数变化很大，直接应用图卷积神经网络的公式会导致句子表示偏向于度数高的结点而不考虑节点中携带的信息(详见Sec. 2.2)，同时<span class="math inline">\(h_i^{(l-1)}\)</span>中的信息永远不会传递到<span class="math inline">\(h_i^{(l)}\)</span>，因为节点在依赖树中不会连接到自己。</p></li>
+<li><p>故在<span class="math inline">\(L\)</span>层GCN中，假设共有<span class="math inline">\(n\)</span>个节点，<span class="math inline">\(h_i^{(l-1)}\)</span>表示为第<span class="math inline">\(l\)</span>层的输入向量，<span class="math inline">\(h_i^{(l)}\)</span>表示为第<span class="math inline">\(l\)</span>层的输出向量，公式更改为： <span class="math display">\[
+h_i^{(l)}=\sigma(\sum_{j=1}^n\tilde A_{ij}W^{(l)}h_j^{(l-1)}/d_i+b^{(l)})
+\]</span> 其中<span class="math inline">\(\tilde A=A+I\)</span>，<span class="math inline">\(I\)</span>为<span class="math inline">\(n×n\)</span>的单位矩阵，<span class="math inline">\(d_i=\sum_{j=1}^n\tilde A_{ij}\)</span>是在结果图中token i的度数，<span class="math inline">\(W^{(l)}\)</span>是线性变换，<span class="math inline">\(b^{(l)}\)</span>是偏置项，<span class="math inline">\(\sigma\)</span>是非线性函数（例如，ReLU）</p></li>
+<li><p>好处：可通过矩阵乘法高效实现，这使得它非常适合在示例上进行批处理计算和在GPU上运行。此外，令牌之间的信息传播是并行进行的，运行时不依赖于依赖树的深度。</p></li>
+<li><p>上述GCN模型对依赖图中所有边使用相同的参数。</p></li>
 </ul>
-<h2 id="向量得分">3. 向量得分</h2>
+<h3 id="使用gcn编码关系encoding-relations-with-gcn">2.2 使用GCN编码关系(Encoding Relations with GCN)</h3>
 <ul>
-<li>最后我们用一个函数表征答案和问题的得分，我们希望问题和它对应的正确答案得尽量高分，通过比较每个候选答案的得分，选出最高的作为正确答案。得分函数定义为二者分布式表达的点乘，即<span class="math inline">\(s(q, a)=f(q)^T\cdot g(a)\)</span>。</li>
-<li>上述整个流程如下图所示 <img src="https://ftp.bmp.ovh/imgs/2021/03/363065f4b4f71aeb.png" /></li>
+<li><p>设<span class="math inline">\(\chi=[x_1,...,x_n]\)</span>表示一个句子，<span class="math inline">\(x_i\)</span>是第<span class="math inline">\(i\)</span>个令牌(token)。主语实体和宾语实体被标识出并分别对应句子中的两个跨度(span)：<span class="math inline">\(\chi_s=[x_{s_1},...,x_{s_2}]\ \ \chi_o=[x_{o_1},...,x_{o_2}]\)</span>，给定<span class="math inline">\(\chi,\chi_s,\chi_o\)</span>，关系提取的目标是预测实体之间存在的关系<span class="math inline">\(r\in R\)</span>（预定义的关系集），否则为“无关系”。</p></li>
+<li><p>在对词向量应用<span class="math inline">\(L\)</span>层GCN后，得到了每个令牌的隐藏表示，为了利用这些单词表示进行关系提取，首先获得如下句子表示法： <span class="math display">\[
+h_{sent}=f(h^{(L)})=f(GCN(h^{(0)}))
+\]</span> <span class="math inline">\(h^{(l)}\)</span>表示第<span class="math inline">\(l\)</span>层GCN的集体隐藏表示，<span class="math inline">\(f:R^{d×n}\rightarrow R^d\)</span>是从<span class="math inline">\(n\)</span>个输出向量映射到句子向量的max-pooling。</p></li>
+<li><p>依赖树中接近实体token的信息通常是关系分类的中心。因此我们也从<span class="math inline">\(h^{(L)}\)</span>中获得了主语表示： <span class="math display">\[
+h_s=f(h^{(L)}_{s_1:s_2})
+\]</span> 同样的方法也可以得到<span class="math inline">\(h_o\)</span>的表示</p></li>
+<li><p>将句子和实体表示连接起来，并将它们馈送到前馈神经网络(FFNN)中来获得用于分类的最终表示： <span class="math display">\[
+h_{final}=FFNN([h_{sent};h_s;h_o])
+\]</span> 然后<span class="math inline">\(h_{final}\)</span>被馈送到线性层随后进行<span class="math inline">\(SoftMax\)</span>运算以获得关系上的概率分布。</p></li>
 </ul>
-<h2 id="如何训练分布式表达">4. 如何训练分布式表达</h2>
+<h3 id="情景化gcncontextualized-gcn">2.3 情景化GCN(Contextualized GCN)</h3>
 <ul>
-<li>对于训练数据集<span class="math inline">\(D=\lbrace (q_i,a_i),\ ....\rbrace\)</span>，我们定义 margin-based ranking 损失函数，公示如下 <img src="https://ftp.bmp.ovh/imgs/2021/03/2321063525beadd5.png" /> 其中<span class="math inline">\(\bar a\)</span>表示负样本集<span class="math inline">\(\bar A\)</span>中的一个负样本(错误答案)，m 是一个值为 0.1 的 margin。最小化这个损失函数，意味着我们希望正确答案和问题的得分要比任意错误答案的得分高出一个 margin</li>
+<li>输入词向量不包含关于语序或歧义消除的上下文信息。事先通过将输入的词向量反馈入LSTM中生成上下文表示，以用作<span class="math inline">\(h^{(0)}\)</span>。</li>
 </ul>
-<h2 id="总结">5. 总结</h2>
+<h2 id="将非路径信息与以路径为中心的修剪相结合incorporating-off-path-information-with-path-centric-pruning">3. 将非路径信息与以路径为中心的修剪相结合(Incorporating Off-path Information with Path-centric Pruning)</h2>
 <ul>
-<li>可以看出，相比信息抽取和语义解析的方法，该方法几乎不需要任何手工定义的特征（hand- crafted features），也不需要借助额外的系统（词汇映射表，词性标注，依存树等）。相对来说，比较简单，也较容易实现，能取得39.2的F1-scor e得分（斯坦福13年的语义解析方法只有35.7）也说明了该方法的强大性。通过自动化的方式扩展数据集和多任务训练也部分解决了实验数据不足的缺点。</li>
-<li>然而，向量建模方法，是一种趋于黑盒的方法，缺少了解释性（语义解析可以将问题转化成一种逻辑形式的表达，而信息抽取构造的每一维特征的含义也是离散可见的），更重要的是，它也缺少了我们的<strong>先验知识</strong>和<strong>推理</strong>（可以看出其F1-score略低于14年使用了大量先验知识的信息抽取方法，该方法F1-score为42.0），事实上，这也是现在深度学习一个比较有争议的诟病。</li>
-<li>就篇论文的向量建模方法来说，也存在一些问题，比如对问题的向量表示采用了类似词袋模型的方法，这样相当于并未考虑问题的语言顺序（比如 “谢霆锋的爸爸是谁？” 谢霆锋是谁的爸爸？ 这两个问题用该方法得到的表达是一样的，然而这两个问题的意思显然是不同的），且训练分布式表达的模型很简单，相当于一个两层的感知机。</li>
-</ul>
-
-      
-    </div>
-
-    
-	
-	
-
-	
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/03/01/%E7%AC%AC%E4%BA%94%E5%91%A8/4.%20Multi-Column%E5%90%91%E9%87%8F%E5%BB%BA%E6%A8%A1-Question%20Answering%20over%20Freebase%20with%20Multi-Column%20Convolutional%20Neural%20Networks/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpg">
-      <meta itemprop="name" content="Olivia">
-      <meta itemprop="description" content="May All Your Troubles Be little Ones">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Olivia的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/03/01/%E7%AC%AC%E4%BA%94%E5%91%A8/4.%20Multi-Column%E5%90%91%E9%87%8F%E5%BB%BA%E6%A8%A1-Question%20Answering%20over%20Freebase%20with%20Multi-Column%20Convolutional%20Neural%20Networks/" class="post-title-link" itemprop="url">4. Multi-Column向量建模-Question Answering over Freebase with Multi-Column Convolutional Neural Networks</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-03-01 00:00:00" itemprop="dateCreated datePublished" datetime="2021-03-01T00:00:00+08:00">2021-03-01</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-05-04 15:15:54" itemprop="dateModified" datetime="2021-05-04T15:15:54+08:00">2021-05-04</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Knowledge-Base-Qestion-Answering/" itemprop="url" rel="index"><span itemprop="name">Knowledge Base Qestion Answering</span></a>
-                </span>
-                  >
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Knowledge-Base-Qestion-Answering/paper-comprehension/" itemprop="url" rel="index"><span itemprop="name">paper comprehension</span></a>
-                </span>
-                  >
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Knowledge-Base-Qestion-Answering/paper-comprehension/basis/" itemprop="url" rel="index"><span itemprop="name">basis</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>3.3k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>3 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <ul>
-<li>论文原文：https://www.aclweb.org/anthology/P15-1026.pdf</li>
-</ul>
-<h2 id="简介">1. 简介</h2>
-<ul>
-<li>本文章采用卷积神经网络的一种变体（作者称为multi-column）从三个方面<strong>（答案路径Answer Path，答案上下文信息Answer Context，答案的类型Answer Type）</strong>对问题和答案的分布式进行学习，使得该分布式表达相比之前的向量建模方法包含更多有效的特征。</li>
-<li>在传统向量建模方法中存在一些问题
-<ul>
-<li>第一个是存在于<strong>问题的向量化</strong>。
-<ul>
-<li>传统向量建模方法采用了类似词袋模型的方式，相当于它并未考虑问题的语言顺序（比如 “<em>谢霆锋的爸爸是谁？” “谢霆锋是谁的爸爸？”</em> 这两个问题用该方法得到的表达是一样的，然而这两个问题的意思显然是不同的）。</li>
-<li>对于这个缺陷，我们可以使用深度学习的模型对问题进行向量化，比如使用循环神经网络（Recurrent Nerual Networks, RNNs）、卷积神经网络（Counvoulutional Nerual Networks, CNNs ）等模型提取问题特征，<strong>这样的方式考虑了语言的顺序，并且提取特征的能力也更加强大。</strong></li>
-</ul></li>
-<li>第二个问题存在于<strong>答案向量化</strong>。
-<ul>
-<li><p>在对答案进行向量化的时候，直接将答案的路径（问题主题词到答案实体的路径）和上下文信息（答案实体周围的知识库子图）一起作为答案特征，通过multi-hot的方式对答案进行向量化。事实上，这样的形式不利于模型区分答案的特征（仅仅根据答案的multi-hot向量是不好区分哪些是答案的类型，哪些来自答案的上下文，哪些来自问题主题词到答案实体的路径）。</p></li>
-<li><p>因此我们可以将问题的特征表示拆解开，用三个向量分别表示答案的三个特征，即<strong>（答案路径Answer Path，答案上下文信息Answer Context，答案的类型Answer Type）</strong>，对于每一个答案特征向量，都用一个<strong>卷积网络</strong>去对<strong>问题</strong>进行特征提取，<strong>将提取出的分布式表达和该答案对应特征向量的分布式表达进行点乘</strong>，这样我们就可以得到一个包含三部分的得分函数：<img src="https://pic3.zhimg.com/80/v2-945c8248709343cac7b3b25730c6efda_720w.png" alt="img" /></p>
-<p>其中<span class="math inline">\(q\)</span>代表问题，<span class="math inline">\(a\)</span>代表答案，<span class="math inline">\(f_i(q)\)</span>代表问题经过卷积神经网络输出的分布式表达，<span class="math inline">\(g_i(a)\)</span>表示答案在对应特征下的分布式表达。</p>
-<p>有了得分函数，我们就可以像向量建模方法一样，通过定义margin-based ranking损失函数对模型参数进行训练。</p></li>
-</ul></li>
-</ul></li>
-</ul>
-<h2 id="multi-column卷积神经网络">2. Multi-Column卷积神经网络</h2>
-<ul>
-<li><p>对于问题的特征提取，作者使用Multi-Column卷积神经网络，其结构实质上是共享<a href="https://link.zhihu.com/?target=http%3A//papers.nips.cc/paper/5021-distributed-representations-of-words-and-phrases-and-their-compositionality.pdf">word-embedding</a>层的三个<a href="https://link.zhihu.com/?target=https%3A//arxiv.org/abs/1408.5882">text-CNNs</a>，text-CNNs模型在文本分类问题上取得了很好的效果。</p>
-<ul>
-<li><p>text-CNNs</p>
-<ul>
-<li><p><strong>词向量（Word-embedding）</strong>：对于问题序列<span class="math inline">\(q=w_1...w_n\)</span>，对于其中的每一个单词<span class="math inline">\(w_i\)</span>它对应的one-hot形式<span class="math inline">\(u(w_i)\)</span>，我们可以通过word-embedding矩阵<span class="math inline">\(W_v\)</span>转化为一个<span class="math inline">\(d\)</span>维的分布式向量（这里的word-embedding矩阵是通过word2vec等pre-train方式初始化的），即<span class="math inline">\(w_i=W_vu(w_i)\)</span></p></li>
-<li><p><strong>卷积操作（Convolution）</strong>：对于一个含<span class="math inline">\(n\)</span>个单词的问题<span class="math inline">\(q\)</span>，我们可以得到一个<span class="math inline">\(n×d\)</span>的矩阵。如果将这个矩阵想象成是一个图片，那么就可以对该图片进行卷积操作了。与图片卷积操作的不同之处在于，每一个卷积核的大小（即卷积窗口）是<span class="math inline">\(m×d\)</span>，表示每次对<span class="math inline">\(m\)</span>个单词的embedding进行卷积操作。</p></li>
-<li><p><strong>池化操作（Pooling）</strong>：对于每一个卷积核的输出（假设卷积核大小为<span class="math inline">\(m\)</span>，在<span class="math inline">\(n×d\)</span>的矩阵上进行卷积，那么输出是一个<span class="math inline">\(n-m+1\)</span>维的向量），通过对该向量进行max-pooling操作（即取最大值）可以得到一个标量，该标量将作为问题最终表达<span class="math inline">\(f_q\)</span>的某一维度（可以理解成一个卷积核负责对整个问题提取一个一维的特征）。因此通过控制卷积核的数目我们可以控制最终输出的维度，即<span class="math inline">\(k\)</span>个卷积核可以输出一个<span class="math inline">\(k\)</span>维的最终表达（注意这里卷积核大小可以不同，一般设置为2，3，4）。流程可如下图，对于不同长度问题，会通过补零（padding）操作将所有问题的长度限定到固定长度<img src="https://pic1.zhimg.com/80/v2-ae615339713f0320104103cd3619bdf0_720w.png" alt="img" /></p>
-<p>这样我们通过三个text-CNNs，在共享word-embedding的情况下，就可以得到<span class="math inline">\(f_1(q)\)</span>,<span class="math inline">\(f_2(q)\)</span>和<span class="math inline">\(f_3(q)\)</span>。（事实上，在这篇文章中所使用的卷积操作，对于每一个column只采用了一个卷积核，一个卷积核对一个卷积窗口的卷积结果并非一个值而是一个向量，max-pooling作用在每一个卷积窗口的卷积结果上，具体方式可以参看后面的图。个人认为这样的卷积方式减少了参数，显得特征提取更加粗粒度，效果很可能不如text-CNNs）</p></li>
-</ul></li>
-</ul></li>
-<li><p>用三个向量来分别表示答案的三种特征。</p>
-<ul>
-<li><p><strong>答案路径（Answer Path）</strong>：从问题中的主题词到答案在知识库中形成的一条路径，我们记录该路径上的每一个实体关系，可以通过multi-hot的形式<span class="math inline">\(u_p(a)\)</span>来进行表示，答案路径的分布式表达<span class="math inline">\(g_1(a)\)</span>可以表示为<span class="math inline">\(g_1(a)=\frac 1 {\begin{Vmatrix}u_p(a)\end{Vmatrix}}_1W_pu_p(a)\)</span>，这里由于路径的长度不确定，所以使用一范式来做一个归一化normalization。</p></li>
-<li><p><strong>答案上下文信息（Answer Context）</strong>：我们将答案实体对应1跳（hop）范围内的实体关系和实体作为答案实体的上下文信息。通过同样的方式我们得到答案上下文信息的分布式表达<span class="math inline">\(g_2(a)=\frac 1 {\begin{Vmatrix}u_c(a)\end{Vmatrix}}_1W_cu_c(a)\)</span></p></li>
-<li><p><strong>答案类型（Answer Type）</strong>：答案类型是一个很重要的特征。类型是一个特殊的实体关系。在实际操作中，可以在freebase里通过实体关系<em>common.topic.notable.types</em> 来查询实体对应的所有类型。通过同样的方式，我们可以得到相应的分布式表达<span class="math inline">\(g_3(a)=\frac 1 {\begin{Vmatrix}u_t(a)\end{Vmatrix}}_1W_tu_t(a)\)</span>，注意如果候选答案是一个值，那么就用该值的类型（string/float/datetime）作为答案的类型，比如答案是2009-12-17，那么类型就是string。</p></li>
-<li><p>至此，我们得到了包含三部分的得分函数：<img src="https://pic3.zhimg.com/80/v2-945c8248709343cac7b3b25730c6efda_720w.png" alt="img" /></p>
-<p>整个流程如下图：<img src="https://pic3.zhimg.com/80/v2-b4bf6fa8346f2ccfd67da64d6c90a1f6_720w.png" alt="img" /></p>
-<p>（图中方块带红色斜线的为主题词，红色箭头表示路径，绿色椭圆表示答案类型，蓝色虚线椭圆表示上下文信息范围）</p>
-<p>对于问题<em>“when</em> <em>did Avatar release in UK”</em>和它的答案<em>2009-12-17，</em>我们通过multi-column卷积神经网络提取三种问题的分布式表达，再通过答案的路径、上下文信息和类型得到答案相应的三种分布式表达，通过分别点乘再求和的方式得到最终的答案-问题对得分。</p>
-<p>可通过向量建模中提到的同样的方式构造损失函数和多任务学习来训练模型参数。</p></li>
-</ul></li>
-</ul>
-<h2 id="存在问题">3. 存在问题</h2>
-<ul>
-<li><strong>候选答案生成</strong>：有些问题的主题词是难以正确提取出来的，比如缩写词和表达不全，如问题“where did jfk and his wife live<em>”</em> ，很难将jfk这个缩写词对应到<em>John F. Kennedy</em>这个人名上，这样会导致我们无法得到正确的候选答案集合。要解决这种情况，可能需要对问题进行一些预处理。</li>
-<li><strong>问题歧义：</strong>对于数据集中有些有歧义的问题，难以获得和正确答案相应的关系，如问题<em>“who is aidan quinn”</em>，答案是演员，我们很难通过该问题<em>who is</em>推断出和职业相关。这种情况该怎么办呢？</li>
-<li><strong>时序敏感（Time-Aware）问题：</strong>对于问题中带有 first / second 这种与时间顺序相关的词语，如<em>“who is johnny cash’s <strong>first</strong> wife”</em> ，答案可能给出的是second wife的名字（模型只关注到了wife而忽略了first的含义，并没有进行额外的推理）。对于这种情况，可能需要定义专门（ad-hoc）的操作，注意的是，这一点是该类方法相比<strong>语义解析</strong>方法的一个缺点。</li>
+<li><p>与关系相关的大部分信息通常包含在以两个实体的最短公共祖先(LCA)为根的子树中。将GCN模型与树修剪策略相结合以进一步提高性能。但是过于激进的修剪(例如只保留依赖路径)可能会导致关键信息丢失，反过来影响健壮性。例如：<img src="https://i.loli.net/2021/04/05/yKIgNkenm13CHJt.png" alt="image-20210405152541144.png" /></p></li>
+<li><p>提出了以路径为中心的剪枝(path-centric pruning)。在LCA子树里添加距离依赖路径最远<span class="math inline">\(K\)</span>个路径的令牌来实现的。<span class="math inline">\(K=0\)</span>，相当于将树向下修剪到路径，<span class="math inline">\(K=1\)</span>保留直接连接到路径的所有节点，<span class="math inline">\(K=∞\)</span>保留整个LCA子树。</p></li>
+<li><p>将剪枝后的树直接反馈到GCN中(LSTM仍然作用于整个句子)，发现<span class="math inline">\(K=1\)</span>的剪枝在包含相关信息(例如否定和合取)和尽可能地将不相关的内容排除在所得到的剪枝树之间达到了最佳的平衡。</p></li>
 </ul>
 
       
@@ -808,7 +320,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/03/01/%E7%AC%AC%E4%BA%94%E5%91%A8/5.%20%E6%9F%A5%E8%AF%A2%E5%9B%BE-%E8%AF%AD%E4%B9%89%E8%A7%A3%E6%9E%90-Semantic%20Parsing%20via%20Staged%20Query%20Graph%20Generation_Question%20Answering%20with%20Knowledge%20Base/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/04/15/%E7%AC%AC09%E5%91%A8/Information%20Extraction%20over%20Structured%20Data%20Question%20Answering%20with%20Freebase/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.jpg">
@@ -822,7 +334,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2021/03/01/%E7%AC%AC%E4%BA%94%E5%91%A8/5.%20%E6%9F%A5%E8%AF%A2%E5%9B%BE-%E8%AF%AD%E4%B9%89%E8%A7%A3%E6%9E%90-Semantic%20Parsing%20via%20Staged%20Query%20Graph%20Generation_Question%20Answering%20with%20Knowledge%20Base/" class="post-title-link" itemprop="url">5. 查询图-语义解析-Semantic Parsing via Staged Query Graph Generation_Question Answering with Knowledge Base</a>
+            <a href="/2021/04/15/%E7%AC%AC09%E5%91%A8/Information%20Extraction%20over%20Structured%20Data%20Question%20Answering%20with%20Freebase/" class="post-title-link" itemprop="url">Information Extraction over Structured Data Question Answering with Freebase</a>
         </h2>
 
         <div class="post-meta">
@@ -832,14 +344,14 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2021-03-01 00:00:00" itemprop="dateCreated datePublished" datetime="2021-03-01T00:00:00+08:00">2021-03-01</time>
+              <time title="创建时间：2021-04-15 00:00:00" itemprop="dateCreated datePublished" datetime="2021-04-15T00:00:00+08:00">2021-04-15</time>
             </span>
               <span class="post-meta-item">
                 <span class="post-meta-item-icon">
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-05-04 15:15:59" itemprop="dateModified" datetime="2021-05-04T15:15:59+08:00">2021-05-04</time>
+                <time title="修改时间：2021-05-06 14:42:24" itemprop="dateModified" datetime="2021-05-06T14:42:24+08:00">2021-05-06</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -855,7 +367,7 @@
                 </span>
                   >
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Knowledge-Base-Qestion-Answering/paper-comprehension/basis/" itemprop="url" rel="index"><span itemprop="name">basis</span></a>
+                  <a href="/categories/Knowledge-Base-Qestion-Answering/paper-comprehension/latest/" itemprop="url" rel="index"><span itemprop="name">latest</span></a>
                 </span>
             </span>
 
@@ -865,351 +377,7 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>5k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>5 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <ul>
-<li>论文原文：https://www.microsoft.com/en-us/research/publication/semantic-parsing-via-staged-query-graph-generation-question-answering-with-knowledge-base/</li>
-</ul>
-<h2 id="简介">1. 简介</h2>
-<ul>
-<li>思想是把自然语言问题转化为逻辑形式，通过逻辑形式转化为查询语句，在知识库中查询得出最终答案。在进行语义解析生成逻辑形式的过程中，主要是在提取自然语言问题中的信息和利用训练好的语法解析器进行解析，<strong>这一过程几乎没有使用到知识库里的信息</strong>。而在向量建模和信息抽取方法中，我们不仅对问题进行了特征提取，还借助知识库确定了候选答案范围（相比语义解析中的词汇映射要在大范围的知识库实体关系中寻找映射，这样的方式使得搜索范围大大减小），并将候选答案在知识库中的信息作为特征。相比之下，可以看出传统的语义解析和知识库本身的联系是<strong>不够紧密</strong>的（Decoupled from KB），也就是说，<strong>传统语义解析方法对知识库的利用还不够</strong>。</li>
-<li>其中语义解析的第一步，词汇映射（Lexicon）。要将自然语言中的谓语关系映射到知识库中的实体关系仅仅通过<strong>统计方式</strong>进行映射，效果并不好。如果能考虑知识库中的信息，即可将词汇映射的范围缩小，使用深度学习的办法通过分布式表达来代替基于统计方法的词汇映射，可能会取得更好的效果。</li>
-<li>于是为了更好的利用知识库中的知识，缩小语义解析树的搜索范围，并获得更多有益的信息，提出本文。</li>
-</ul>
-<h2 id="查询图">2. 查询图</h2>
-<h3 id="定义和组成">2.1 定义和组成</h3>
-<ul>
-<li><p>对于问句*“**Who first voiced Meg on Family Guy?"* (谁是第一个为Family Guy里的MegGriffin角色配音的人，<em>注：Family Guy是美国的一部动画片，MegGriffin是其中的一个角色，有两个人先后为其配音过</em>)</p>
-<p>对于深度学习的向量建模法来说，<em>first</em>这种时序敏感（Time-Aware）词常常会被模型忽略而给出错误答案。语义解析方法可以将first解析为逻辑形式的聚合函数（<em>arg min</em>），但它又难以将问题中的<em>Meg</em>这一缩写词通过词汇表映射为知识库中的<em>MegGriffin</em>。</p>
-<p>为了更好的利用知识库，我们可以先去知识库里搜Family Guy，在它对应的知识库子图中搜索和Meg很接近的实体，也就是说我们一开始就借助知识库，帮我们缩小了范围，这样我们就很容易找到Meg其实对应的是MegGriffin。我们可以借助这样的思想来对我们的语义解析进行改进。<strong>用一种图的形式来代替语法解析树表示逻辑形式，这个图被称为查询图（query graph）</strong>。</p>
-<p>问句<em>“Who first voiced Meg on Family Guy?"</em>对应的查询图如下图所示：<img src="https://pic4.zhimg.com/80/v2-8de621b2d2a7896042f05bbf06176a2b_720w.png" alt="img" /></p></li>
-<li><p>查询图的组成</p>
-<ul>
-<li><strong>知识库实体</strong>：在图中用圆角矩形表示。</li>
-<li><strong>中间变量</strong>：在图中用白底圆圈表示。</li>
-<li><strong>聚合函数</strong>：用菱形表示。</li>
-<li><strong>lambda变量（答案）</strong>：在图中用灰底圆圈表示。</li>
-</ul>
-<p>图中实体节点到答案变量的路径可以转化为一系列join操作，不同路径可以通过intersection操作结合到一起，因此，该查询图在不考虑聚合函数argmin的情况下可以转化为一个lambda表达式，即：<img src="https://www.zhihu.com/equation?tex=+%5Clambda+x.%5Cexists+y.cast%28FamilyGuy%2C+y%29++%5Cwedge++actor%28y%2Cx%29+%5Cwedge++character%28y%2CMegGriffin%29" alt="[公式]" /></p>
-<p><em>（上式表示 我们要寻找x，使得在知识库中存在实体y，满足 1. y和FamilyGuy存在cast关系；2. y和x存在actor关系；3.y和MegGriffin存在character关系，这里我们可以把y想象成是一个中间变量，通过对它增加约束来缩小它的范围，通过它和答案x的关系来确定答案x）</em></p></li>
-</ul>
-<h3 id="查询图的阶段生成">2.2 查询图的阶段生成</h3>
-<ul>
-<li><p><strong>核心推导链（core inferential chain）</strong>：问题中的主题词（可以看作是一个根节点）到答案变量的这条路径（如Family Guy - y - x）包含了所有的中间变量，这条路径可以看作是从问题到答案的一个核心推导过程。而对于核心推导链里的中间变量，我们可以对它加一些<strong>约束</strong>（要求它与其他实体具有一定的关系，如 y - character -&gt; Meg Griifin）和<strong>聚合函数</strong>（如 y - from -&gt; arg min）。</p></li>
-<li><p>故查询图生成可分为以下步骤：<strong>确定主题词</strong>，<strong>确定核心推导链</strong>，<strong>是否增加约束和聚合</strong>。可如下图这个有限状态机自动机表示：<img src="https://pic3.zhimg.com/80/v2-25d90924a565306502b7c4e964fa155a_720w.png" alt="img" /></p>
-<p>其中状态集合<span class="math inline">\(S=\{\phi,S_e,S_p,S_c\}\)</span>分别表示空集、仅含主题词节点、含核心推导链、含约束节点。而动作集合<span class="math inline">\(A=\{A_e,A_p,A_a,A_c\}\)</span>分别表示选择主题词节点、选择核心推导链、加入聚合函数、加入约束。</p></li>
-<li><p>查询图可以分阶段生成，这个生成的过程实质上是一个<strong>搜索</strong>。依照我们的有限状态自动机，根据图所处的状态<span class="math inline">\(s\)</span>，我们可以确定在该状态下可以采取的动作集合<span class="math inline">\(\Pi(s)\)</span>（比如当前我们处在状态<span class="math inline">\(\phi\)</span>，根据有限自动机我们的动作为选择主题词节点，假设检测出来问句有3个主题词候选，那么我们的动作集合大小为3）。因此，查询图生成过程实际上是一个搜索过程，如果对这个搜索不加任何限制，那么这个搜索是指数级复杂度的。因此对于每一个状态<span class="math inline">\(s\)</span>，我们可以用<strong>奖励函数</strong>（reward function）对它进行评估，奖励函数<span class="math inline">\(\gamma\)</span>得分越高表示这个状态对应的查询图和正确的语义解析表达越接近，我们用一个对数线性模型（log-linear）模型来学习奖励函数。有了奖励函数，我们用best-first的策略利用优先队列进行启发式搜索，算法流程如下：<img src="https://pic3.zhimg.com/80/v2-4414dfdb988c5c5b441103627927079e_720w.png" alt="img" /></p>
-<p>其中<span class="math inline">\(T(s,a)\)</span>代表在<span class="math inline">\(s\)</span>状态下采取动作<span class="math inline">\(a\)</span>后得到的新状态，我们将优先队列的大小<span class="math inline">\(N\)</span>限制为1000。上述算法可以简单概括为：<strong>每次从队列中取出得分最高的状态分别执行动作集中的每一个动作生成一批新的状态并压入优先队列，始终记录得分最高的状态，最终将得分最高的状态作为最后的查询图。</strong></p></li>
-</ul>
-<h3 id="查询图生成举例">2.3 查询图生成举例</h3>
-<h4 id="主题词链接linking-topic-entity">2.3.1 主题词链接（Linking Topic Entity）</h4>
-<ul>
-<li>从问题中确定主题词</li>
-<li>作者使用了<a target="_blank" rel="noopener" href="https://yiyangnlp.github.io/downloads/yang-acl-2015-updated.pdf">S-MART</a>作为实体链接系统，该系统是针对带噪音的短文本设计的，适合用于对问句提取主题词，它会为相应的 实体-自然语言短语 链接对 给出<strong>链接得分</strong>（Linking Score）<img src="https://pic1.zhimg.com/v2-fc1cd35137a0e5c2f1cc377003530f18_r.jpg" alt="img" /></li>
-</ul>
-<h4 id="核心推导链">2.3.2 核心推导链</h4>
-<ul>
-<li><p>对于每一个候选的主题词，将它在知识库中对应的实体节点周围长度为1的路径（如下图<span class="math inline">\(s_5\)</span>和长度为2且包含<a target="_blank" rel="noopener" href="http://blog.maidou.info/?p=169">CVT</a>节点的路径（如下图<span class="math inline">\(s_3\)</span>和<span class="math inline">\(s_4\)</span>）作为核心推导链的候选（CVT，即复合值类型 Compound Value Types，是freebase中用于表示复杂数据而引入的概念）。如下图：<img src="https://pic3.zhimg.com/v2-8212ab7bac6ffe2544850f1aac6509a6_r.jpg" alt="img" /></p></li>
-<li><p>核心推导链其实就是将自然语言问题映射为一个<strong>谓语序列</strong>（如cast-actor），因此可以用<strong>卷积神经网络</strong>来对映射进行打分，如图所示：<img src="https://pic2.zhimg.com/v2-d270f48ce95509ab63a76038b85ad8bd_r.jpg" alt="img" /></p></li>
-<li><p>将自然语言和谓语序列分别作为输入，分别经过两个不同的卷积神经网络得到300维的分布式表达，利用表达向量之间的相似度距离（如cosine距离）计算自然语言和谓语序列的<strong>语义相似度得分</strong>。</p></li>
-<li><p>输入采用的是<strong>字母三元组</strong>（letter-trigram），类似于<a target="_blank" rel="noopener" href="https://arxiv.org/pdf/1509.01626.pdf">character-CNN</a>。每个单词都拆分成几个 字母三元组，作为CNN的输入。比如单词<em>who</em>可以拆分为#-w-h, w-h-o, h-o-#。每个单词通过前后添加符号#来区分单词界限（并且单词最短只含一个字母，添加两个#可以保证能形成至少一个字母三元组）。</p></li>
-<li><p>采用<strong>字母三元组的好处</strong>：</p>
-<ul>
-<li>1.减小输入维度，这样输入维度可以稳定在字母集大小+1(#号)的三次方，即<span class="math inline">\(27^3\)</span>，而不是字典大小（同时可以处理一些字典中不存在的词和一些低频词，如缩写词等等）。</li>
-<li>相同语义的词语可能因为词根等缘故，前缀或者后缀会比较相似，这样能更好的提取单词语义的特征。</li>
-<li>对于现实生活中的用户，有时候可能会发生单词拼写错误，但错误拼写不会对这种输入方式造成太大影响。</li>
-</ul></li>
-</ul>
-<h4 id="增加约束和聚合函数">2.3.3 增加约束和聚合函数</h4>
-<ul>
-<li><p>通过增加约束和聚合函数的方式来扩展查询图，缩小答案的范围，以增加准确率，如下图：<img src="https://pic4.zhimg.com/v2-cf8cee1305f077c185cc213593ae8bcb_r.jpg" alt="img" /></p></li>
-<li><p>是否要为CVT节点添加约束节点和聚合节点：</p>
-<ol type="1">
-<li>约束实体出现在问句中</li>
-<li>约束谓词表示事件的结束时间，但没有值（这表示它是当前事件）</li>
-<li>问题中出现约束实体名称的一些单词</li>
-<li>谓语是<em>people.marriage</em>.<em>type_of_union</em>（这说明关系是否是家庭伴侣关系、婚姻关系还是民事关系）</li>
-<li>问句中包含单词 <em>first</em> 或者 <em>oldest</em>，并且谓语是from形式的谓语（表明事件的起始时间）</li>
-<li>问句中包含单词 <em>last</em>, <em>latest</em> 或 <em>newest</em> ，并且谓语是to形式的谓语（表明事件的结束时间）</li>
-</ol></li>
-<li><p>对于答案节点，如果包含以下之一的谓语，我们会增加一个<strong>约束节点</strong>：</p>
-<p><em>people.person.gender /</em> <em>common.topic.notable types /</em> <em>common.topic.notable_for</em></p></li>
-</ul>
-<h2 id="奖励函数的特征定义">3. 奖励函数的特征定义</h2>
-<ul>
-<li><p>利用对数线性模型训练奖励函数，需手工定义一个特征向量来表征整个查询图的信息，将其作为对数线性模型的输入。</p></li>
-<li><p>例如问题：“<em>Who first voiced Meg on Family Guy?</em>” 对应的查询图，它的特征如下图所示：<img src="https://pic3.zhimg.com/v2-22f7a9d0ca105aeda97d27af5e9a087e_r.jpg" alt="img" /></p>
-<ul>
-<li><p>从<strong>主题词链接</strong>、<strong>核心推导链</strong>、<strong>增加约束聚合</strong>三个方面定义特征。</p>
-<ul>
-<li><p><strong>主题词链接特征</strong>：实体链接得分（EntityLinkingScore），由实体链接系统给出。例如：<em>EntityLinkingScore(FamilyGuy,"Family Guy")=0.9</em></p></li>
-<li><p><strong>核心推导链特征</strong>：</p>
-<ol type="1">
-<li><p><strong>PatChain</strong>：将问句中的主题词替换为实体符号，和谓语序列同时输入两个不同的CNN，根据CNN输出的表达求语义相似度作为特征。</p>
-<p>如: <em>PatChain("Who first voiced Meg on <e>", cast-actor) =0.7</em></p></li>
-<li><p><strong>QuesEp</strong>：将谓语序列和主题词的规范名称（canonical name）连接（concatenate）起来作为输入，和问题求语义相似度</p>
-<p>如: <em>QuesEP(q,“family guy cast-actor”</em>) = 0.6</p></li>
-<li><p><strong>ClueWeb</strong>：用<a target="_blank" rel="noopener" href="http://lemurproject.org/clueweb12/index.php">ClueWeb</a>来训练一个更加<em>in-domain</em>的模型。如果一句话包含两个实体和谓语，那么就把这句话和谓语作为一组 数据对 输入模型进行训练。<em>注意：ClueWeb的输入和PatChain是一样的，但是其模型是用不同数据训练的。</em></p></li>
-</ol>
-<p>从这定义的三个特征可以看出，这其实是一个<em>ensemble</em>模型，将三种模型的输出结果进行了一个log-linear组合。</p></li>
-<li><p><strong>约束聚合特征</strong>：</p>
-<ul>
-<li>对于CVT节点，有以下特征：
-<ol type="1">
-<li>约束实体是否出现在问句中 如<em>ConstraintEntityInQ("Meg Griffin",q)=1</em></li>
-<li>是否是当前发生的事件</li>
-<li>是否是当前发生的事件，且问句中包含关键词“currently”, “current”, “now”, “present” 和“presently”</li>
-<li>约束实体单词出现在问句中的百分比 如<em>ConstraintEntityWord("Meg Griffin",q)=0.5</em></li>
-<li>约束谓语的类型是<em>people.marriage.type_of_union</em></li>
-<li>问题中是否包含“first” 或 “oldest” ，谓语是from形式谓语，并且CVT节点按该from性质排序是第一</li>
-<li>问题中是否包含“last”, “latest” 或 “newest” ，谓语是to形式谓语，并且CVT节点按该to性质排序是最后</li>
-</ol></li>
-<li>对于答案节点有以下特征：
-<ol type="1">
-<li>性别一致性（男性）：约束谓语是<em>gender</em>，并且问句中出现了以下男性关键词中的一个{“dad”, “father”, “brother”, “grandfather”, “grandson”, “son”, “husband”}</li>
-<li>性别一致性（女性）：约束谓语是<em>gender</em>，并且问句中出现了以下女性关键词中的一个{“mom”, “mother”, “sister”, “grandmother”, “granddaughter”, “daughter”, “wife”}</li>
-<li>当约束谓语是 <em>notable_types</em> 或 <em>notable_for</em> 时，约束实体单词出现在问题中的百分比</li>
-</ol></li>
-</ul></li>
-<li><p><strong>总体特征</strong></p>
-<ul>
-<li>查询图对应的答案数量<strong>NumAns</strong></li>
-<li>查询图的节点数<strong>NumNodes</strong></li>
-</ul></li>
-</ul></li>
-</ul></li>
-</ul>
-<h2 id="模型学习">4. 模型学习</h2>
-<ul>
-<li>根据查询图对应的实体和真实答案的F1-score进行排名。</li>
-<li>基于<a target="_blank" rel="noopener" href="https://pdfs.semanticscholar.org/0df9/c70875783a73ce1e933079f328e8cf5e9ea2.pdf">lambda-rank</a>算法对一个一层的神经网络进行训练。</li>
-<li>好处：有些查询图虽然查询得到的答案和真实答案不完全相同，但根据它的相同程度（F1-score）也可以说它比完全错误的查询图要好。</li>
-</ul>
-
-      
-    </div>
-
-    
-	
-	
-
-	
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/03/01/%E7%AC%AC%E4%BA%94%E5%91%A8/6.%20%E5%9F%BA%E4%BA%8E%E8%AE%B0%E5%BF%86%E7%BD%91%E7%BB%9C-Large-scale%20Simple%20Question%20Answering%20with%20Memory%20Networks/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpg">
-      <meta itemprop="name" content="Olivia">
-      <meta itemprop="description" content="May All Your Troubles Be little Ones">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Olivia的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/03/01/%E7%AC%AC%E4%BA%94%E5%91%A8/6.%20%E5%9F%BA%E4%BA%8E%E8%AE%B0%E5%BF%86%E7%BD%91%E7%BB%9C-Large-scale%20Simple%20Question%20Answering%20with%20Memory%20Networks/" class="post-title-link" itemprop="url">6. 基于记忆网络-Large-scale Simple Question Answering with Memory Networks</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-03-01 00:00:00" itemprop="dateCreated datePublished" datetime="2021-03-01T00:00:00+08:00">2021-03-01</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-05-04 15:16:04" itemprop="dateModified" datetime="2021-05-04T15:16:04+08:00">2021-05-04</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Knowledge-Base-Qestion-Answering/" itemprop="url" rel="index"><span itemprop="name">Knowledge Base Qestion Answering</span></a>
-                </span>
-                  >
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Knowledge-Base-Qestion-Answering/paper-comprehension/" itemprop="url" rel="index"><span itemprop="name">paper comprehension</span></a>
-                </span>
-                  >
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Knowledge-Base-Qestion-Answering/paper-comprehension/basis/" itemprop="url" rel="index"><span itemprop="name">basis</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>2.3k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>2 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <ul>
-<li>论文：https://arxiv.org/abs/1506.02075</li>
-</ul>
-<h2 id="简介">1. 简介</h2>
-<ul>
-<li><p>当时的KB-QA对于解决<strong>只依赖一个知识三元组</strong>的简单问题（称为Simple Question Answering）仍有些困难，为此作者构建了一个更大的简单问题数据集，称作<strong>SimpleQuestions</strong>。该数据集的每个问题都依据一个知识三元组知识，进行人工构建问题，数据集最终一共包含了108,442个问题-答案对，相比之前只含8000多个问题-答案对的benchmark数据集WebQuestion，其数据量大了很多。该数据集的部分数据如下图所示<em>（下划线表示答案）</em>：<img src="https://pic1.zhimg.com/80/v2-97d2063bf381150a3e97860e6d53d760_720w.png" alt="img" /></p></li>
-<li><p>整体思想是<strong>将知识库里的知识存储到记忆模块M中，问题经过输入模块I转化为分布式表达，输出模块O选择与问题最相关的支撑记忆（由于SimpleQuestions的问题只依赖一个知识，所以只需要选择一条记忆），回答模块R将该记忆对应三元组的宾语作为最终答案输出。</strong></p></li>
-<li><p>在模型训练完毕后，我们将Reverb中提取的三元组（Reverb的知识三元组是自然语言形式，如<em>(“Obama”, “was also born in”, “<strong>August 1961</strong>”)</em>，知识三元组抽取自ClueWeb）作为新的知识，用<strong>泛化模块G</strong>将新知识存储到记忆模块中，在不经过re-training的情况下使用该记忆回答问题，测试模型的泛化性能。</p></li>
-</ul>
-<h2 id="整体流程">2. 整体流程</h2>
-<h3 id="存储知识">2.1 存储知识</h3>
-<ul>
-<li>首先将知识库中的知识存储到记忆网络中。作者使用Freebase的两个子集FB2M（含2M实体和5K实体关系）和FB5M（含5M实体和7K实体关系）分别作为知识库。使用<strong>输入模块I</strong>来处理数据。</li>
-<li>由于一个问句可能有多个答案，并且对于一个<strong>问题输出模块O</strong>只能选择一个支撑记忆，我们先对知识做两种预处理：
-<ul>
-<li>将具有相同主语和实体关系的三元组进行<strong>合并</strong>（Group），这样每一条知识将包含k个不同的宾语，即<span class="math inline">\(y=(s,r,\{o_1,...,o_k\})\)</span>。合并的原因在于我们想用一条记忆回答具有多个答案的问题（我们将合并前的知识三元体成为Atomic Facts，合并后的三元组成为Facts），合并后和合并前的知识库大小如下：<img src="https://pic3.zhimg.com/80/v2-4ed153a77495a8cde90f7ed1d81180a6_720w.png" alt="img" /></li>
-<li><strong>去除中间节点。</strong>有些知识中日期会链接两个实体以区分某一事实的时间范围，我们可以将中间节点（mediator node）去除转化成一个二阶关系，这样我们就把长度为2的路径压缩成了长度为1的路径，即压缩为一个三元组。这个操作使得WebQuestion里的能被单一关系回答的问题数量从65%上升到86%。</li>
-</ul></li>
-<li>预处理完知识后，我们的<strong>输入模块I</strong>对知识进行预处理并存储到记忆中。这里使用词袋模型bag-of-symbol的方法，用一个<span class="math inline">\(N_S\)</span>维的multi-hot向量<span class="math inline">\(f(y)\)</span>来表示每一条知识并作为记忆。<span class="math inline">\(N_S\)</span>的大小为知识库实体和实体关系的大小之和，主语实体<span class="math inline">\(s\)</span>和实体关系<span class="math inline">\(r\)</span>对应向量维的值为1，宾语实体<span class="math inline">\(o_i\)</span>对应维的值设为<span class="math inline">\(1/k\)</span>。</li>
-</ul>
-<h3 id="训练记忆网络">2.2 训练记忆网络</h3>
-<ul>
-<li>使用问题-答案对来训练记忆网络。</li>
-<li>首先用<strong>输入模块I</strong>来处理输入的自然语言问句<span class="math inline">\(q\)</span>，我们使用n-gram词袋模型（bag-of-ngrams）方法，用一个<span class="math inline">\(N_V\)</span>维的multi-hot向量<span class="math inline">\(g(q)\)</span>来表示每一个问句。<span class="math inline">\(N_V\)</span>的大小是字典大小，字典包含所有问题中出现的单词和所有知识库实体的自然语言别称（这个别称可能由多个单词构成，我们用1个n-gram来表示）。</li>
-<li>对于输入<span class="math inline">\(g(q)\)</span>，我们的<strong>输出模块O</strong>要在记忆中寻找一个与之最相关的支撑记忆。为了避免遍历整个记忆模块里的每一条知识，我们先确定一个候选范围。确定方式如下，将问句中的所有n-gram与知识库实体别称进行匹配，以确定候选实体，将含有候选实体作为主语的知识作为我们的候选支撑记忆。我们将记忆和问题投影到一个低维分布式空间，通过consine相似度作为得分函数，来寻找最相关的支撑记忆，即：<span class="math inline">\(S_{QA}(q,y)=cos(W_Vg(q),W_Sf(y))\)</span>。这里我们需要学习的参数就是两个权值矩阵<span class="math inline">\(W_V,W_S\)</span>。</li>
-<li>这里与[[4. Multi-Column向量建模-Question Answering over Freebase with Multi-Column Convolutional Neural Networks]]提到的训练方法一样，我们构建margin-based ranking损失函数，也进行多任务的训练，通过多任务训练让语义相同的问题的分布式表达<span class="math inline">\(W_V(q)\)</span>相似。</li>
-<li>需要注意的是，我们知道构建margin-based ranking损失函数需要提供支撑记忆的正样本和负样本，由于SimpleQuestion数据集的每个问题都有对应的知识标签，因此我们已经有支撑记忆的正确标签。但是对于WebQuestion数据集，我们没有正确的支撑记忆标签，作者通过类似之前寻找候选支撑记忆的方式去得到标签。</li>
-</ul>
-<h3 id="测试网络泛化能力">2.3 测试网络泛化能力</h3>
-<ul>
-<li>使用<strong>泛化模块G</strong>来连接新的知识库Reverb到我们的记忆中，通过实体链接和实体别名匹配等方式，来匹配已有记忆中的实体和新知识库里的实体（这种方式只能匹配到新知识库中17%的实体）。新知识库中剩下的实体和所有的关系都用词袋模型表示，因此我们可以用一个<span class="math inline">\(N_V+N_S\)</span>维的向量来<span class="math inline">\(h(y)\)</span>表示新知识并将其存储到记忆中。同样的，输出模块在寻找支撑记忆时的相似度得分函数为<span class="math inline">\(S_{RVB}(q,y)=cos(W_Vg(q),W_{VS}h(y))\)</span>，其中矩阵<span class="math inline">\(W_{VS}\)</span>直接由之前训练好的<span class="math inline">\(W_V,W_s\)</span>拼接（concatenate）而成。</li>
-</ul>
-
-      
-    </div>
-
-    
-	
-	
-
-	
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/03/01/%E7%AC%AC%E4%BA%94%E5%91%A8/8.%20%E9%9D%9E%E7%BB%93%E6%9E%84%E5%8C%96%E7%9A%84%E7%9F%A5%E8%AF%86%E5%BA%93-Reading%20Wikipedia%20to%20Answer%20Open-Domain%20Questions/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpg">
-      <meta itemprop="name" content="Olivia">
-      <meta itemprop="description" content="May All Your Troubles Be little Ones">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Olivia的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/03/01/%E7%AC%AC%E4%BA%94%E5%91%A8/8.%20%E9%9D%9E%E7%BB%93%E6%9E%84%E5%8C%96%E7%9A%84%E7%9F%A5%E8%AF%86%E5%BA%93-Reading%20Wikipedia%20to%20Answer%20Open-Domain%20Questions/" class="post-title-link" itemprop="url">8. 非结构化的知识库-Reading Wikipedia to Answer Open-Domain Questions</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-03-01 00:00:00" itemprop="dateCreated datePublished" datetime="2021-03-01T00:00:00+08:00">2021-03-01</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-05-04 15:16:13" itemprop="dateModified" datetime="2021-05-04T15:16:13+08:00">2021-05-04</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Knowledge-Base-Qestion-Answering/" itemprop="url" rel="index"><span itemprop="name">Knowledge Base Qestion Answering</span></a>
-                </span>
-                  >
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Knowledge-Base-Qestion-Answering/paper-comprehension/" itemprop="url" rel="index"><span itemprop="name">paper comprehension</span></a>
-                </span>
-                  >
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Knowledge-Base-Qestion-Answering/paper-comprehension/basis/" itemprop="url" rel="index"><span itemprop="name">basis</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>1.6k</span>
+              <span>1.1k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -1229,39 +397,33 @@
 
       
           <ul>
-<li>论文：https://arxiv.org/pdf/1704.00051.pdf</li>
+<li>论文：http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.650.469&amp;rep=rep1&amp;type=pdf</li>
 </ul>
-<h2 id="简介">1. 简介</h2>
+<h2 id="信息抽取">信息抽取</h2>
 <ul>
-<li><p>给定一个问题，我们可以在维基百科中找到相关信息和答案，如下表：<img src="https://pic4.zhimg.com/v2-a2e9cc281b19fe87607083a05bcb8ee3_r.jpg" alt="img" /></p>
-<p>可以看出，对于问题我们可以在维基百科中找到相应的文章，根据文章找到与答案相关的段落，然后提取出答案。</p></li>
-</ul>
-<h2 id="流程">2. 流程</h2>
+<li><p>根据<strong>主题词</strong>，在相应跳的范围内为<strong>候选答案</strong>构成<strong>主题图</strong>。</p></li>
+<li><p><a target="_blank" rel="noopener" href="http://www.hankcs.com/nlp/chinese-sentences-svo-java-extraction.html">语法依存树(Dependency tree)</a>通过提取<strong>问题词<em>qword</em></strong>，<strong>问题焦点<em>qfocus</em></strong>，<strong>问题主题词<em>qtopic</em></strong>和<strong>问题中心动词<em>qverb</em></strong>这四个问题特征，我们可以将该问题的依存树转化为<strong>问题图（Question Graph）</strong>，如下图所示</p>
 <figure>
-<img src="https://pic1.zhimg.com/v2-8eff24241e258b3065b41b1c8332686c_r.jpg" alt="img" /><figcaption aria-hidden="true">img</figcaption>
+<img src="https://pic3.zhimg.com/v2-f83ebe87d2f27db0eea0de3de5248cbe_r.jpg" alt="img" /><figcaption aria-hidden="true">img</figcaption>
 </figure>
-<h3 id="document-retriever">2.1 Document Retriever</h3>
 <ul>
-<li>通过问题检索出相关的文章有很多的方法，最简单的方法就是统计两者的<a target="_blank" rel="noopener" href="http://www.ruanyifeng.com/blog/2013/03/tf-idf.html">TF-IDF</a>得到词袋模型向量，然后通过cosine similarity等相似度度量方式进行检索。进一步可以将相邻词汇也考虑进去，使用n-gram的词袋模型。这篇文章中，作者使用bigram的词袋模型，为了加快效率，将bigram映射为<a target="_blank" rel="noopener" href="https://github.com/PeterScott/murmur3">murmur3 hash</a>。</li>
+<li>问题词(qword)：例如 who, when, what, where, how, which, why, whom, whose</li>
+<li>问题焦点(qfocus)：这个词<strong>暗示了答案的类型</strong>，比如name/time/place，我们直接将问题词<strong><em>qword</em></strong>相关的那个名词抽取出来作为<em>qfocus</em>【可最后一步确定答案类型时确定】</li>
+<li>主题词(qtopic)：可通过命名实体识别。</li>
+<li>中心动词(qverb)：<strong>动词能够给我们提供很多和答案相关的信息</strong>，比如play，那么答案有可能是某种球类或者乐器。我们可以通过词性标注（Part-of-Speech，POS）确定<em>qverb。</em></li>
+<li>转换时还需去掉一些不重要的叶子节点，如限定词（determiner，如a/the/some/this/each等），介词（preposition）和标点符号（punctuation）</li>
+</ul></li>
 </ul>
-<h3 id="document-reader">2.2 Document Reader</h3>
+<h2 id="构建特征向量对候选答案进行分类">构建特征向量对候选答案进行分类</h2>
 <ul>
-<li><p>可以使用NLP阅读理解中的一些方法来得出答案。对于每篇文章的每个段落，我们去预测一个文本区间作为答案的概率，具体来说，我们根据问题去预测该自然段答案的起始位置（start position）和终止位置（end position）。依次对每篇文章的每个段落进行预测，选出概率最大的区间作为最终答案。</p></li>
-<li><p>首先我们对<strong>每个段落进行encoding</strong>，将段落中的每一个token用一个特征向量表示，该特征向量包含以下四个部分：</p>
-<ol type="1">
-<li><p><strong>词向量（Word-embeddings）</strong>：300维度预训练好的词向量，由于问题中有些词语比较特殊，如疑问词，因此我们在训练中，对word-embedding中前1000的高频词进行fine-tune，其他词的word-embedding固定使用预训练的值，不再进行训练。</p></li>
-<li><p><strong>抽取匹配（Exact Match）</strong>：我们用三个二元的指示器来表示该token是否在问题中出现，三个二元指示器分别表示该token的不同形式的表达（如大小写）。</p></li>
-<li><p><strong>符号的特征（Token Features）</strong>：我们也将该符号的词性标注、命名实体和归一化后的TF作为3个特征加入到特征向量中。</p></li>
-<li><p><strong>引入对问题的注意力机制（Aligned question embedding）</strong>：该特征和特征2<strong>抽取匹配</strong>类似，都是为了表征该token和问题的关联度，与特征2不同的是，该特征考虑了整个问题与它的相似度，而非某一个具体的单词，是一种soft-alignment。具体来说，将问题每个单词的embedding和该token通过点乘比较相似度得到加权系数，再对问题每个单词的embedding进行加权求和作为该特征，公式如下：<img src="https://pic1.zhimg.com/v2-063485fc91ff8dcc62a362e357a1d4ec_r.jpg" alt="img" /></p>
-<p>其中p表示段落中的token，q代表问题中的token，E表示embedding，<span class="math inline">\(\alpha\)</span>是二者点乘后的归一化相似度，即：</p>
-<figure>
-<img src="https://pic1.zhimg.com/v2-1c26aa63445d9925c60788fd4fd0e124_r.jpg" alt="img" /><figcaption aria-hidden="true">img</figcaption>
-</figure></li>
-</ol>
-<p>这样就将段落中每一个token进行了向量化，接下来，我们使用一个3层的双向LSTM对段落进行encoding，假设双向LSTM每一层隐层为h，我们将所有隐藏层连接起来，这样对于每个token就得到了一个6h大小的向量表达<span class="math inline">\(p_i\)</span>。</p></li>
-<li><p>接下来我们<strong>对问题进行encoding</strong>，使用另外一个3层的双向LSTM对问题的word-embedding进行编码，将每时刻的隐层进行加权求和，<strong>该归一化加权系数由训练得到</strong>，学习了问题中每个单词的重要程度，这样我们就得到了一个问题的向量表达<span class="math inline">\(q\)</span>。</p></li>
-<li><p>得到问题和段落的编码后，我们就可以对答案区间进行预测，对于段落的每一个位置i，都用两个双线性项去分别预测它作为答案起始位置和终止位置的概率，公式如下：<img src="https://pic2.zhimg.com/v2-2c962349c9ab8c19b260ed6045ad00b5_r.jpg" alt="img" /></p>
-<p>我们在该段落中去寻找一个区间最有可能是答案的区间<span class="math inline">\([i, i&#39;]\)</span>，即满足<span class="math inline">\(P_{start}(i)×P_{end}(i&#39;)\)</span>最大，且<span class="math inline">\(i≤i&#39;≤i+15\)</span>。我们将每个候选段落中最可能是答案的区间进行比较，选出最终的答案区间，这里为了能够在所有段落中进行比较，我们用指数形式替换掉归一化的Softmax。</p></li>
+<li><p>对于每个候选答案而言实际上是一个二分类问题，训练分类器，<strong>分类器的输入特征向量中的每一维对应一个问题-候选答案特征</strong>。每一个问题-候选答案特征由问题特征中的一个特征，和候选答案特征的一个特征，<strong>组合（combine）而成</strong>。</p></li>
+<li><p>问题特征：从问题图中的每一条边e(s,t)，抽取4种问题特征：s，t，s|t，和s|e|t。如对于边prep_of(qfocus=name，brother)，我们可以抽取这样四个特征：<em>qfocus=what，brother，qfocus=what|brother</em> 和 <em>qfocus=what|prep_of|brother。</em></p></li>
+<li><p>候选答案特征：对于主题图中的每一个节点，我们都可以抽取出以下特征：该节点的所有<strong>关系</strong>（relation，记作rel），和该节点的所有<strong>属性</strong>（property，如type/gender/age）。</p></li>
+<li><p>利用朴素贝叶斯计算了每一个关系R和整个问题Q的关联度，可表示为概率的形式<span class="math inline">\(P(R|Q)\)</span>。</p></li>
+</ul>
+<h2 id="训练">训练</h2>
+<ul>
+<li>使用<a target="_blank" rel="noopener" href="https://stanfordnlp.github.io/CoreNLP/">Standford CoreNLP</a>帮助对问题进行信息抽取。</li>
 </ul>
 
       
@@ -1284,7 +446,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/03/01/%E7%AC%AC%E4%BA%94%E5%91%A8/7.%20%E5%BC%95%E5%85%A5%E6%B3%A8%E6%84%8F%E5%8A%9B%E6%9C%BA%E5%88%B6-Question%20Answering%20over%20Knowledge%20Base%20with%20Neural%20Attention%20Combining%20Global%20Knowledge%20Information/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/04/15/%E7%AC%AC09%E5%91%A8/KERMIT%20Complementing%20Transformer%20Architectures%20with%20Encoders%20of%20Explicit%20Syntactic%20Interpretations/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.jpg">
@@ -1298,7 +460,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2021/03/01/%E7%AC%AC%E4%BA%94%E5%91%A8/7.%20%E5%BC%95%E5%85%A5%E6%B3%A8%E6%84%8F%E5%8A%9B%E6%9C%BA%E5%88%B6-Question%20Answering%20over%20Knowledge%20Base%20with%20Neural%20Attention%20Combining%20Global%20Knowledge%20Information/" class="post-title-link" itemprop="url">7. 引入注意力机制-Question Answering over Knowledge Base with Neural Attention Combining Global Knowledge Information</a>
+            <a href="/2021/04/15/%E7%AC%AC09%E5%91%A8/KERMIT%20Complementing%20Transformer%20Architectures%20with%20Encoders%20of%20Explicit%20Syntactic%20Interpretations/" class="post-title-link" itemprop="url">KERMIT Complementing Transformer Architectures with Encoders of Explicit Syntactic Interpretations</a>
         </h2>
 
         <div class="post-meta">
@@ -1308,14 +470,14 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2021-03-01 00:00:00" itemprop="dateCreated datePublished" datetime="2021-03-01T00:00:00+08:00">2021-03-01</time>
+              <time title="创建时间：2021-04-15 00:00:00" itemprop="dateCreated datePublished" datetime="2021-04-15T00:00:00+08:00">2021-04-15</time>
             </span>
               <span class="post-meta-item">
                 <span class="post-meta-item-icon">
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-05-04 15:16:09" itemprop="dateModified" datetime="2021-05-04T15:16:09+08:00">2021-05-04</time>
+                <time title="修改时间：2021-05-06 14:42:44" itemprop="dateModified" datetime="2021-05-06T14:42:44+08:00">2021-05-06</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1331,7 +493,7 @@
                 </span>
                   >
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Knowledge-Base-Qestion-Answering/paper-comprehension/basis/" itemprop="url" rel="index"><span itemprop="name">basis</span></a>
+                  <a href="/categories/Knowledge-Base-Qestion-Answering/paper-comprehension/latest/" itemprop="url" rel="index"><span itemprop="name">latest</span></a>
                 </span>
             </span>
 
@@ -1341,7 +503,660 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>1.9k</span>
+              <span>2.8k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>3 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <ul>
+<li>论文：https://www.aclweb.org/anthology/2020.emnlp-main.18/</li>
+</ul>
+<h2 id="abstract-intro">Abstract &amp; Intro</h2>
+<ul>
+<li><p>将句法分析树嵌入到人工神经网络并可视化语法推理</p></li>
+<li><p>用<strong>显式通用句法解释</strong>（句法分析树）改进最新的通用句子嵌入，并创建在句法上可解释的神经网络结构</p></li>
+<li><p>循环神经网络[RecNNs]是应用于二叉树的递归神经网络。</p></li>
+<li><p>结构核函数[structural kernel function]一直是学习中利用句法信息的方法，但这些函数不能在神经网络中使用。核机器[kernel machine]利用了这些通常是递归的结构核函数，它们定义了计算公共子结构的两棵树之间的相似性度量。</p></li>
+<li><p>结构核领域，分布式内核为了降低树核的计算量，这些分布式树核将巨大的子结构空间嵌入到较小的空间中。这种嵌入是通过使用递归函数来获得的，递归函数相对于树的大小是线性的。[ Distributed tree kernels.]</p></li>
+<li><p>Reverse Feature Engineering of Syntactic Tree Kernels[2010]</p></li>
+</ul>
+<h2 id="the-model">3. The model</h2>
+<ul>
+<li>介绍Kernel-inspired Encoder with a Recursive Mechanism for Interpretable Trees(KERMIT)，及其可视化工具<span class="math inline">\(\bold {KERMIT}_{viz}\)</span>，可以与transformer网络结合使用。</li>
+</ul>
+<h3 id="预备表示preliminary-notation">3.1 预备表示(Preliminary notation)</h3>
+<ul>
+<li>修正了解析树、随机向量和对随机向量操作的表示。</li>
+<li>解析树<span class="math inline">\(\mathcal{T}\)</span>和解析子树<span class="math inline">\(\tau\)</span>被递归定义为<span class="math inline">\(t=(r,[t_1,...,t_k])\)</span>，其中<span class="math inline">\(r\)</span>是树根的表示，<span class="math inline">\([t_1,...,t_k]\)</span>是子树<span class="math inline">\(t_i\)</span>的集合。叶子节点<span class="math inline">\(t\)</span>被定义为<span class="math inline">\(r=(r,[])\)</span>，其中的子树集合为空，也可直接记作<span class="math inline">\(t=r\)</span></li>
+<li>对于解析树<span class="math inline">\(\mathcal{T}\)</span>，模型需要三个子树集合的定义：集合<span class="math inline">\(N(\mathcal{T})\)</span>、集合<span class="math inline">\(\bar S(\mathcal{T})\)</span>和集合<span class="math inline">\(S(\mathcal{T})\)</span>。后两个集合根据我们想要在通用句法embedding中建模而用到的子树定义。
+<ul>
+<li><span class="math inline">\(N(\mathcal{T})\)</span>包含<span class="math inline">\(\mathcal{T}\)</span>的所有<strong>完整子树</strong>。给定一棵树<span class="math inline">\(\mathcal{T}\)</span>和其中一个结点<span class="math inline">\(r\)</span>，<span class="math inline">\(\mathcal{T}\)</span>的一个完整子树是以<span class="math inline">\(r\)</span>为根一直到达叶子节点的子树。<img src="https://i.loli.net/2021/04/08/fTmQbLz7lOs1xGH.png" alt="image-20210408165347649.png" /></li>
+<li><span class="math inline">\(\bar S(\mathcal{T})\)</span></li>
+</ul></li>
+<li>最后，为了构建未经训练的KERMIT编码器，我们利用从多变量高斯分布<span class="math inline">\(v\sim \mathcal{N}(d,\frac 1 {\sqrt{d}})\)</span>中提取出的随机向量的性质。这些向量保证了如果<span class="math inline">\(u ≠v\)</span>，则<span class="math inline">\(u^Tv≈0\)</span>并且<span class="math inline">\(u^Tu≈1\)</span>。这个性质对于可解释性很重要。</li>
+<li>为了合成这些向量，我们利用混洗循环卷积(shuffled circular convolution)<span class="math inline">\(u\otimes v\)</span>。如何这些向量取自多元高斯分布，则该函数保证<span class="math inline">\((u\otimes v)^Tu≈0,(u\otimes v)^Tv≈0,(u\otimes v)≠(v\otimes u)\)</span>。这是一步循环卷积(circular convolution)的操作。这一步操作对于合理合成节点向量很重要。</li>
+</ul>
+<h3 id="解析树及其子网络的编码器the-encoder-for-parse-trees-and-its">3.2 解析树及其子网络的编码器(The encoder for parse trees and its</h3>
+<p>sub-network)</p>
+<figure>
+<img src="C:\Users\Olivia~\AppData\Roaming\Typora\typora-user-images\image-20210408172002015.png" alt="image-20210408172002015" /><figcaption aria-hidden="true">image-20210408172002015</figcaption>
+</figure>
+<ul>
+<li>主要有两个组件。第一个是Kermit编码器，它将解析树<span class="math inline">\(\mathcal{T}\)</span>实际编码为嵌入向量。 <span class="math display">\[
+y=\mathcal{D}(\mathcal{T})
+\]</span> 第二个组件是利用这些嵌入向量的多层感知器： <span class="math display">\[
+z=mlp(y)
+\]</span></li>
+</ul>
+<h4 id="第一个组件">第一个组件</h4>
+<ul>
+<li><p>编码器<span class="math inline">\(\mathcal{D}\)</span>来源于树核(tree kernel)和分布式树核(distributed tree kernel)。它使得在向量空间<span class="math inline">\(R^d\)</span>内表示解析树成为可能，这个空间承载了大量子树<span class="math inline">\(R^n\)</span>的空间，其中<span class="math inline">\(n\)</span>是不同子树的数目。</p></li>
+<li><p>每个<span class="math inline">\(\mathcal{T}\)</span>使用它的有效子树<span class="math inline">\(S(\mathcal{T})\)</span>表示。</p></li>
+<li><p>编码器是基于树节点标签<span class="math inline">\(x_r=W_or\in R^d\)</span>的嵌入层和基于混洗循环卷积<span class="math inline">\(\otimes\)</span>的递归编码函数。</p></li>
+<li><p>嵌入层<span class="math inline">\(x_r=W_or\in R^d\)</span>是未经训练的编码函数，其将一个树节点标签<span class="math inline">\(r\)</span>的one-hot向量<span class="math inline">\(r\)</span>映射到先前介绍的多变量高斯分布<span class="math inline">\(v\sim \mathcal{N}(d,\frac 1 {\sqrt{d}})\)</span>中提取到的随机变量。</p></li>
+<li><p>所以<span class="math inline">\(W_o\in R^{m×d}\)</span>是一个<span class="math inline">\(m\)</span>列的矩阵，其中<span class="math inline">\(m\)</span>是节点标签集合的基数，并且矩阵<span class="math inline">\(W_o\)</span>中每一列<span class="math inline">\(w^{(i)}\)</span>都满足<span class="math inline">\(w^{(i)}\sim \mathcal{N}(d,\frac 1 {\sqrt{d}})\)</span>。函数<span class="math inline">\(\mathcal{D}(\mathcal{T})\)</span>被定义为解析树上的递归函数<span class="math inline">\(\Upsilon(t)\)</span>的和： <span class="math display">\[
+y=\mathcal{D}(\mathcal{T})=\sum_{t\in N(\mathcal{T})}\Upsilon(t)
+\]</span> 其中，<span class="math inline">\(N(\mathcal{T})\)</span>之前定义为是完整子树<span class="math inline">\(\mathcal{T}\)</span>的集合，然后<span class="math inline">\(\Upsilon(t)\)</span>被定义为：<img src="https://i.loli.net/2021/04/08/AHOdWq2VGLFYyoI.png" alt="image-20210408191917727.png" /></p>
+<p>其中，<span class="math inline">\(0&lt;\lambda≤1\)</span>是惩戒大子树的衰减因子。通过动态算法实现<span class="math inline">\(\mathcal{D}(\mathcal{T})\)</span>计算成本是相对于树的节点是线性的，并且基本函数的<span class="math inline">\(\otimes\)</span>的花销是<span class="math inline">\(dlogd\)</span>，<span class="math inline">\(d\)</span>是表示空间<span class="math inline">\(R^d\)</span>的大小。</p></li>
+<li><p>由于其本质，树神经编码器有一个很好地解释为一个非常简单的嵌入层即<span class="math inline">\(W_{\Upsilon}\in R^{d×n}\)</span>，将子树的空间嵌入到较小的<span class="math inline">\(R^d\)</span>空间中，因此<span class="math inline">\(\mathcal{D(T)}\)</span>可看作： <span class="math display">\[
+y=\mathcal{D(T)}=W_{\Upsilon}x
+\]</span> 其中<span class="math inline">\(x\)</span>为子树集合<span class="math inline">\(S(\mathcal{T})\)</span>的向量表示，即<span class="math inline">\(\sqrt{\lambda^k}x_t\)</span>的和，其中<span class="math inline">\(x_t\)</span>是表示<span class="math inline">\(t\in S(\mathcal{T})\)</span>的one-hot向量，<span class="math inline">\(\lambda\)</span>是惩戒规模大的树的衰减因子，<span class="math inline">\(k\)</span>是树<span class="math inline">\(t\)</span>的节点数目。可以很容易的推导出，矩阵<span class="math inline">\(W_\Upsilon\)</span>中列<span class="math inline">\(w_i\)</span>编码子树<span class="math inline">\(t\)</span>如下：<img src="https://i.loli.net/2021/04/08/t8OMTVIE3JbGPlX.png" alt="image-20210408193355775.png" /></p></li>
+</ul>
+
+      
+    </div>
+
+    
+	
+	
+
+	
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/04/15/%E7%AC%AC09%E5%91%A8/%E4%BE%9D%E5%AD%98%E5%8F%A5%E6%B3%95%E5%88%86%E6%9E%90/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="Olivia">
+      <meta itemprop="description" content="May All Your Troubles Be little Ones">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Olivia的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/04/15/%E7%AC%AC09%E5%91%A8/%E4%BE%9D%E5%AD%98%E5%8F%A5%E6%B3%95%E5%88%86%E6%9E%90/" class="post-title-link" itemprop="url">依存句法分析</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-04-15 00:00:00" itemprop="dateCreated datePublished" datetime="2021-04-15T00:00:00+08:00">2021-04-15</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-05-06 14:53:13" itemprop="dateModified" datetime="2021-05-06T14:53:13+08:00">2021-05-06</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Knowledge-Base-Qestion-Answering/" itemprop="url" rel="index"><span itemprop="name">Knowledge Base Qestion Answering</span></a>
+                </span>
+                  >
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Knowledge-Base-Qestion-Answering/Others/" itemprop="url" rel="index"><span itemprop="name">Others</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>2.9k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>3 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="句法分析依存分析dependency-parsing">句法分析：依存分析(Dependency Parsing)</h1>
+<h2 id="句法分析任务分类">1. 句法分析任务分类</h2>
+<p>根据<strong>句法结构的表现形式</strong>不同，最常见的句法分析任务可以分为以下三种：</p>
+<ul>
+<li>句法结构分析(syntactic structure parsing)，又称短语结构分析（phrase structure parsing），也叫成分句法分析（constituent syntactic parsing）。作用是识别出句子中的短语结构以及短语之间的层次句法关系。</li>
+<li><strong>依存关系分析</strong>，又称依存句法分析（dependency syntactic parsing），简称依存分析，作用是识别句子中词汇与词汇之间的相互依存关系。依存句法分析属于<strong>浅层句法分析</strong>。</li>
+<li>深层文法句法分析，即利用深层文法，例如词汇化树邻接文法（Lexicalized Tree Adjoining Grammar， LTAG）、词汇功能文法（Lexical Functional Grammar， LFG）、组合范畴文法（Combinatory Categorial Grammar， CCG）等，对句子进行深层的句法以及语义分析。</li>
+</ul>
+<h2 id="依存分析方法">2. 依存分析方法</h2>
+<p>PCFG、Lexical PCFG详见：https://blog.csdn.net/qq_28031525/article/details/79187080</p>
+<p><a target="_blank" rel="noopener" href="https://wohugb.github.io/chatbot/12.semantic-dependency/">用语言云分析依存句法和语义依存</a>：语言云工具</p>
+<p><a target="_blank" rel="noopener" href="https://wohugb.github.io/chatbot/18.tree/">生成句法分析树</a>：基于概率上下文无关文法(PCFG)</p>
+<ul>
+<li><p>依存语句树：除了一个词，即根节点（这里为jumped）外，其他词都有词作为父亲节点，而该根节点（jumped）的父亲节点为root。</p></li>
+<li><p>但是注意，依存句法树是不允许弧之间有交叉或者回路！ <img src="https://img-blog.csdnimg.cn/img_convert/69120f8dc9aed900de650b9a592973e5.png" alt="69120f8dc9aed900de650b9a592973e5.png" /></p></li>
+<li><p>文本表示格式为conll格式： <img src="https://img-blog.csdnimg.cn/img_convert/bfb3e982b9771e1855c8140fa3b10a05.png" alt="bfb3e982b9771e1855c8140fa3b10a05.png" /></p></li>
+</ul>
+<h3 id="传统的基于转移的依存分析transition-based-parsing">传统的基于转移的依存分析（Transition-based Parsing）</h3>
+<ul>
+<li><p>框架由状态和动作两部分构成，其中状态用来记录不完整的预测结果，动作则用来控制状态之间的转移。</p></li>
+<li><p>构造一个三元组，分别是</p>
+<ul>
+<li>Stack：最开始只存放一个Root节点；</li>
+<li>Buffer：则装有我们需要解析的一个句子；</li>
+<li>Set：中则保存我们分析出来的依赖关系， 最开始是空的。</li>
+</ul></li>
+<li><p>用在生成依存句法树上，则具体表示为<strong>从空状态开始，通过动作转移到下一个状态，一步一步生成依存句法树，最后的状态保存了一个完整的依存树</strong>。依存分析就是用来预测词与词之间的关系，现在转为预测动作序列。在基于转移的框架中，我们定义了4种动作（栈顶的元素越小表示离栈顶越近）：</p>
+<ul>
+<li><p>移进（shift）：将buffer中的第一个词移出并放到stack上。</p></li>
+<li><p>左规约（arc_left_I）：栈顶两个元素规约，左边节点下沉成为孩子节点，为弧上关系</p></li>
+<li><p>右规约（arc_right_I）：栈顶两个元素规约，右边节点下沉成为孩子节点，为弧上关系</p></li>
+<li><p>根出栈（pop_root）：根节点出栈，分析完毕</p></li>
+<li><p>其中下沉的意思：</p>
+<figure>
+<img src="https://img-blog.csdnimg.cn/img_convert/f16fd3ae392da443a33e232dc0137a1c.png" alt="f16fd3ae392da443a33e232dc0137a1c.png" /><figcaption aria-hidden="true">f16fd3ae392da443a33e232dc0137a1c.png</figcaption>
+</figure>
+<p>0下沉，0是1的孩子</p></li>
+</ul></li>
+<li><p>具体例子理解：</p>
+<ul>
+<li><p>以上面依存树为例：</p>
+<figure>
+<img src="https://img-blog.csdnimg.cn/img_convert/a5f82461c27efca70218c269ff3f6eb5.png" alt="a5f82461c27efca70218c269ff3f6eb5.png" /><figcaption aria-hidden="true">a5f82461c27efca70218c269ff3f6eb5.png</figcaption>
+</figure></li>
+<li><p>一整套分析的动作序列为：</p>
+<figure>
+<img src="https://img-blog.csdnimg.cn/img_convert/adaa897b0aab1aeb7536f5e06c3b1863.png" alt="adaa897b0aab1aeb7536f5e06c3b1863.png" /><figcaption aria-hidden="true">adaa897b0aab1aeb7536f5e06c3b1863.png</figcaption>
+</figure></li>
+<li><p>初始状态 <img src="https://img-blog.csdnimg.cn/img_convert/885541f1d219e457829d439cd3894122.png" alt="885541f1d219e457829d439cd3894122.png" /></p>
+<p>栈为空，队列为整个文本的数字序列。这个时候只能进行移进shift操作：</p></li>
+<li><figure>
+<img src="https://img-blog.csdnimg.cn/img_convert/e34663dd816b1ca94471bdfd888f87b3.png" alt="e34663dd816b1ca94471bdfd888f87b3.png" /><figcaption aria-hidden="true">e34663dd816b1ca94471bdfd888f87b3.png</figcaption>
+</figure></li>
+</ul>
+<p>因为左边栈只有一个元素0，还是只能进行移进shift操作：</p>
+<ul>
+<li><img src="https://img-blog.csdnimg.cn/img_convert/c2beb7f2cf582a82b0850eba175b4b30.png" title="fig:" alt="c2beb7f2cf582a82b0850eba175b4b30.png" /></li>
+</ul>
+<p>这个时候栈中有2个元素，我们此时看依存树</p>
+<pre><code>![06c37ba91a01f9587a79587f0e6b48d6.png](https://img-blog.csdnimg.cn/img_convert/06c37ba91a01f9587a79587f0e6b48d6.png) </code></pre>
+<p>0、1之间并没有弧，不能进行规约，所以还是只能shift：</p>
+<ul>
+<li><img src="https://img-blog.csdnimg.cn/img_convert/f44b666f17bb65cdbaf7b58d737fad03.png" title="fig:" alt="f44b666f17bb65cdbaf7b58d737fad03.png" /></li>
+</ul>
+<p>此时看栈顶两元素，发现依存树中1、2之间有依存关系</p>
+<pre><code>![41fd404827975a6e7d7d6612912aafea.png](https://img-blog.csdnimg.cn/img_convert/41fd404827975a6e7d7d6612912aafea.png) </code></pre>
+<p>而且1为2的孩子，所以此时的动作为左规约arc_left，1下沉，为2的孩子（此时实际操作为1被踢出栈，栈里剩为0、2，踢出是因为最后能根据动作序列还原整个依存树，当然也为了接下来的操作方便），此时标签为amod：</p>
+<ul>
+<li><img src="https://img-blog.csdnimg.cn/img_convert/d4215341ff4eccb3f643a6b595921b80.png" title="fig:" alt="d4215341ff4eccb3f643a6b595921b80.png" /></li>
+</ul>
+<p>此时栈里为0、2，再次查看依存树</p>
+<pre><code>![9186bf73f9d75305eb42097fefa09f9d.png](https://img-blog.csdnimg.cn/img_convert/9186bf73f9d75305eb42097fefa09f9d.png) </code></pre>
+<p>发现0、2之间有依存关系，其中0为2的孩子，所以此时操作为左规约，此时标签为det</p>
+<p>...</p>
+<ul>
+<li><p>中间略过一些步骤，因为都是同理，这次说下第9步： <img src="https://img-blog.csdnimg.cn/img_convert/05a8eb621856d2a90d2298ae0468dbba.png" alt="05a8eb621856d2a90d2298ae0468dbba.png" /></p>
+<p>此时栈中为3、4，查看依存树</p>
+<figure>
+<img src="https://img-blog.csdnimg.cn/img_convert/7747df36c58715bc888df2582b7a5678.png" alt="7747df36c58715bc888df2582b7a5678.png" /><figcaption aria-hidden="true">7747df36c58715bc888df2582b7a5678.png</figcaption>
+</figure>
+<p>按照正常操作，此时应该arc_right右规约，但是如果真的4就下沉，就没了。而一会5要入栈，再查看依存树发现4是自己的父节点，天呐，5的父节点没了，其他词都有父节点，就5没有，还有比这个更惨的吗？这就没发再进行操作了！所以，还有一个潜规则<strong>如果操作为栈顶元素要进行arc_right时，不执行该操作，而选择shift。</strong></p>
+<p>而你可能会问arc_left会有这样的问题吗？不会啦，比如3、4进行arc_left操作，3下沉，如果右边的队列中有父亲节点是3，那么就表示该依存树有交叉或者回路！这种是不可能发生的，因为依存树不允许有交叉或者回路！</p>
+<p>最后说下，pop_root根弹出操作，只能发生在最后 <img src="https://img-blog.csdnimg.cn/img_convert/8ad7de60b3f63796fe7be7649b7a68bf.png" alt="8ad7de60b3f63796fe7be7649b7a68bf.png" /></p>
+<p>右下角的数据为词与词之间的关系，这个就是根据动作序列生成的依存关系（父亲，孩子，关系），根据该关系，就能还原成原来的依存树。</p></li>
+</ul></li>
+</ul>
+<h3 id="神经网络模型">神经网络模型</h3>
+<ul>
+<li>利用神经网络进行特征提取，分为两部分：
+<ul>
+<li>编码器：用来负责计算词的隐层表示</li>
+<li>解码器：用来解码计算当前状态的所有动作得分</li>
+</ul></li>
+</ul>
+<h4 id="编码器">编码器</h4>
+<ul>
+<li><p>用Bi-LSTM来编码一个句子<span class="math inline">\((e_1,e_2,...,e_n)\)</span>计算对应的隐层表示。公式为： <span class="math display">\[
+\{h_1,...,h_n\}=Bi-LSTM(\{e_1\oplus p_1,...,e_n\oplus p_n\})
+\]</span></p>
+<p>其中：<span class="math inline">\(e\)</span>为词向量，<span class="math inline">\(p\)</span>为词性向量，<span class="math inline">\(\oplus\)</span>是向量拼接</p></li>
+</ul>
+<h4 id="解码器">解码器</h4>
+<ul>
+<li><p>解码端就需要<strong>对每一个状态打出所有动作的得分</strong>。根据经验，认为<strong>栈顶三元素和队列首元素为动作预测关键特征</strong>，于是将栈顶三元素（下标越小离栈顶越近）和队列首元素进行拼接。然后用线性变换计算每一个动作的分数： <span class="math display">\[
+o=Linear(h_{s0}\oplus h_{s1}\oplus h_{s2}\oplus h_{q0})
+\]</span></p></li>
+<li><p>对每一个动作的分数进行Softmax概率化，然后输入到交叉熵中，作为目标函数。然后再用Adam来进行更新模型参数，最小化目标函数 <img src="https://img-blog.csdnimg.cn/img_convert/c9b57159a161b3117f27e79730a244bc.png" alt="c9b57159a161b3117f27e79730a244bc.png" /></p>
+<p>其中<span class="math inline">\(p_{a_g}\)</span>为动作序列概率，<span class="math inline">\(\Theta\)</span>为模型参数</p></li>
+</ul>
+
+      
+    </div>
+
+    
+	
+	
+
+	
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/04/15/%E7%AC%AC09%E5%91%A8/%E6%95%B0%E6%8D%AE%E9%9B%86/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="Olivia">
+      <meta itemprop="description" content="May All Your Troubles Be little Ones">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Olivia的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/04/15/%E7%AC%AC09%E5%91%A8/%E6%95%B0%E6%8D%AE%E9%9B%86/" class="post-title-link" itemprop="url">DataSet</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-04-15 00:00:00" itemprop="dateCreated datePublished" datetime="2021-04-15T00:00:00+08:00">2021-04-15</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-05-06 14:53:21" itemprop="dateModified" datetime="2021-05-06T14:53:21+08:00">2021-05-06</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Knowledge-Base-Qestion-Answering/" itemprop="url" rel="index"><span itemprop="name">Knowledge Base Qestion Answering</span></a>
+                </span>
+                  >
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Knowledge-Base-Qestion-Answering/Others/" itemprop="url" rel="index"><span itemprop="name">Others</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>297</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <ul>
+<li>ComplexWebQuestions: https://www.tau-nlp.org/compwebq</li>
+<li>MetaQA: https://github.com/yuyuz/MetaQA</li>
+<li>WebQuestionSP: http://aka.ms/WebQSP</li>
+</ul>
+<p><img src="https://i.loli.net/2021/04/11/hpmTO7FN6PIzrC9.png" alt="image-20210411210148108.png" />【图源Query Graph....】</p>
+<ul>
+<li>PathQuestion: https://github.com/zmtkeke/IRN/tree/master/PathQuestion
+<ul>
+<li>大部分都是 of 's</li>
+<li>2/3跳</li>
+</ul></li>
+<li>ComplexQuestions: https://github.com/JunweiBao/MulCQA/tree/ComplexQuestions</li>
+</ul>
+
+      
+    </div>
+
+    
+	
+	
+
+	
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/03/29/%E7%AC%AC08%E5%91%A8/Improving%20Multi-hop%20Knowledge%20Base%20Question%20Answering%20by%20Learning%20Intermediate%20Supervision%20Signals/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="Olivia">
+      <meta itemprop="description" content="May All Your Troubles Be little Ones">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Olivia的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/03/29/%E7%AC%AC08%E5%91%A8/Improving%20Multi-hop%20Knowledge%20Base%20Question%20Answering%20by%20Learning%20Intermediate%20Supervision%20Signals/" class="post-title-link" itemprop="url">Improving Multi-hop Knowledge Base Question Answering by Learning Intermediate Supervision Signals Bases</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-03-29 00:00:00" itemprop="dateCreated datePublished" datetime="2021-03-29T00:00:00+08:00">2021-03-29</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-05-06 14:51:48" itemprop="dateModified" datetime="2021-05-06T14:51:48+08:00">2021-05-06</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Knowledge-Base-Qestion-Answering/" itemprop="url" rel="index"><span itemprop="name">Knowledge Base Qestion Answering</span></a>
+                </span>
+                  >
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Knowledge-Base-Qestion-Answering/paper-comprehension/" itemprop="url" rel="index"><span itemprop="name">paper comprehension</span></a>
+                </span>
+                  >
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Knowledge-Base-Qestion-Answering/paper-comprehension/latest/" itemprop="url" rel="index"><span itemprop="name">latest</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>4.2k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>4 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="introduction">1. Introduction</h2>
+<ul>
+<li><p>只能以最终答案为参考，而在中间步骤缺乏监督信号，学生网络的目标是找到问题的正确答案，教师网络则是试图学习中间监督信号以提高学生网络的推理能力，具体地说，教师模型推断中间步骤的哪些实体与问题更相关，并且这些实体被认为是中间监督信号。主要创新点是教师网络的设计，利用向前向后推理来<strong>增强中间实体分布的学习</strong>，教师网络可以产生更可靠的中间监督信号，解决虚假推理。</p></li>
+<li><p>监督信号一般为&lt;question, answer&gt;而不是&lt;question, relation path&gt;。</p></li>
+<li><p>双向搜索算法，向前和向后搜索来更有效地识别。我们也有两种不同的观点来考虑任务设置：寻找从主题实体(即查询中的实体)到答案实体的路径的正向推理和从答案实体返回到主题实体的反向推理。</p></li>
+<li><p><strong>学生网络采用神经状态机(NSM)来实现</strong>，学生网络可以根据从教师网络学习到的中间实体分布来改进自己。</p></li>
+</ul>
+<h2 id="提出的方法">4. 提出的方法</h2>
+<h3 id="overview">4.1 Overview</h3>
+<ul>
+<li>学生网络基于NSM，通过将知识库看作一个图，使其适应于多跳KBQA任务，并在多跳推理过程中保持逐步学习的实体在实体上的分布。教师网络是对NSM的体系结构进行了改进，加入了一种新颖的双向推理机制，使其能够在中间推理步骤中学习到更可靠的实体分布，这些实体分布随后将被学生网络用作监督信号。</li>
+</ul>
+<h3 id="neural-state-machine-for-multi-hop-kbqa">4.2 Neural State Machine for Multi-hop KBQA</h3>
+<ul>
+<li>由指令部件和推理组件组成，指令组件向推理组件发送指令向量，<strong>而推理组件判断实体分布并学习实体表示</strong>。<img src="https://i.loli.net/2021/04/02/NWzRXDf4rwcGiAL.png" alt="image-20210402095741740.png" /></li>
+</ul>
+<h4 id="指令组件instruction-component">4.2.1 指令组件(Instruction Component)</h4>
+<ul>
+<li><p>先描述将给定的<strong>自然语言问题转换为</strong>一系列控制推理过程的<strong>指令向量</strong>。</p></li>
+<li><p>指令组件的输入由<strong>查询嵌入</strong>和来自前一个推理步骤的<strong>指令向量</strong>组成。</p></li>
+<li><p>初始向量为0向量。利用GloVe获得查询词的嵌入，然后利用LSTM网络获得一组隐藏层<span class="math inline">\(\{h_j\}^l_{j=1}\)</span>，其中<span class="math inline">\(h_j\in R^d,l\)</span>是查询的长度，最后一个隐藏层状态为问题表示即<span class="math inline">\(q=h_l\)</span>。令<span class="math inline">\(i^{(k)}\in R^d\)</span>为第<span class="math inline">\(k\)</span>步推理的指令向量，采用下列方法学习指令向量<span class="math inline">\(i^{(k)}\)</span>： <span class="math display">\[
+i^{(k)}=\sum_{j=1}^l\alpha_j^{(k)}h_j,\\
+\alpha_j^{(k)}=softmax_j(W_\alpha(q^{(k)}\odot h_j)+b_{\alpha}),\\
+q^{(k)}=W^{(k)}[i^{(k-1)}:q]+b^{(k)}.
+\]</span></p>
+<p>其中<span class="math inline">\(W^{(k)}\in R^{d×2d},W_{\alpha}\in R^{d×d},b^{k}、b_{\alpha}\in R^d\)</span>都是需要学习的参数。</p>
+<p>核心思想是学习不同时间步的指令向量时关注查询的特定部分。同时动态更新查询表示，以便包含先前指令向量的信息，通过重复以上步骤，可以在<span class="math inline">\(n\)</span>步推理后获得指令向量列表<span class="math inline">\(\{i^{(k)}\}^n_{k=1}\)</span>。</p></li>
+</ul>
+<h4 id="推理组件reasoning-component">4.2.2 推理组件(Reasoning Component)</h4>
+<ul>
+<li><p>获得指令组件<span class="math inline">\(i^{k}\)</span>后，我们可以将其用作推理信号的指导信号。</p></li>
+<li><p>推理组件的输入包括当前步骤的指令向量、以及上一步推理步骤中获得的实体分布(entity distribution)和实体嵌入(entity embeddings)。首先，考虑涉及<span class="math inline">\(e\)</span>的关系来设置初始实体嵌入： <span class="math display">\[
+e^{(0)}=\sigma(\sum_{(&lt;e&#39;,r,e&gt;\in N_e)}r\cdot W_T)
+\]</span> 其中<span class="math inline">\(W_T\in R^{d×d}\)</span>是需要学习的参数，没有用到<span class="math inline">\(e\)</span>的嵌入来初始化，因为重要的是关系不是实体。</p></li>
+<li><p>给定三元组<span class="math inline">\(&lt;e&#39;,r,e&gt;\)</span>，匹配向量<span class="math inline">\(m_{&lt;e&#39;,r,e&gt;}^{(k)}\)</span>通过匹配当前指令向量<span class="math inline">\(i^{(k)}\)</span>与关系向量<span class="math inline">\(r\)</span>来获得： <span class="math display">\[
+m_{&lt;e&#39;,r,e&gt;}=\sigma(i^{(k)}\odot W_Rr)
+\]</span> <span class="math inline">\(W_R\in R^{d×d}\)</span>是需要学习的参数。</p></li>
+<li><p>最后我们聚合来自相邻三元组的匹配信息，并根据它们在上一推理步骤中受到的关注程度来为其分配权重。 <span class="math display">\[
+\tilde e^{(k)}=\sum_{&lt;e&#39;,r,e&gt;\in N_e}p^{(k-1)}_{e&#39;}\cdot m^{(k)}_{&lt;e&#39;,r,e&gt;&#39;}
+\]</span> 其中<span class="math inline">\(p_{e&#39;}^{(k-1)}\)</span>是上一推理步骤中实体<span class="math inline">\(e&#39;\)</span>的分配概率。这样的表示能捕获与知识库中实体相关联的关系语义。</p></li>
+<li><p>然后更新实体嵌入如下： <span class="math display">\[
+e^{(k)}=FFN([e^{(k-1)};\tilde e^{(k)}])
+\]</span> 其中，FFN是以上一步嵌入<span class="math inline">\(e^{(k-1)}\)</span>及关系聚合embedding<span class="math inline">\(\tilde e^{(k)}\)</span>为输入的前反馈层。</p></li>
+<li><p>通过此过程，关系路径(从topic entities到answer entities)和它与问题的匹配程度都编码到节点嵌入中去。在步骤<span class="math inline">\(k\)</span>导出的中间实体上的概率分布可计算为： <span class="math display">\[
+p^{(k)}=softmax(E^{ {(k)}^T}w)
+\]</span> 其中<span class="math inline">\(E^{(k)}\)</span>是一个矩阵，每一列为第<span class="math inline">\(k\)</span>步的实体嵌入，<span class="math inline">\(w\)</span>为参数。</p></li>
+</ul>
+<h3 id="the-teacher-network">4.3 The Teacher Network</h3>
+<ul>
+<li>目标是在中间步骤中学习或推断可靠的实体分布。没有这样的标签实体分布来训练教师网络，故受双向搜索算法启发，结合了双向推理机制来增强教师网络中中间实体分布的学习。</li>
+</ul>
+<h4 id="多跳kbqa的双向推理">4.3.1 多跳KBQA的双向推理</h4>
+<ul>
+<li><p>考虑forward reasoning和backward reasoning，让这两个推理过程在中间步骤相互同步。这样派生的中间实体分布比从单一方向学习的分布更可靠。</p></li>
+<li><p>给定<span class="math inline">\(n\)</span>跳推理路径，让<span class="math inline">\(p_f^{(k)}\)</span>和<span class="math inline">\(p_b^{(n-k)}\)</span>分别表示前向推理第<span class="math inline">\(k\)</span>步和后向推理第<span class="math inline">\(n-k\)</span>步的实体分布。正常情况下<span class="math inline">\(p_f^{(k)}≈p_b^{(n-k)}\)</span>。</p></li>
+</ul>
+<h4 id="推理体系结构reasoning-architectures">4.3.2 推理体系结构(Reasoning Architectures)</h4>
+<ul>
+<li><p>有两种神经结构：并行推理和混合推理</p>
+<ul>
+<li><p>并行推理(parallel reasoning)：建立两个独立地NSM分别用于正向和反向推理，这两个网络相互独立，不共享参数，只考虑在中间实体分布上加上对应约束。</p></li>
+<li><p>混合推理(hybrid reasoning)：<strong>共享相同的指令组件</strong>，并将两个推理过程安排在一个循环流水线中。除了对应约束之外，<strong>这两个进程还接收相同的指令向量。此外，在正向推理的最后一步中导出的信息作为初始值被馈送到反向推理中。</strong>在形式上，以下公式在这种情况下成立： <span class="math display">\[
+p_b^{(0)}=p_f^{(n)},E_b^{(0)}=E_f^{(n)},\\
+i_b^{(k)}=i_f^{(n+1-k)}
+\]</span></p></li>
+</ul></li>
+<li><p>两种结构图如下：<img src="https://i.loli.net/2021/04/02/jJDR7XM2aNGtF5e.png" alt="image-20210402112347486.png" /></p></li>
+<li><p>并行推理具有更松散的集成，而混合推理则需要两个推理过程中的信息进行更深层次的融合。与双向BFS不同，在我们的任务中，<strong>反向推理可能无法准确模拟正向推理的反向过程，因为这两个过程对应于多跳KBQA中不同的语义</strong>。考虑到这一问题，我们共享指令向量，并循环正向推理的最终状态来初始化后向推理。通过这种方式，反向推理获得了更多关于正向推理的信息，从而可以更好地追溯正向推理的推理路径。</p></li>
+</ul>
+<h3 id="通过学生-教师框架学习">4.4 通过学生-教师框架学习</h3>
+<h4 id="optimizing-the-teacher-network">4.4.1 Optimizing the Teacher Network</h4>
+<ul>
+<li><p>教师网络主要考虑两个方面的损失，即推理损失和通信损失。</p></li>
+<li><p>推理损失反映了对准确实体的预测能力，分成两个方向 <span class="math display">\[
+\mathcal{L}_f=D_{KL}(p_f^{(n)},p^{*}_f),\ \mathcal{L}_b=D_{KL}(p_b^{(n)},p_b^{*})
+\]</span> 其中<span class="math inline">\(p_f^{(n)}\)</span>（<span class="math display">\[p_b^{(n)}\]</span>）表示前向(后向)推理过程中最后的实体分布。<span class="math inline">\(p_f^*\)</span>及<span class="math inline">\(p_b^*\)</span>表示真实的实体分布。<span class="math inline">\(D_{KL}(\cdot,\cdot)\)</span>表示Kullback-Leibler发散，以不对称的方式测量两个分布之间的差异。</p>
+<p>为了获得<span class="math inline">\(p_f^*\)</span>和<span class="math inline">\(p_b^*\)</span>我们将正确实体出现的次数转化为频率归一化分布。例如，如果图中<span class="math inline">\(k\)</span>个实体是正确实体，则最终分布中为他们分配<span class="math inline">\(\frac{1}{k}\)</span>的概率。</p></li>
+<li><p>通信损失反映了两个推理过程的中间实体分布之间的一致性。可以通过计算每个中间步骤的损失相加来计算： <span class="math display">\[
+\mathcal{L}_c=\sum_{k=1}^{n-1}D_{JS}(p_f^{(k)},p_b^{(n-k)})
+\]</span> 其中<span class="math inline">\(D_{JS}(\cdot,\cdot)\)</span>是Jensen-Shannon散度，以对称的方式测量两个分布之间的差异。</p></li>
+<li><p>最后教师网络整体的损失函数<span class="math inline">\(\mathcal{L}_t\)</span>为： <span class="math display">\[
+\mathcal{L}_t=\mathcal{L}_f+\lambda_b\mathcal{L}_b+\lambda_c\mathcal{L}_c
+\]</span></p></li>
+<li><p>其中<span class="math inline">\(\lambda_b\ and\ \lambda_c\in(0,1)\)</span>是控制因子权重的超参数。</p></li>
+</ul>
+<h4 id="optimizing-the-student-network">4.4.2 Optimizing the Student Network</h4>
+<ul>
+<li><p>对教师模型进行收敛训练后，可以得到教师网络两个推理过程中的中间实体分布。我们将两个分布的平均值最为监督信号： <span class="math display">\[
+p_t^{(k)}=\frac{1}{2}(p_f^{k}+p_b^{(n-k)}),\ k=1,...,n-1
+\]</span></p></li>
+<li><p>采用NSM模型作为学生网络进行正向推理。除了推理损失外，还考虑了学生网络的预测和教师网络的监督信号的损失： <span class="math display">\[
+\mathcal{L}_1=D_{KL}(p_s^{(n)},p_f^*)\\
+\mathcal{L}_2=\sum_{k=1}^{n-1}D_{KL}(p_s^{(k)},p_t^{(k)})\\
+\mathcal{L}_s=\mathcal{L}_1+\lambda\mathcal{L}_2
+\]</span> 其中<span class="math inline">\(p_t^{(k)}\)</span>与<span class="math inline">\(p_s^{(k)}\)</span>是分别表示教师网络和学生网络在第<span class="math inline">\(k\)</span>步的中间实体分布，<span class="math inline">\(\lambda\)</span>是需要调优的参数。</p></li>
+</ul>
+
+      
+    </div>
+
+    
+	
+	
+
+	
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/03/29/%E7%AC%AC08%E5%91%A8/Multi-hop%20knowledge%20base%20question%20answering%20with%20an%20iterative%20sequence%20matching%20model/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="Olivia">
+      <meta itemprop="description" content="May All Your Troubles Be little Ones">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Olivia的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/03/29/%E7%AC%AC08%E5%91%A8/Multi-hop%20knowledge%20base%20question%20answering%20with%20an%20iterative%20sequence%20matching%20model/" class="post-title-link" itemprop="url">Multi-hop knowledge base question answering with an iterative sequence matching model</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-03-29 00:00:00" itemprop="dateCreated datePublished" datetime="2021-03-29T00:00:00+08:00">2021-03-29</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-05-06 14:36:35" itemprop="dateModified" datetime="2021-05-06T14:36:35+08:00">2021-05-06</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Knowledge-Base-Qestion-Answering/" itemprop="url" rel="index"><span itemprop="name">Knowledge Base Qestion Answering</span></a>
+                </span>
+                  >
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Knowledge-Base-Qestion-Answering/paper-comprehension/" itemprop="url" rel="index"><span itemprop="name">paper comprehension</span></a>
+                </span>
+                  >
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Knowledge-Base-Qestion-Answering/paper-comprehension/latest/" itemprop="url" rel="index"><span itemprop="name">latest</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>2.4k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -1361,41 +1176,68 @@
 
       
           <ul>
-<li>论文：https://arxiv.org/abs/1606.00979</li>
+<li>论文地址：https://ink.library.smu.edu.sg/cgi/viewcontent.cgi?article=5939&amp;context=sis_research</li>
 </ul>
-<h2 id="简介">1. 简介</h2>
+<h2 id="introduction">1. Introduction</h2>
 <ul>
-<li>深度学习提升向量建模方法的大体框架都很接近：根据问题确定主题词，根据主题词确定候选答案，通过候选答案和问题的分布式表达相似度得分确定最终答案。<strong>而方法的核心在于学习问题和候选答案的分布式表达</strong>，其实相关的方法都是在这两个部分做文章。这篇文章的想法在于，<strong>对于不同的答案，我们关注问题的焦点是不同的，我们根据候选答案的信息，来引入注意力机制，对同一个问题提取出不同的分布式表达。</strong></li>
-<li>比如 对于问题 <em>"who is the president of France?"</em>，其中之一的答案是实体<em>“Francois Holland”</em>，我们通过知识库可以知道<em>Francois</em> <em>Holland</em> 是一个总统，因此我们会更加关注问句中的 <em>“president”</em> 和 <em>“France”</em> 单词，而根据<em>Francois</em> <em>Holland</em>的类型person，我们会更关注问句中的疑问词<em>who</em>。</li>
+<li><p>迭代的增长候选关系路径，最终到候选答案。每次迭代修剪掉不太可能到正确答案的分支。</p></li>
+<li><p>采用match-aggregate框架将问题与候选答案序列进行匹配。提出一种增量式序列匹配模型来计算匹配分数，而不需要重新访问关系路径中的早期关系。</p></li>
+<li><p>无需假设跳数已知等</p></li>
+<li><p>由3个模块组成：迭代路径增长、增量序列匹配和终止检查。【3跳数据集】</p></li>
 </ul>
-<h2 id="过程">2. 过程</h2>
-<h3 id="将候选答案转化为分布式表达">2.1 将候选答案转化为分布式表达</h3>
+<h2 id="our-method">3. Our Method</h2>
+<h3 id="迭代路径增长iterative-path-growth">3.1 迭代路径增长(Iterative Path Growth)</h3>
 <ul>
-<li>我们从多个方面考虑答案的特征：答案实体、答案上下文环境（知识库中所有与答案实体直接相连的实体）、答案关系（答案与问题主题词之间的实体关系）、答案类型。每一种特征都可以用<span class="math inline">\(v_k\)</span>维的multi-hot向量表示，<span class="math inline">\(v_k\)</span>即知识库实体和实体关系的数量之和。我们通过Embedding矩阵<span class="math inline">\(E_k\)</span>将每一种特征转化为低维的分布式表达，我们就得到了四种关于答案的分布式表达<span class="math inline">\(e_e,e_c,e_r,e_t\)</span>（其中由于答案上下文环境涉及的实体较多，我们取这些实体的embedding均值作为上下文环境的embedding）。</li>
+<li>迭代路径增长将候选路径增长到<span class="math inline">\(T\)</span>跳，每次迭代一跳。在每次迭代结束时，它只保留与问题最匹配的前K个候选路径。</li>
 </ul>
-<h3 id="将自然语言问题转化为分布式表达">2.2 将自然语言问题转化为分布式表达</h3>
+<h4 id="candidate-path">3.1.1 Candidate path</h4>
 <ul>
-<li>将问句中的每一个单词经过Embedding矩阵<span class="math inline">\(E_w\)</span>转化为wrod-embedding，使用双向LSTM(bi-LSTM)提取问句特征。bi-LSTM第<span class="math inline">\(j\)</span>时刻的输出记作<span class="math inline">\(h_j\)</span>，使用bi-LSTM的好处在于<span class="math inline">\(h_j\)</span>既包含了第<span class="math inline">\(j\)</span>个单词之前的信息，又包含了该单词之后的信息。</li>
+<li>给定问题<span class="math inline">\(q\)</span>，首先确定主题实体(topic entity)<span class="math inline">\(e_0\)</span>，候选路径是起始于<span class="math inline">\(e_0\)</span>的实体和关系的序列，使用<span class="math inline">\(p=(e_0,r_1,e_1,r_2,e_2,...,r_t,e_t)\)</span>表示<span class="math inline">\(t\)</span>跳的候选路径。</li>
 </ul>
-<h3 id="在得分函数中引入注意力机制">2.3 在得分函数中引入注意力机制</h3>
+<h4 id="candidate-path-set">3.1.2 Candidate path set</h4>
 <ul>
-<li><p>我们希望我们问句的分布式表达对于四种不同的答案特征有不同的表达（根据答案特征对于问题有不同的关注点），第<span class="math inline">\(i\)</span>种答案的分布式表达<span class="math inline">\(e_i\)</span>对应的问句分布式表达记作<span class="math inline">\(q_i\)</span>，我们的得分函数定义为四种对应表达的点乘之和，即：<img src="https://pic3.zhimg.com/80/v2-802b38aa199f6d26e3a73283998105fa_720w.png" alt="img" /></p></li>
-<li><p>对于一般的LSTM，我们通常将最后一个时刻的输出<span class="math inline">\(h_T\)</span>作为句子的最终表达，而在这里，我们引入注意力机制，根据问题的特征，给予每一时刻的输出不同程度的关注（对bi-LSTM每一时刻的输出进行加权求和），即：</p>
+<li>在第<span class="math inline">\(t\)</span>次迭代后的候选路径集合定义为在第<span class="math inline">\(t\)</span>次迭代结束时保留的前<span class="math inline">\(K\)</span>条候选路径的集合，用<span class="math inline">\(\mathcal{P}^{(t)}\)</span>表示。<span class="math inline">\(|\mathcal{P}|=K\)</span>，<span class="math inline">\(each\ p\in \mathcal{P}^{(t)}\)</span>有<span class="math inline">\(t\)</span>跳关系。</li>
+</ul>
+<h4 id="tail-entity">3.1.3 Tail entity</h4>
+<ul>
+<li>候选路径<span class="math inline">\(p\)</span>的最后一个实体。</li>
+</ul>
+<h4 id="总结算法">3.1.4 总结算法</h4>
 <figure>
-<img src="https://pic2.zhimg.com/80/v2-d735558c648d7fc61ce4bd7744c56575_720w.png" alt="img" /><figcaption aria-hidden="true">img</figcaption>
-</figure></li>
-<li><p>其中的权重系数<span class="math inline">\(a_{ij}\)</span>取决于bi-LSTM第<span class="math inline">\(j\)</span>时刻的输出<span class="math inline">\(h_j\)</span>和第<span class="math inline">\(i\)</span>种答案特征的分布式表达<span class="math inline">\(e_i\)</span>，因此可以使用一个单层的神经网络去学习这个权重，并通过Softmax对权重进行归一化，公式如下：<img src="https://pic1.zhimg.com/v2-6992d087e8a1da5e3f6d620f0ab65bec_r.jpg" alt="img" /></p></li>
+<img src="https://i.loli.net/2021/04/01/RUD9H1qvJsBKbGh.png" alt="image-20210401202726357.png" /><figcaption aria-hidden="true">image-20210401202726357.png</figcaption>
+</figure>
+<h3 id="增量序列匹配incremental-sequence-matching">3.2 增量序列匹配(Incremental Sequence Matching)</h3>
+<ul>
+<li><p>因为路径是迭代增长，在第<span class="math inline">\(t\)</span>此迭代中，当需要匹配候选路径<span class="math inline">\(p\in \tilde{\mathcal{P}}\)</span>时，前<span class="math inline">\(t-1\)</span>个关系时的<span class="math inline">\(p\)</span>已经与先前迭代中的问题匹配完了，故只需将最后一个关系<span class="math inline">\(p\)</span>与问题进行匹配，并将此迭代中的分数与前几次迭代分数聚合起来，故为增量。</p></li>
+<li><p>问题表示为：<span class="math inline">\(Q=(q_1,q_2,...,q_m)\)</span>，其中<span class="math inline">\(q_i\)</span>是问题中第i个词的embedding向量。</p></li>
+<li><p>对于候选路径<span class="math inline">\(p=(e_0,r_1,e_1,...,r_t,e_t)\)</span>，表示为<span class="math inline">\(P^{(t)}=(w_{r_t,1},w_{r_t,2},...,w_{r_t,n})\)</span>，其中<span class="math inline">\(w_{r_t,j}\)</span>是关系<span class="math inline">\(r_t\)</span>的第<span class="math inline">\(j\)</span>个词的embedding向量。只考虑<span class="math inline">\(r_t\)</span>而不考虑其他关系，因为我们是增量的。也无需考虑各个实体。</p></li>
+<li><p>然后考虑两组注意力权重：一组在Q(<span class="math inline">\(\beta\)</span>)上归一化，一组在<span class="math inline">\(P^{t}\)</span>(<span class="math inline">\(\alpha\)</span>)上归一化。<img src="https://i.loli.net/2021/04/01/r2lPWLTsKECpiou.png" alt="image-20210401210423623.png" /></p></li>
+<li><p>为衡量<span class="math inline">\(P^{(t)}\)</span>与<span class="math inline">\(Q\)</span>的匹配程度，对于<span class="math inline">\(Q\)</span>中每个单词<span class="math inline">\(q_i\)</span>，推导出注意力加权和<span class="math inline">\(\bar P^{(t)}\)</span>如下： <span class="math display">\[
+v_i^{(t)}=\sum_{j=1}^n\alpha_{i,j}\cdot \bar w_{r_t,j}
+\]</span> 可以将<span class="math inline">\(\bar q_i\)</span>与<span class="math inline">\(v_i^{(t)}\)</span>进行比较，衡量问题中的第<span class="math inline">\(i\)</span>个单词通过关系<span class="math inline">\(r_t\)</span>在当前迭代中的匹配程度。</p></li>
+<li><p>因为做的是增量匹配，可能<span class="math inline">\(\bar q_i\)</span>已在<span class="math inline">\(p_{(t-1)}\)</span>中与其他单词匹配过，故在当前阶段<span class="math inline">\(\bar q_i\)</span>与<span class="math inline">\(r_t\)</span>的匹配可能不关键。故定义标量<span class="math inline">\(a_i^{(t)}\)</span>来记录路径<span class="math inline">\(p\)</span>中到第<span class="math inline">\(t\)</span>次迭代得匹配程度，首先设置<span class="math inline">\(a_i^{(0)}=0\)</span>，然后定义 <span class="math display">\[
+a^{(t)}_i=a^{(t-1)}_i+\sum_{j=1}^n\beta_{i,j}
+\]</span> 与<span class="math inline">\(Q\)</span>中其他单词相比，<span class="math inline">\(\sum_{j=1}^n\)</span>直观展示了<span class="math inline">\(q_i\)</span>与<span class="math inline">\(r_t\)</span>中所有单词的匹配程度。</p></li>
+<li><p>匹配向量(matching vector)：<img src="C:\Users\Olivia~\AppData\Roaming\Typora\typora-user-images\image-20210401212652816.png" alt="image-20210401212652816" /></p></li>
+<li><p>给定序列<span class="math inline">\((m_1^{(t)},m_2^{(t)},...,m_m^{t})\)</span>，使用LSTM来处理该序列，然后进行maxpooling来获得单个向量<span class="math inline">\(\bar m^{(t)}\)</span>： <span class="math display">\[
+\bar m^{(t)}=Max-Pool(LSTM(m_1^{(t)},m_2^{(t)},...,m_m^{t}))
+\]</span></p></li>
+<li><p>然后使用该向量导出<span class="math inline">\(Q\)</span>和<span class="math inline">\(P^{(t)}\)</span>的匹配分数，如下图：<img src="https://i.loli.net/2021/04/01/x2VaZF9qdluI6tT.png" alt="image-20210401213322706.png" /></p></li>
+<li><p>整个候选路径<span class="math inline">\(p\)</span>和问题之间的完全匹配分数定义为如下，其中<span class="math inline">\(s^{(0)}(\cdot)=1\)</span>，对于有<span class="math inline">\(t\)</span>个关系的<span class="math inline">\(p\)</span>来说： <span class="math display">\[
+s^{(t)}(p)=s^{(t-1)}(p_{t-1})\cdot  \gamma^{(t)}
+\]</span> <span class="math inline">\(s^{(t)}(\cdot)\)</span>之后被用来rank<span class="math inline">\(\tilde{\mathcal{P}}\)</span>，来获得<span class="math inline">\(\mathcal{P}^{(t)}\)</span>。</p></li>
 </ul>
-<h3 id="oov问题">2.3 OOV问题</h3>
+<h3 id="终止检查termination-check">3.3 终止检查(Termination Check)</h3>
 <ul>
-<li>在测试过程中，我们的候选答案可能从未在训练集中出现过，因此它对应的分布式表达是没有被我们的模型训练过的（这个问题称为<em>the problem of out of vocabulary, OOV</em>）。为了解决该问题，作者利用<a target="_blank" rel="noopener" href="https://www.utc.fr/~bordesan/dokuwiki/_media/en/transe_nips13.pdf">TransE</a>对知识库进行训练，训练实体和实体关系对应的Embedding矩阵<span class="math inline">\(E_k\)</span>（实际操作中，作者通过轮流训练KB-QA模型和TranE的方式训练并共用Embedding矩阵<span class="math inline">\(E_k\)</span>，每训练一个epoch的KB-QA就训练100个epoch的TransE)。这样，我们就利用了整个知识库的特性，预先对每一个知识库实体都进行了训练，使得相似实体的分布式表达也很相似。因此，即使遇到KB-QA训练集中未遇到的候选答案实体，KB-QA模型也能将它视作是在训练集中出现过的某个和它分布式表达相似的实体，这样就减轻了OOV问题所带来的破坏性。
-<ul>
-<li>关于TransE：<em>TransE是知识图谱补全的经典方法，它借鉴了word-embedding的思想，能够将知识库中的实体和实体关系用分布式向量表达。其主要思想是对于一个知识三元组（s,r,o），我们希望主语实体的分布式表达e(s)加上关系实体的分布式表达e(r)能够尽量接近宾语实体的分布式表达e(o)，因此我们可以构建类似的margin-rank损失函数通过正样本和采样负样本进行训练。TransE提出之后还出现了大量的改进算法，诸如TransH、TransR、TransG、TranSparse、TransD等等。</em></li>
-</ul></li>
+<li><p>向量<span class="math inline">\(\bar m^{(t)}\)</span>是对<span class="math inline">\(p\)</span>相对于<span class="math inline">\(q\)</span>的匹配程度进行编码，将其转换为单个值便于终止检查，首先在第<span class="math inline">\(t\)</span>次迭代中为每个候选路径<span class="math inline">\(p\)</span>定义以下分数<img src="https://i.loli.net/2021/04/01/QwIJn9Dcrzgyxks.png" alt="image-20210401215412299.png" /></p>
+<p>在预测阶段，将<span class="math inline">\(\bar z(T)\)</span>与阀值<span class="math inline">\(\tau\)</span>进行比较以确定何时停止。</p></li>
 </ul>
-<h2 id="实验环节">3. 实验环节</h2>
+<h3 id="损失函数">3.4 损失函数</h3>
 <ul>
-<li>注意力机制的好处：<strong>可视化</strong>，通过可视化每个单词的权重，可以得到一些可解释性，如下图：<img src="https://pic2.zhimg.com/v2-e96c3293e5997acdd4b8676063248aed_r.jpg" alt="img" /></li>
+<li><p>需要学习的参数：<img src="https://i.loli.net/2021/04/01/rev7tJaUHiXLEAl.png" alt="image-20210401220026815.png" /></p></li>
+<li><p>希望终止时<span class="math inline">\(\bar z^{(t)}\)</span>接近1，反之接近0</p></li>
+<li><p>对于<span class="math inline">\(each\ p\in \mathcal{P}^{(t)}\)</span>，通过比较tail entity(或者tail entities)与正确答案entity或entities，可以计算F1分数，然后使用以下公式进行归一化：<img src="https://i.loli.net/2021/04/01/yuKoxiGUclDM83T.png" alt="image-20210401220943615.png" /></p></li>
+<li><p>第二个目标是终止检查：<img src="https://i.loli.net/2021/04/01/UlI38qg9icGzfys.png" alt="image-20210401221241224.png" /></p></li>
 </ul>
 
       
@@ -1418,7 +1260,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/03/01/%E7%AC%AC%E4%BA%94%E5%91%A8/9.%20%E6%B8%85%E5%8D%8E-Grounded%20Conversation%20Generation%20as%20Guided%20Traverses%20in%20Commonsense%20Knowledge%20Graphs/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/03/29/%E7%AC%AC08%E5%91%A8/%E6%80%BB%E7%BB%93/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.jpg">
@@ -1432,7 +1274,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2021/03/01/%E7%AC%AC%E4%BA%94%E5%91%A8/9.%20%E6%B8%85%E5%8D%8E-Grounded%20Conversation%20Generation%20as%20Guided%20Traverses%20in%20Commonsense%20Knowledge%20Graphs/" class="post-title-link" itemprop="url">9. Grounded Conversation Generation as Guided Traverses in Commonsense Knowledge Graphs-清华</a>
+            <a href="/2021/03/29/%E7%AC%AC08%E5%91%A8/%E6%80%BB%E7%BB%93/" class="post-title-link" itemprop="url">Summary(1)-to 2021.3.29</a>
         </h2>
 
         <div class="post-meta">
@@ -1442,14 +1284,154 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2021-03-01 00:00:00" itemprop="dateCreated datePublished" datetime="2021-03-01T00:00:00+08:00">2021-03-01</time>
+              <time title="创建时间：2021-03-29 00:00:00" itemprop="dateCreated datePublished" datetime="2021-03-29T00:00:00+08:00">2021-03-29</time>
             </span>
               <span class="post-meta-item">
                 <span class="post-meta-item-icon">
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-05-04 15:21:55" itemprop="dateModified" datetime="2021-05-04T15:21:55+08:00">2021-05-04</time>
+                <time title="修改时间：2021-05-06 14:39:36" itemprop="dateModified" datetime="2021-05-06T14:39:36+08:00">2021-05-06</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Knowledge-Base-Qestion-Answering/" itemprop="url" rel="index"><span itemprop="name">Knowledge Base Qestion Answering</span></a>
+                </span>
+                  >
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Knowledge-Base-Qestion-Answering/Others/" itemprop="url" rel="index"><span itemprop="name">Others</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>1.4k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>1 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="合成图">合成图</h2>
+<ul>
+<li><p>The Web as a Knowledge-base for Answering Complex Questions：大问题分解成小问题</p></li>
+<li><p>Answering Complex Questions by Combining Information from Curatedand Extracted Knowledge Bases：</p>
+<ul>
+<li><p>部分查询。问句编码(q)、主路径编码、约束编码、注意力机制。其中注意力机制是利用查询向量<span class="math inline">\(g\)</span>(主路径编码和约束编码联合)学习<strong>针对问句</strong>中的emphasize parts最后形成上下文向量<span class="math inline">\(c\)</span>。最后<span class="math inline">\(c,q,g\)</span>一起训练得到语义相似度分数<span class="math inline">\(S_{sem}(q,G_i)\)</span>，最后的损失函数为 <span class="math display">\[
+loss=ylog(S_{sem})+(1-y)log(1-S_{sem})
+\]</span> <span class="math inline">\(y\in \{0,1\}\)</span>表示<span class="math inline">\(G_i\)</span>是否正确。将部分查询的质量估计为其所有完整查询派生的最佳<span class="math inline">\(F_1\)</span>分数。</p></li>
+<li><p>每一步搜索出的作为部分查询，然后判断部分查询与原问题的相似度大小。</p></li>
+<li><p>数据集：CompQWeb、WebQSP</p></li>
+<li><p>最后不是可以直接生成问句？？</p></li>
+</ul></li>
+</ul>
+<h2 id="uhop模型">UHop模型</h2>
+<ul>
+<li>UHop An Unrestricted-Hop Relation Extraction Framework for Knowledge-Based Question Answering：
+<ul>
+<li>使用的数据集为带标记的数据集(严重bug！)：
+<ul>
+<li>WebQSP：有标记，但跳数少</li>
+<li>PathQuestion(L)：2 跳或3 跳</li>
+<li>Grid World：跳数很多，但是三元组很特殊(relations in Grid World are the relative directions of two nodes)</li>
+<li>Complex Sequential QA 未使用，不是需要多跳的问题，而是问题序列，每个问题需要一跳关系</li>
+</ul></li>
+<li>单跳关系提取、比较终止、动态问题表示</li>
+<li>一次确定一条边，更新颖的是结束标志，所有outbound 比之前的都小</li>
+</ul></li>
+<li>Query Graph Generation for Answering Multi-hop Complex Questions from Knowledge Bases：
+<ul>
+<li>查询图一边加约束一边延伸，直到某一迭代的评分不比前一代高，但是语义匹配做的不好。</li>
+<li>数据集
+<ul>
+<li>ComplexWebQuestions(CWQ)为主，1 跳 2 跳</li>
+<li>WebQuestionSP(WQSP)</li>
+<li>ComplexQuestion(CQ)</li>
+</ul></li>
+</ul></li>
+<li>Multi-hop knowledge base question answering with an iterative sequence matching model：
+<ul>
+<li>一个很传统的搜索匹配模型</li>
+<li>之前已经匹配过了，所以相似度得分只考虑最后一个的，但是还是设置一个变量考虑之前的匹配程度</li>
+<li>终止检查考虑的是阀值【可以考虑利用UHop里的】</li>
+</ul></li>
+<li>问题和推理分开！！！相当于监督概率分布，监督的损失不好。教师网络相当于把学生网络正着反着做了一遍，损失一个是最后的结果，一个是中间各步骤的差。没有讲清楚推理的步数（推理的步数由指示组件完成）？忽略了语序，正着反着也容易忽略语义情况</li>
+<li>监督也的确是得监督中间的概率分布，至于中间预设的跳数可以用UHop，监督语义匹配的分数概率</li>
+<li>没有中间路径，所以很多是直接计算的目前的和整个问题的相似度，利用那个分解树，建立中间的监督或者是调节？来消除虚假推理。去年和前年两篇中顶会的论文采用了部分查询的思想，但是还是比较的</li>
+</ul>
+
+      
+    </div>
+
+    
+	
+	
+
+	
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/03/15/%E7%AC%AC07%E5%91%A8/Answering%20Complex%20Questions%20by%20Combining%20Information%20from%20Curatedand%20Extracted%20Knowledge%20Bases/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="Olivia">
+      <meta itemprop="description" content="May All Your Troubles Be little Ones">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Olivia的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/03/15/%E7%AC%AC07%E5%91%A8/Answering%20Complex%20Questions%20by%20Combining%20Information%20from%20Curatedand%20Extracted%20Knowledge%20Bases/" class="post-title-link" itemprop="url">Answering Complex Questions by Combining Information from Curatedand Extracted Knowledge Bases</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-03-15 00:00:00" itemprop="dateCreated datePublished" datetime="2021-03-15T00:00:00+08:00">2021-03-15</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-05-06 11:56:39" itemprop="dateModified" datetime="2021-05-06T11:56:39+08:00">2021-05-06</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1465,7 +1447,7 @@
                 </span>
                   >
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Knowledge-Base-Qestion-Answering/paper-comprehension/%E7%9E%8E%E7%9C%8B%E7%9C%8B/" itemprop="url" rel="index"><span itemprop="name">瞎看看</span></a>
+                  <a href="/categories/Knowledge-Base-Qestion-Answering/paper-comprehension/latest/" itemprop="url" rel="index"><span itemprop="name">latest</span></a>
                 </span>
             </span>
 
@@ -1475,7 +1457,7 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>4.6k</span>
+              <span>4.3k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -1494,104 +1476,133 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <ul>
-<li>论文：http://nlp.csai.tsinghua.edu.cn/documents/57/Grounded_Conversation_Generation_as_Guided_Traverses_in_Commonsense_Knowledge_Graphs.pdf</li>
-</ul>
+          <p>论文：https://www.aclweb.org/anthology/2020.nli-1.1.pdf</p>
 <h2 id="abstract">Abstract</h2>
 <ul>
-<li>会话生成模型ConceptFlow通过将会话建立在概念空间（concept space）的基础上，<strong>将潜在的会话流表示为沿着常识关系（commonsense relations）在概念空间中的遍历</strong>。<strong>遍历是由概念图中的图注意力引导</strong>，在概念空间中向更有意义的方向移动，以产生更多的语义和信息响应。</li>
+<li>在这项工作中，我们着眼于回答复杂的问题，这些问题往往需要结合来自多个来源的信息。提出了一种新颖的知识库问答系统MULTIQUE，它<strong>可以通过一系列针对特定知识库的简单查询将复杂问题映射为复杂查询模式</strong>。它使用基于神经网络的模型发现简单查询，该模型能够对抽取知识库中的文本关系和精选知识库中的本体关系进行集体推理。</li>
 </ul>
 <h2 id="introduction">1. Introduction</h2>
 <ul>
-<li><p>之前的生成模型<strong>可能会退化为枯燥和重复的内容，会导致离题和无用的响应。</strong>人类的对话是围绕着一些相关的概念聊天，并将注意力从一个概念转移到另一个概念</p></li>
-<li><p>解决办法：<strong>基于外部知识，如开放领域知识图、常识知识库或背景文件。</strong>最近的研究利用了这些外部知识，将它们用于基础会话，将它们整合为额外的表示，然后根据文本和基础语义生成反应。将外部知识整合为额外的语义表示和会话模型的额外输入。</p></li>
-<li><p>对人类会话中的概念转换进行建模，本文提出了<strong>ConceprFlow(ConceptFlow generation with Concept Flow)</strong>，利用常识知识图对显示概念空间中的会话流进行建模</p></li>
-<li><p>概念图中的<strong>遍历是由图注意力机制来引导的</strong>，图注意力机制来源于图神经网络，用来关注更合适的概念，使得ConceptFlow学习可以沿着更有意义的关系对会话发展建模。将常识知识建模为概念流，既是通过将当前对话焦点分散到其他概念来提高反应多样性的良好实践（Chen等人，2017），也是上述注意状态的实现解决方案（Grosz和Sidner，1986）。</p></li>
-<li><p>在<strong>Reddit会话集</strong>上使用<strong>常识知识图ConceptNet</strong>进行的实验证明了ConceptFlow的有效性。在自动和人工评估中，ConceptFlow显著优于各种基于seq2seq的生成模型（Sutskever et al.，2014），以及以前的方法，这些方法也利用常识知识图，但是只是作为静态记忆（Zhou et al.，2018a；Ghazvinejad et al.，2018；Zhu et al.，2017）。值得注意的是，ConceptFlow的性能也优于两个经过微调的GPT-2系统（Radford等人，2019年），同时使用的参数减少了70%。显式建模会话结构提供了更好的参数效率。</p></li>
+<li><p>利用<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/25735572">curated KB和extracted KB</a>一起回答，二者互为补充</p></li>
+<li><p>MULTIQUE构建查询路径来回答来自简单查询的复杂问题，每个查询都针对特定的知识库。</p></li>
+<li><p>在语义解析的基础上，遵循enumerate-encode-compare方法。首先收集候选查询并编码为语义向量，然后与问题向量进行比较。然后在知识库上执行具有最高语义相似度的候选。</p></li>
+<li><p>提出了两个关键修改：为了能够对知识库中的本体[curated KB]和文本关系[extracted KB]进行集体推理，首先对不同关系进行对齐，并学习了统一的语义表示。其次，由于缺乏完整注解的查询来训练模型，我们使用问题答案形式的隐式监督信号来学习。</p></li>
 </ul>
-<h2 id="methodology">3. Methodology</h2>
-<h3 id="preliminary">3.1 Preliminary</h3>
+<h2 id="task-and-overview">2. Task and Overview</h2>
 <ul>
-<li><p>用户语句：<span class="math inline">\(X=\{x_1,...,x_m\}\)</span>，共<span class="math inline">\(m\)</span>个单词 会话生成模型通过encoder-decoder生成响应：<span class="math inline">\(Y=\{y_1,...,y_n\}\)</span></p></li>
-<li><p>编码器将用户语句<span class="math inline">\(X\)</span>表示为表示集<span class="math inline">\(H={\vec h_1,...,\vec h_m}\)</span>，这一步由GRU得到：<span class="math inline">\(\vec h_i=GRU(\vec h_{i-1},\vec x_i)\)</span>，<span class="math inline">\(\vec x_i\)</span>是<span class="math inline">\(x_i\)</span>的embedding。</p></li>
-<li><p>解码器根据先前<span class="math inline">\(t-1\)</span>个单词生成的<span class="math inline">\(y_{＜t}=\{y_1,...,y_{t_1}\}\)</span>和用户话语<span class="math inline">\(X\)</span>生成相应的第<span class="math inline">\(t\)</span>个单词<span class="math inline">\(y_t\)</span>：</p>
-<p><span id="gs2"><img src="https://s3.ax1x.com/2021/03/09/632Drn.png" alt="632Drn.png" /></span></p></li>
-<li><p>然后最小化交叉熵损失函数L，并端到端优化所有参数：<span id="gs3"></span> <span class="math display">\[
-L=\sum_{t=1}^nCrossEntropy(y_t^*,y_t)
-\]</span> 其中<span class="math inline">\(y_t^*\)</span> is the token from the golden response.</p></li>
-<li><p>ConceptFlow的体系结构图如下：</p>
-<figure>
-<img src="https://s3.ax1x.com/2021/03/09/63RTyj.png" alt="63RTyj.png" /><figcaption aria-hidden="true">63RTyj.png</figcaption>
-</figure></li>
-<li><p>ConceptFlow首先根据与固定概念之间的距离（跳数）构造一个概念图<span class="math inline">\(G\)</span>，其中中心图为<span class="math inline">\(G_{central}\)</span>，外部图为<span class="math inline">\(G_{outer}\)</span>【Sec. 3.2】</p>
-<p>然后利用图神经网络和概念嵌入(concept embedding)技术将中心概念流和外部概念流分别编码到中心图和外部图中。【Sec. 3.3】</p>
-<p>【Sec. 3.4】中介绍的解码器利用概念流和对话编码来生成用于响应的单词或概念。</p></li>
-</ul>
-<h3 id="concept-graph-construction">3.2 Concept Graph Construction</h3>
+<li><p>Complex Question:</p>
 <ul>
-<li>ConceptFlow构造一个概念图G来作为每个会话的知识。它从出现在会话语句中并有实体链接系统标注的根概念(grounded concepts)（零跳概念<span class="math inline">\(V^0\)</span>）开始。</li>
-<li>然后ConceptFlow用一跳概念(<span class="math inline">\(V^1\)</span>)和二跳概念(<span class="math inline">\(V^2\)</span>)来增长零跳概念(<span class="math inline">\(V^0\)</span>)。来自<span class="math inline">\(V^0\)</span>和<span class="math inline">\(V^1\)</span>的概念以及它们之间的所有关系构成了中心概念图<span class="math inline">\(G_{central}\)</span>，它与当前会话主题密切相关，<span class="math inline">\(V^1\)</span>和<span class="math inline">\(V^2\)</span>中的概念及其联系构成了外图<span class="math inline">\(G_{outer}\)</span>。</li>
-</ul>
-<h3 id="encoding-latent-concept-flow">3.3 Encoding Latent Concept Flow</h3>
+<li>问题Q对应的一个查询(query)G有不止一个关系，但只有一个查询焦点(query focus)。G是一个部分查询(partial queries)<span class="math inline">\(G=(G_1,G_2,...,G_O)\)</span>通过不同条件连接起来的序列。</li>
+<li>一个部分查询包含四个基本要素
 <ul>
-<li>构造的概念图提供了关于概念如何与常识知识相关的显式语义。ConceptFlow利用它对会话进行建模并知道响应的生成。它从用户的话语开始，经过中心图<span class="math inline">\(G_{center}\)</span>，到外部图<span class="math inline">\(G_{outer}\)</span>，这是通过根据用户的话语对中心和外部概念流进行编码来建模的。</li>
-</ul>
-<h4 id="central-flow-encoding">3.3.1 Central Flow Encoding</h4>
+<li>a <em>seed</em> entity <span class="math inline">\(s^r\)</span> is the root of the query</li>
+<li>a <em>variable</em> node <span class="math inline">\(o^v\)</span> corresponds to an answer to the query</li>
+<li>a <em>main relation path</em> <span class="math inline">\((s^r,p,o^v)\)</span> is the path that links <span class="math inline">\(s^r\)</span> to <span class="math inline">\(o^v\)</span> by one or two edges from either <span class="math inline">\(R^o\)</span> or <span class="math inline">\(R^t\)</span>（两种知识库中的关系）</li>
+<li><em>constraints</em> take the form of an entity linked to the main relation by a relation <span class="math inline">\(c\)</span></li>
+</ul></li>
+<li>一个合成树(composition tree)<span class="math inline">\(C\)</span>描述如何在给定部分查询的情况下构造和评估查询<span class="math inline">\(G\)</span>，包含两个函数：
 <ul>
-<li>中心概念图<span class="math inline">\(G_{center}\)</span>由一个图神经网络编码，该网络将信息从用户话语<span class="math inline">\(H\)</span>传播到中心概念图。具体来说，它将概念<span class="math inline">\(e_i \in G_{central}\)</span>编码表示为： <span class="math display">\[
-\vec g_{e_i}=GNN(\vec e_i,G_{central},H)
-\]</span> 其中<span class="math inline">\(\vec e_i\)</span>是<span class="math inline">\(e_i\)</span>的concept embedding。具体使用哪种GNN网络没有限制，本文选择了Sun等人(2018)的GNN(GraftNet)，它在编码知识图方面表现出很强的有效性。</li>
-</ul>
-<h4 id="outer-flow-encoding">3.3.2 Outer Flow Encoding</h4>
+<li><span class="math inline">\(simQA\)</span> 是用于查找简单查询的模型，它枚举简单查询的候选项，对其进行编码，并与问题表示进行比较，然后评估出最佳候选项</li>
+<li><span class="math inline">\(join\)</span>描述了如何连接两个部分查询，即它们是否共享查询焦点或另一个变量节点</li>
+</ul></li>
+</ul></li>
+<li><p><strong>方法总览</strong>：</p>
 <ul>
-<li><p>从<span class="math inline">\(e_p \in V_1\)</span>跳到与其相连的两跳概念<span class="math inline">\(e_k\)</span>的外部流动<span class="math inline">\(f_{e_p}\)</span>通过注意力机制编码到<span class="math inline">\(\vec f_{e_p}\)</span>： <span class="math display">\[
-\vec {f_{e_p}}=\sum_{e_k} \theta ^{e_k} \cdot [\vec e_p \circ \vec e_k]
-\]</span> 其中 <span class="math inline">\(\vec e_p\)</span>和<span class="math inline">\(\vec e_k\)</span> 是 <span class="math inline">\(e_p\)</span>和<span class="math inline">\(e_k\)</span> 的embedding；concatenated（<span class="math inline">\(\circ\)</span>）；</p></li>
-<li><p>注意力<span class="math inline">\(\theta^{e_k}\)</span>聚合了概念三元组<span class="math inline">\((e_p,r,e_k)\)</span>以获得<span class="math inline">\(\vec {f_{e_p}}\)</span>： <span class="math display">\[
-\theta ^{e_k}=softmax((w_r\cdot \vec r)^T\cdot tanh(w_h \cdot \vec e_p+w_t \cdot \vec e_k))
-\]</span> 其中<span class="math inline">\(\vec r\)</span>是概念<span class="math inline">\(e_p\)</span>和它相邻概念<span class="math inline">\(e_k\)</span>的关系embedding；<span class="math inline">\(w_r,w_h,w_t\)</span>是需要训练的参数。它提供了一个有效的注意力，特别是对于多跳概念之间的关系。</p></li>
-</ul>
-<h3 id="generating-text-with-conceptflow">3.4 Generating Text with ConceptFlow</h3>
-<ul>
-<li>为了同时考虑用户语句和相关信息，decoder使用两个组件合并来自用户语句和潜在概念流的文本
+<li><p>给定一个复杂的输入问题</p>
 <ol type="1">
-<li>结合其编码器的上下文表示【Sec 3.4.1】</li>
-<li>从上下文表示中有条件地生成单词和概念【Sec 3.4.2】</li>
-</ol></li>
+<li>首先计算一颗合成树，该树描述如何将推理分解为简单的部分查询</li>
+<li>从curated和extracted KBs中为每个部分查询收集候选查询</li>
+<li>对于每个候选，使用一个基于神经网络模型来衡量其与问题的语义相似性，该模型可对不同形式的关系进行推理</li>
+<li>联接不同的部分查询找到问题的复杂查询</li>
+<li>将派生出的几个完整的查询根据它们部分查询的语义相似分数(semantic similarity of their partial queries)、查询结构(query structure)和实体链接分数(entity linking scores)对其进行排序，在多个KB上寻找最佳推导。下图为MULTIQUE的体系结构：</li>
+</ol>
+<p><img src="https://i.loli.net/2021/03/21/kiUZOLudEWpFP6I.png" alt="image-20210321172428400.png" style="zoom:150%;" /></p></li>
+</ul></li>
 </ul>
-<h4 id="context-representation">3.4.1 Context Representation</h4>
+<h2 id="partial-query-candidate-generation">3. Partial Query Candidate Generation</h2>
+<figure>
+<img src="https://i.loli.net/2021/03/21/6oFZhsmleQiwRPz.png" alt="image-20210321173056774.png" /><figcaption aria-hidden="true">image-20210321173056774.png</figcaption>
+</figure>
+<h3 id="identify-seed-entity">3.1 Identify seed entity</h3>
 <ul>
-<li><p>为了生成第t个时间的相应令牌，我们首先根据语句编码和潜在概念流计算第t个时间decoder输出的上下文表示<span class="math inline">\(\vec s_t\)</span>。</p></li>
-<li><p>准确说，<span class="math inline">\(\vec s_t\)</span>是通过利用第<span class="math inline">\((t-1)\)</span>步的上下文表示<span class="math inline">\(\vec c_{t-1}\)</span>来更新第<span class="math inline">\((t-1)\)</span>步的输出表示<span class="math inline">\(\vec s_{t-1}\)</span>来计算的： <span class="math display">\[
-\vec s_t=GRU(\vec s_{t-1},[\vec c_{t-1}\circ \vec y_{t-1}])
-\]</span></p>
-<p>其中<span class="math inline">\(\vec y_{t-1}\)</span>是第<span class="math inline">\(t-1\)</span>步生成的token<span class="math inline">\(y_{t-1}\)</span>的embedding；上下文表示<span class="math inline">\(\vec c_{t-1}\)</span>concatenate了基于文本的表示<span class="math inline">\(\vec c_{t-1}^{text}\)</span>和基于概念的表示<span class="math inline">\(\vec c_{t-1}^{concept}\)</span>： <span class="math display">\[
-\vec c_{t-1}=FFN([\vec c_{t-1}^{text}\circ \vec c_{t-1}^{cpt}])
-\]</span></p></li>
-<li><p><strong>基于文本的表示(text-based representation)</strong> <span class="math inline">\(\vec c_{t-1}^{text}\)</span>通过标准注意力机制读取用户语句编码<span class="math inline">\(H\)</span>(Bahdanau et al., 2015): <span class="math display">\[
-\vec c_{t-1}^{text}=\sum_{i=1}^m \alpha_{t-1}^j \cdot \vec h_j
-\]</span> 其中语句token的注意力<span class="math inline">\(\alpha_{t-1}^j\)</span>： <span class="math display">\[
-\alpha_{t-1}^j=softmax(\vec s_{t-1}\cdot \vec h_j)
-\]</span></p></li>
-<li><p><strong>基于概念的表示(concept-based representation)</strong><span class="math inline">\(\vec c_{t-1}^{concept}\)</span>是一个内部流动和外部流动的组合编码： <span class="math display">\[
-\vec c_{t-1}^{cpt}=(\sum_{e_i \in G_{center}}\beta_{t-1}^{e_i}\cdot\vec g_{e_i})\circ(\sum_{f_{e_p}\in G_{outer}}\gamma_{t-1}^f\cdot \vec f_{e_p})
-\]</span></p>
-<p>注意力<span class="math inline">\(\beta_{t-1}^{e_i}\)</span>是在中心概念表示上的权重： <span class="math display">\[
-\beta_{t-1}^{e_i}=softmax(\vec s_{t-1} \cdot \vec g_{e_i})
-\]</span> 注意力<span class="math inline">\(\gamma_{t-1}^f\)</span>在外部浮动概念上的权重： <span class="math display">\[
-\gamma_{t-1}^f=softmax(\vec s_{t-1} \cdot \vec f_{e_p})
-\]</span></p></li>
+<li>部分查询的seed <span class="math inline">\(s^r\)</span> 是问题中的链接实体或先前评估的部分查询的答案。</li>
 </ul>
-<h4 id="generating-tokens">3.4.2 Generating Tokens</h4>
+<h3 id="identify-main-relation-path">3.2 Identify main relation path</h3>
 <ul>
-<li><p>第<span class="math inline">\(t\)</span>次的输出表示包括来自语句文本的信息、具有不同跳步的概念以及对它们的注意力。解码器利用<span class="math inline">\(\vec s_t\)</span>生成第<span class="math inline">\(t\)</span>个token以形成更多信息的响应。</p></li>
-<li><p>先利用门(gate)<span class="math inline">\(\sigma^*\)</span>，通过选择单词(<span class="math inline">\(\sigma^*=0\)</span>)、中心概念(<span class="math inline">\(V^{0,1},\sigma^*=1\)</span>)和外部概念集(<span class="math inline">\(V^2,\sigma^*=2\)</span>)来控制生成 <span class="math display">\[
-\sigma^*=argmax_{\sigma \in\{0,1,2\}}(FFN_{\sigma}(\vec s_t))
-\]</span></p></li>
-<li><p>单词<span class="math inline">\(w\)</span>、中心概念<span class="math inline">\(e_i\)</span>和外部概念<span class="math inline">\(e_k\)</span>的生成概率在词汇表和内部概念集<span class="math inline">\(V^{0,1}\)</span>、外部概念集<span class="math inline">\(V^2\)</span>上计算：</p>
-<p><span id="gs15"><img src="https://s3.ax1x.com/2021/03/09/68CWWT.png" alt="68CWWT.png" /></span></p>
-<p>其中<span class="math inline">\(\vec w\)</span>是词<span class="math inline">\(w\)</span>的embedding，<span class="math inline">\(\vec g_{e_i}\)</span>是概念<span class="math inline">\(e_i\)</span>的在内部概念表示，<span class="math inline">\(\vec e_k\)</span>是两跳概率<span class="math inline">\(e_k\)</span>的embedding。</p></li>
-<li><p>概念流的训练和预测遵循标准的条件语句模型，即使用<a href="#gs15">公式15</a>代替<a href="#gs2">公式2</a>，并通过交叉熵损失函数(<a href="#gs3">公式3</a>)进行训练。训练只使用真实响应，而不需要额外注释。</p></li>
+<li>给定一个种子实体，考虑所有1跳和2跳路径<span class="math inline">\(p\)</span>，包括ontological and textual relations，路径的另一端是变量结点<span class="math inline">\(o^v\)</span>。</li>
+</ul>
+<h3 id="identify-constraints">3.3 Identify constraints</h3>
+<ul>
+<li>上一步确认的那些要给个实体和类型约束(<em>entity and type constraints</em>)。在例子中，我们考虑利用约束关系<em>is_a</em>来查找变量结点<span class="math inline">\(o^v\)</span>。我们还考虑通过单个关系连接到路径上的实体。我们还考虑约束的子集，以支持具有多个约束的查询。</li>
+</ul>
+<h3 id="transition-to-next-partial-query">3.4 Transition to next partial query</h3>
+<ul>
+<li>一旦收集到部分查询<span class="math inline">\(G_i\)</span>的候选，我们就参考合成树来确定下一部分查询<span class="math inline">\(G_{i+1}\)</span>的开始状态。</li>
+<li>如果下一个操作是simQA，我们使用语义匹配模型来计算<span class="math inline">\(G_i\)</span>候选的语义相似度，并评估K个最好的候选。否则，继续生成<span class="math inline">\(G_i\)</span>中不重叠的实体链接候选。</li>
+</ul>
+<h2 id="semantic-matching">4. Semantic Matching</h2>
+<figure>
+<img src="https://i.loli.net/2021/03/21/VZbctA2Sfnu6OKl.png" alt="image-20210321200753591.png" /><figcaption aria-hidden="true">image-20210321200753591.png</figcaption>
+</figure>
+<h3 id="model-architecture">4.1 Model Architecture</h3>
+<h4 id="encoding-question">4.1.1 Encoding question</h4>
+<ul>
+<li>使用令牌序列(token sequence)和依存结构(dependency structure)。</li>
+<li><span class="math inline">\(&lt;w_1,w_2,...,w_n&gt;\)</span>是<span class="math inline">\(Q\)</span>中的令牌，其中，seed(constraint)已经被替换为<span class="math inline">\(w_E,w_C\)</span></li>
+<li>利用embedding矩阵<span class="math inline">\(E_w\)</span>将token转换成向量<span class="math inline">\(&lt;q_1^w,q_2^w,...,q_n^w&gt;\)</span></li>
+<li>再利用LSTM将序列编码为一个潜在向量<span class="math inline">\(q^w\)</span></li>
+<li>类似地，将依存数编码为一个潜在向量<span class="math inline">\(q^{dep}\)</span></li>
+</ul>
+<h4 id="encoding-main-relation-path">4.1.2 Encoding main relation path</h4>
+<ul>
+<li><p>主关系路径可能是来自<span class="math inline">\(K_o\)</span>的textual relation，也可能来自<span class="math inline">\(K_c\)</span>的ontological relation，为在同一空间推断，需进行关系对齐</p></li>
+<li><p>在关系对齐的情况下，对 对齐中的每个关系形式编码为潜在向量<span class="math inline">\(r_i\)</span>。然后对不同关系的潜在向量进行最大合并，以获得不同关系形式上的统一语义表示。</p></li>
+<li><p>为了将每种关系形式编码成向量<span class="math inline">\(r_i\)</span>，考虑<strong>符号序列和id序列</strong>(Luo et al., 2018)。</p>
+<p>For instance, the id sequence of the relation in Fig. 5 is {book_author}, while its token sequence is {‘book’, author’}.</p>
+<ul>
+<li>符号序列：将token编码成向量利用embedding矩阵，最后将average embedding记作token层的表示<span class="math inline">\(r^w\)</span>。</li>
+<li>id序列：直接利用embedding矩阵<span class="math inline">\(E_r\)</span>计算id层的表示<span class="math inline">\(r_i^{id}\)</span></li>
+</ul></li>
+<li><p>一条路径的向量最终表示为<span class="math inline">\(r_i=[r_i^w;r_i^{id}]\)</span></p></li>
+</ul>
+<h4 id="encoding-constraints">4.1.3 Encoding constraints</h4>
+<ul>
+<li>同样的方法利用token级的表示<span class="math inline">\(c_i^w\)</span>和id级的表示<span class="math inline">\(c_i^{id}\)</span>编码约束关系<span class="math inline">\(c_i\)</span>。</li>
+<li><strong>给定关系路径和约束路径的向量表示，我们通过应用max pooling来获得查询语句的组合语义表示(compositional semantic representation)<span class="math inline">\(g\)</span>。</strong></li>
+</ul>
+<h4 id="attention-mechanism">4.1.4 Attention mechanism</h4>
+<ul>
+<li><p>利用查询向量<span class="math inline">\(g\)</span>学习问句中的emphasize parts。</p></li>
+<li><p>给定token层表示中的各隐藏层<span class="math inline">\(h_t,\ t\in \{1,2,...,n\}\)</span>，定义上下文向量[context vector]<span class="math inline">\(c\)</span>作为所有隐藏状态的加权和： <span class="math display">\[
+c=\sum_{t=1}^n\alpha_th_t
+\]</span> <span class="math inline">\(\alpha\)</span>是注意力权重，计算公式为： <span class="math display">\[
+\alpha=softmax(Wtanh(W_qq^w+W_gg))
+\]</span></p>
+<p>其中<span class="math inline">\(W,W_g,W_q\)</span>是网络的参数矩阵。注意力权重表示给定部分查询，模型对各个token的关注度。</p></li>
+</ul>
+<h4 id="objective-function">4.1.5 Objective function</h4>
+<ul>
+<li><p>将上下文向量<span class="math inline">\(c\)</span>、问题依存向量<span class="math inline">\(q^{dep}\)</span>和查询向量<span class="math inline">\(g\)</span>连接起来，一起送到多层感知机(MLP)中。输出为一个标量，表示语义相似度分数<span class="math inline">\(S_{sem}(q,G_i)\)</span>。使用交叉熵损失函数来训练模型。 <span class="math display">\[
+loss=ylog(S_{sem})+(1-y)log(1-S_{sem})
+\]</span> <span class="math inline">\(y\in \{0,1\}\)</span>表示<span class="math inline">\(G_i\)</span>是否正确。</p></li>
+<li><p>训练模型需要对等关系表单的对齐和(question, partial query)对。我们描述如何在给定QA对的情况下生成它们。</p></li>
+</ul>
+<h3 id="relation-alignment">4.2 Relation Alignment</h3>
+<ul>
+<li>首先学习textual嵌入然后对其进行聚类以获得规范化(canonicalized)关系蔟(Vashishth et al., 2018)。例如，一个聚类可以包含"is author of"和"authored"。</li>
+<li>使用规范化的文本关系(canonicalized textual relations)来推导出与本体论关系(ontological relations)的对齐。</li>
+<li>基于一对 本体关系 和 规范化文本关系 的 支持实体对<span class="math inline">\((s,o)\)</span> 来实现这种对齐。</li>
+<li>以我们的示例问题为例，关系<em>"is author of"</em>和<em>book.author</em>一定比关系<em>"is author of"</em>和<em>education.institution</em>有更多关联实体。</li>
+<li>该对齐基于支持阀值，即一对关系的最小数量的支持实体对，本文中设置为5.</li>
+</ul>
+<h3 id="implicit-supervision">4.3 Implicit Supervision</h3>
+<ul>
+<li><p>候选查询的质量可以通过计算其对标签答案的<span class="math inline">\(F_1\)</span>分数间接获得(Peng et al., 2017a)。但是对于复杂问题，候选查询的答案可能与标签答案几乎没有重叠。</p></li>
+<li><p>因此采用另一种评分策略，将部分查询的质量估计为其所有完整查询派生的最佳<span class="math inline">\(F_1\)</span>分数。计算部分查询的分数<span class="math inline">\(V(G_i^{(k)})\)</span>为： <span class="math display">\[
+V(G_i^{(k)})=\max_{i\leq t \leq n-1}F_1(D_{t+1}^{k})
+\]</span> 其中<span class="math inline">\(D_t\)</span>表示级别<span class="math inline">\(t\)</span>的派生，<span class="math inline">\(n\)</span>表示部分查询的数量。</p></li>
+<li><p>这种隐含监督可能收到虚假推导的影响，恰好评估出了正确答案，却没有捕捉到问题的语义含义，所以还需要考虑额外的先验来促进训练数据中的真阳性和假阴性的示例。</p></li>
+<li><p>我们使用<span class="math inline">\(L(Q,G_i^{(k)})\)</span>作为问题<span class="math inline">\(Q\)</span>中提到<span class="math inline">\(G_i^{(k)}\)</span>的关系中的词数之比。也使用<span class="math inline">\(C(Q,G_i^{(k)})\)</span></p></li>
 </ul>
 
       
@@ -1614,7 +1625,7 @@ L=\sum_{t=1}^nCrossEntropy(y_t^*,y_t)
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/02/06/%E7%AC%AC%E5%9B%9B%E5%91%A8/%E8%AE%BA%E6%96%87%E7%A0%94%E8%AF%BB-A%20Survey%20on%20Knowledge%20Graphs%20Representation,%20Acquisition%20and%20Applications/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/03/15/%E7%AC%AC07%E5%91%A8/Query%20Graph%20Generation%20for%20Answering%20Multi-hop%20Complex%20Questions%20from%20Knowledge%20Bases/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.jpg">
@@ -1628,7 +1639,7 @@ L=\sum_{t=1}^nCrossEntropy(y_t^*,y_t)
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2021/02/06/%E7%AC%AC%E5%9B%9B%E5%91%A8/%E8%AE%BA%E6%96%87%E7%A0%94%E8%AF%BB-A%20Survey%20on%20Knowledge%20Graphs%20Representation,%20Acquisition%20and%20Applications/" class="post-title-link" itemprop="url">A Survey on Knowledge Graphs Representation, Acquisition and Applications</a>
+            <a href="/2021/03/15/%E7%AC%AC07%E5%91%A8/Query%20Graph%20Generation%20for%20Answering%20Multi-hop%20Complex%20Questions%20from%20Knowledge%20Bases/" class="post-title-link" itemprop="url">Query Graph Generation for Answering Multi-hop Complex Questions from Knowledge Bases</a>
         </h2>
 
         <div class="post-meta">
@@ -1638,14 +1649,14 @@ L=\sum_{t=1}^nCrossEntropy(y_t^*,y_t)
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2021-02-06 00:00:00" itemprop="dateCreated datePublished" datetime="2021-02-06T00:00:00+08:00">2021-02-06</time>
+              <time title="创建时间：2021-03-15 00:00:00" itemprop="dateCreated datePublished" datetime="2021-03-15T00:00:00+08:00">2021-03-15</time>
             </span>
               <span class="post-meta-item">
                 <span class="post-meta-item-icon">
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-05-04 15:21:36" itemprop="dateModified" datetime="2021-05-04T15:21:36+08:00">2021-05-04</time>
+                <time title="修改时间：2021-05-06 11:56:45" itemprop="dateModified" datetime="2021-05-06T11:56:45+08:00">2021-05-06</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1661,7 +1672,7 @@ L=\sum_{t=1}^nCrossEntropy(y_t^*,y_t)
                 </span>
                   >
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Knowledge-Base-Qestion-Answering/paper-comprehension/basis/" itemprop="url" rel="index"><span itemprop="name">basis</span></a>
+                  <a href="/categories/Knowledge-Base-Qestion-Answering/paper-comprehension/latest/" itemprop="url" rel="index"><span itemprop="name">latest</span></a>
                 </span>
             </span>
 
@@ -1671,14 +1682,14 @@ L=\sum_{t=1}^nCrossEntropy(y_t^*,y_t)
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>7.3k</span>
+              <span>3.4k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>7 分钟</span>
+              <span>3 分钟</span>
             </span>
 
         </div>
@@ -1690,223 +1701,92 @@ L=\sum_{t=1}^nCrossEntropy(y_t^*,y_t)
     <div class="post-body" itemprop="articleBody">
 
       
-          <h2 id="abstract">Abstract</h2>
-<ul>
-<li>包含
-<ul>
-<li>知识图谱表现学习【knowledge graph representation learning】</li>
-<li>知识获取和补全【knowledge acquisition and completion】</li>
-<li>时态图谱【temporal knowledge graph】</li>
-<li>知识感知应用【knowledge-aware applications】</li>
-</ul></li>
-<li>知识图嵌入从表示空间、得分函数、编码模型和辅助信息四个方面进行组织。</li>
-<li>对知识获取，特别是知识图谱的补全，嵌入方法、路径推理和逻辑规则推理进行了综述。</li>
-<li>进一步探讨了元关系学习、常识推理和时序知识图谱</li>
+          <ul>
+<li>论文原文：https://www.aclweb.org/anthology/2020.acl-main.91.pdf</li>
 </ul>
 <h2 id="introduction">1. Introduction</h2>
 <ul>
-<li><p>知识图是事实的结构化表示，由实体、关系和语义描述组成。</p>
+<li>目前主要在研究两种复杂性问题：
 <ul>
-<li>实体可以是现实世界的对象和抽象概念</li>
-<li>关系表示实体之间的关联</li>
-<li>实体及其关系的语义描述包含定义良好的类型和属性
+<li>带约束的单一关系问题(Single-relation questions with constraints)</li>
+<li>具有多跳关系的问题(Questions with <em>multiple hops</em> of relations)
 <ul>
-<li>属性图或性质图被广泛使用，其中节点和关系具有属性或性质</li>
+<li>减少需考虑的多跳关系路径的数量，本文采用beam search，即consider only the best matching relation instead of all relations when extending a relation path.</li>
 </ul></li>
 </ul></li>
-<li><p>知识图谱与知识库同义。当考虑图结构时，知识图谱是一个图，当涉及到形式语义时，可以作为解释和推断事实的知识库。</p>
-<figure>
-<img src="https://mmbiz.qpic.cn/mmbiz_png/AefvpgiaIPw3y4gISW2dgzIZJuoPqiahfDljpZGtTkr9fNADtF790ojtnWGZGealiacSMGiaQficticUia94QJMpuFXDg/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1&amp;wx_co=1" alt="图片" /><figcaption aria-hidden="true">图片</figcaption>
-</figure></li>
-<li><p>近年来，<strong>基于知识图谱的研究主要集中在知识表示学习(KRL)和知识图谱嵌入(KGE)两个方面</strong>。具体的知识获取任务包括知识图谱补全(KGC)、三元组分类、实体识别和关系提取。知识感知模型得益于异构信息、丰富的知识表示本体和语义以及多语言知识的集成。因此，许多现实世界的应用，如推荐系统和问题回答已经具备常识性的理解和推理能力。微软的Satori和谷歌的Knowledge Graph</p></li>
-<li><p>为了对现有的文献进行全面的综述，本文重点研究了<strong>知识表示，它为知识获取和知识感知应用提供了更加上下文化、智能化和语义化的知识表示方法</strong>。本文所做贡献如下</p>
+<li>本文同时处理复杂KBQA的约束和多跳关系。
 <ul>
-<li><strong>全面性综述。</strong>我们对知识图谱的起源和现代知识图谱的关系学习技术进行了全面的综述。介绍和比较了知识图谱表示、学习和推理的主要神经网络结构。此外，我们还提供了不同领域中许多应用的完整概述。</li>
-<li><strong>全视图分类和新的分类法。</strong>对知识图谱的研究进行了全面的分类，并提出了精细的分类方法。具体来说，在高层次上，<strong>我们从KRL、知识获取和知识感知应用三个方面对知识图谱进行了回顾。对于KRL方法，我们进一步将细粒度分类法分为四个视图，包括表示空间、评分函数、编码模型和辅助信息。在知识获取方面，将知识获取分为基于嵌入的排序、关系路径推理、逻辑规则推理和元关系学习；实体关系获取任务分为实体识别、类型识别、消除歧义和对齐；并根据神经范式对关系抽取进行了讨论。</strong></li>
-<li><strong>对新进展的广泛综述。本文提供了广泛的新兴主题，包括基于transformer的知识编码、基于图神经网络(GNN)的知识传播、基于路径推理的强化学习和元关系学习。</strong></li>
-<li>总结和展望</li>
-</ul></li>
-<li><p>论文其余部分组织如下：</p>
-<ul>
-<li>首先，知识图谱的概述，包括历史、符号、定义和分类，在第2节中给出;</li>
-<li>然后，我们在第三节从四个范围讨论KRL;</li>
-<li>接下来，我们将回顾第4节和第5节中知识获取和时间知识图谱的任务;下游应用介绍在第6节;</li>
-<li>最后，讨论了未来的研究方向，并得出结论。其他信息，包括KRL模型训练和一组知识图谱数据集以及开源实现，可以在附录中找到。</li>
+<li>在查询图的生成过程中，允许更长的关系路径。</li>
+<li>不再是关系路径构建完成之后再添加约束，而是同时合并约束和扩展关系路径，可以减少搜索空间。</li>
 </ul></li>
 </ul>
-<h2 id="概述">2. 概述</h2>
-<h3 id="知识库简史">2.1 知识库简史</h3>
+<h2 id="method">2. Method</h2>
+<h3 id="preliminaries">2.1 Preliminaries</h3>
 <ul>
-<li>自从2012年谷歌搜索引擎首次提出知识图谱概念以来，知识图谱得到了极大的普及。</li>
-</ul>
-<h3 id="定义和符号">2.2 定义和符号</h3>
+<li><p>现有的查询图生成方法【本文largely inspired by】</p>
+<p>【<span id="2015"><a target="_blank" rel="noopener" href="https://www.aclweb.org/anthology/P15-1128.pdf">Semantic parsing via staged query graph generation: Question answering with knowledge base, 2015</a></span></p>
+<p><span id="2016"><a target="_blank" rel="noopener" href="https://www.aclweb.org/anthology/C16-1236.pdf">Constraint-based question an- swering with knowledge graph, 2016</a></span></p>
+<p><span id="2018"><a target="_blank" rel="noopener" href="https://www.aclweb.org/anthology/D18-1242.pdf">Knowledge base question answering via en- coding of complex query graphs, 2018</a></span>】</p></li>
+<li><p>一个查询图(query graph)有四种结点：</p>
 <ul>
-<li><p>将知识图谱定义为<span class="math inline">\(G=\{E,R,F\}\)</span>。其中<span class="math inline">\(E、R、F\)</span>分别表示实体、关系和事实的集合。一个事实记作一个三元组<span class="math inline">\(A\)</span> <span class="math inline">\(triple(h,r,t)∈F\)</span></p></li>
-<li><p>两个定义</p>
-<ul>
-<li><strong>定义1</strong> (Ehrlinger和Woß[35])。知识图谱获取信息并将其集成到本体中，应用推理引擎获得新知识。</li>
-<li><strong>定义2</strong> (Wang et al.[158])。知识图谱是由实体和关系构成的多关系图，实体和关系分别被视为节点和不同类型的边。</li>
+<li>grounded entity(带阴影的矩形)：知识库中已经存在的实体</li>
+<li>existential variable(无阴影的矩形)：不是一个grounded entity</li>
+<li>lambda variable(圆形)：不是一个grounded entity，但是代表了答案</li>
+<li>aggregation function(菱形)：聚合函数</li>
 </ul></li>
-<li><p>下表列出了具体的符号表示及其描述。附录B解释了几种数学运算的细节。</p>
-<figure>
-<img src="https://mmbiz.qpic.cn/mmbiz_png/AefvpgiaIPw1cVpgRZMk258hyicM9JBoFcPtfCcplT3tFP5wQRcZrJqnQaS6ich4FrvicJe0YpxCt8ecBMaHv6nnlw/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1&amp;wx_co=1" alt="图片" /><figcaption aria-hidden="true">图片</figcaption>
-</figure></li>
-</ul>
-<h3 id="知识图研究的分类">2.3 知识图研究的分类</h3>
-<ul>
-<li><p>本综述对知识图谱的研究，即KRL、知识获取、下游知识感知应用等方面进行了全面的文献综述，整合了许多最新的先进深度学习技术。研究的总体分类如下图所示。</p>
-<figure>
-<img src="https://mmbiz.qpic.cn/mmbiz_png/AefvpgiaIPw1cVpgRZMk258hyicM9JBoFcKvhVw33icTt7fMW03kpdjsAYYRyMyn1pxdJTerkS7PwmNh6R7c3C5xQ/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1&amp;wx_co=1" alt="图片" /><figcaption aria-hidden="true">图片</figcaption>
-</figure></li>
-<li><p><strong>知识表示学习(Knowledge Representation Learning, KRL)</strong>是后续的基础。我们将KRL分为<strong>表示空间、评分函数、编码类型和辅助信息</strong>四个方面，为开发KRL模型提供了清晰的工作流程。具体内容包括：</p>
+<li><p>查询图的边来自知识图中的关系，一个查询图应该只有一个lambda变量表示答案，不止一个grounded entity、没有或者多个existential变量和聚合函数。</p></li>
+<li><p>查询图生成过程(<a href="#2015">Yih et al., 2015</a>; <a href="#2016">Bao et al., 2016</a>)：</p>
 <ol type="1">
-<li><strong>关系和实体所表示的表示空间</strong></li>
-<li><strong>度量事实三元组似然性的评分函数</strong></li>
-<li><strong>用于表示和学习关系交互的编码模型</strong></li>
-<li><strong>嵌入方法所集成的辅助信息</strong></li>
+<li><p>Starting from a grounded entity found in the question (referred to as a <em>topic entity</em>), identify a core relation path linking the topic entity to a lambda variable. Existing work considers core relation paths containing a single relation(<a href="#2015">Yih et al., 2015</a>; <a href="#2016">Bao et al., 2016</a>; <a href="#2018">Luo et al., 2018</a>).</p></li>
+<li><p>From a core relation path identified in Step 1, attach one or more constraints found in the question. A constraint consists of either a grounded entity or an aggregation function together with a relation.</p></li>
+<li><p>With all the candidate query graphs generated from Step 1 and Step 2, rank them by measuring their similarities with the question. This is typically done through a neural network model such as a CNN . (<a href="#2015">Yih et al., 2015</a>; <a href="#2016">Bao et al., 2016</a>).</p></li>
+<li><p>Execute the top-ranked query graph against the KB to obtain the answer entities.</p></li>
 </ol>
-<ul>
-<li>表示学习包括点向空间、流形、复向量空间、高斯分布和离散空间</li>
-<li>评价指标一般分为<strong>基于距离的评分函数和基于相似度匹配的评分函数</strong></li>
-<li>目前研究主要集中在编码模型，包括线性/双线性模型，因式分解和神经网络。</li>
-<li>辅助信息包括文本信息、视觉信息和类型信息</li>
-</ul></li>
-<li><p><strong>知识获取任务分为三类</strong>：KGC、关系提取和实体发现。</p>
-<ul>
-<li>第一个用于扩展现有的知识图谱，而其他两个用于从文本中发现新知识(即关系和实体)。知识图谱补全(KGC)主要分为以下几类：基于嵌入的排序、关系路径推理、基于规则的推理和元关系学习。</li>
-<li>实体发现包括识别、消除歧义、类型化和对齐</li>
-<li>关系提取模型知识图谱补全利用了注意力机制、图卷积网络、对抗性训练、强化学习、深度残差学习和迁移学习。</li>
-</ul></li>
-<li><p><strong>时序知识图谱</strong>包含了表示学习的时态信息。本研究将时间嵌入、实体动态、时序关系依赖、时序逻辑推理四个研究领域进行了分类。</p></li>
-<li><p><strong>知识感知应用</strong>包括自然语言理解(NLU)、问题回答、推荐系统和各种真实世界的任务，这些应用程序注入知识以改进表示学习。</p></li>
-</ul>
-<h3 id="相关综述论文">2.4 相关综述论文</h3>
-<ul>
-<li>以往关于知识图谱的综述论文主要集中在统计相关学习[112]、知识图谱精细化[117]、中文知识图谱构建[166]、KGE[158]或KRL[87]。后两项综述与我们的工作关系更大。</li>
-<li>Lin等[87]以线性的方式提出KRL，着重于定量分析。Wang等人[158]根据评分函数对KRL进行分类，并特别关注KRL中使用的信息类型。它仅从评分度量的角度提供了当前研究的一般视角。</li>
-<li>我们的综述深入到KRL，并提供了一个完整的视图，它来自四个方面，包括<strong>表示空间、评分函数、编码模型和辅助信息</strong>。此外，本文还对知识获取和知识感知应用进行了全面的综述，讨论了基于知识图谱的推理和小样本学习等几个新兴的主题。</li>
-</ul>
-<h2 id="知识表示学习">3. 知识表示学习</h2>
-<ul>
-<li><strong>KRL在文献中也被称为KGE、多关系学习和统计关系学习。</strong>本节介绍在分布式表示学习丰富的语义信息的实体和关系形成4个范围的最新进展，包括<strong>表示空间(表示实体和关系,3.1节), 评分函数(度量事实的合理性,3.2节),编码模型(模型的语义交互事实,3.3节),和辅助信息(利用外部信息,3.4节)</strong>。我们还在第3.5节中提供了一个摘要。KRL模型的训练策略在附录D中进行了回顾。</li>
-</ul>
-<h3 id="表示空间">3.1 表示空间</h3>
-<ul>
-<li><p>表示学习的关键是学习低维分布式嵌入的实体和关系</p>
-<p>以下依次是<strong>实值点向空间</strong>(包括向量空间、矩阵空间和张量空间)、复平面空间、高斯空间、流形空间</p>
-<p>嵌入空间应遵循三个条件，即评分函数的可微性、计算可能性和可定义性。</p>
-<p><strong><em>TODO p4</em></strong></p>
 <figure>
-<img src="https://mmbiz.qpic.cn/mmbiz_png/AefvpgiaIPw1cVpgRZMk258hyicM9JBoFcgvH1Te5D7cG2IIBsu7XGTw3joD2jSwUxBXRFHyvYVY2AiaiaN66fibkjw/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1&amp;wx_co=1" alt="图片" /><figcaption aria-hidden="true">图片</figcaption>
+<img src="https://i.loli.net/2021/03/22/XeE7IC63fdyuUp5.png" alt="image-20210322215711338.png" /><figcaption aria-hidden="true">image-20210322215711338.png</figcaption>
 </figure></li>
 </ul>
-<h3 id="评分函数">3.2 评分函数</h3>
+<h3 id="motivation">2.2 Motivation</h3>
 <ul>
-<li><p>用于度量事实的可信度，在基于能量的学习框架中也称为能量函数。能量学习的目的是学习能量函数。</p></li>
-<li><p>基于能量的学习目标学习能量函数<span class="math inline">\(E_{\theta}(x)\)</span>(被将<span class="math inline">\(x\)</span>视为输入的<span class="math inline">\(\theta\)</span>参数化)，以确保正样本分数高于负样本。本文采用评分函数的形式进行统一。</p></li>
-<li><p>评分函数有两种典型类型，即<strong>基于距离的和基于相似性的函数</strong>(如下图a, b)，用于度量事实的合理性。</p>
-<ul>
-<li><p>基于距离的评分函数通过计算实体之间的距离来衡量事实的合理度，其中使用较多的是关系为<span class="math inline">\(h+r≈t\)</span>的翻译函数</p></li>
-<li><p>基于语义相似度的评分方法是通过语义匹配来衡量事实的合理性，通常采用乘法公式，即<span class="math inline">\(h^TM_r≈t^T\)</span>，转换头尾部附近的实体表示空间。</p></li>
-<li><p>下图即为以TransE[10]和DistMult[185]为例的基于距离和基于相似匹配的评分函数示意图。</p>
-<p><strong><em>TODO p5</em></strong></p>
-<figure>
-<img src="https://mmbiz.qpic.cn/mmbiz_png/AefvpgiaIPw1cVpgRZMk258hyicM9JBoFcwVxuEaKDTTM33fP2sRHcxgQtzxUA4IWU2Tf2TlIP1OScsEia2vhVwKQ/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1&amp;wx_co=1" alt="图片" /><figcaption aria-hidden="true">图片</figcaption>
-</figure></li>
-</ul></li>
+<li>看起来更像是两个模型的组合：上述模型不利于解决多跳问题；最新研究出的多跳模型(beam search，在生成t+1跳关系路径之前只保留前K个t跳关系路径【(<a href="#2019">Chen et al., 2019</a>; <a href="#2019b">Lan et al., 2019b</a>)】)但忽略了在生成过程中的约束。</li>
+<li>不再是关系路径构建完成之后再添加约束，而是同时合并约束和扩展关系路径。</li>
+<li>This more flexible way of generating query graphs, coupled with <strong>a beam search mechanism</strong> and <strong>a semantic matching model</strong> to guide pruning, explores a much smaller search space while still maintaining a high chance of finding the correct query graph.</li>
 </ul>
-<h3 id="编码模型">3.3 编码模型</h3>
+<h3 id="query-graph-generation">2.3 Query Graph Generation</h3>
 <ul>
-<li><p>本节介绍通过特定的模型体系结构(包括<strong>线性/双线性模型、因子分解模型和神经网络</strong>)对实体和关系的交互进行编码的模型。线性模型通过将头部实体投射到接近尾部实体的表示空间中，将关系表示为线性/双线性映射。因子分解的目的是将关系数据分解为低秩矩阵进行表示学习。神经网络用非线性神经激活和更复杂的网络结构来编码关系数据。几个神经模型如图5所示。</p>
-<p><strong><em>TODO p6【图不全】</em></strong></p></li>
-<li><p>图5: 神经编码模型示意图。(a) MLP[33]和(b) CNN[110]将三元组数据输入到稠密层和卷积运算中学习语义表示，(c) GCN[132]作为知识图谱的编码器，产生实体和关系嵌入。(d) RSN[50]对实体关系序列进行编码，有区别地跳跃关系。</p>
-<figure>
-<img src="https://mmbiz.qpic.cn/mmbiz_png/AefvpgiaIPw1cVpgRZMk258hyicM9JBoFct7MkJrYbQ7SI0RlXp8wfZj3Rm75j77ABlBeSVBYkzAx9wlTIJTbn5A/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1&amp;wx_co=1" alt="图片" /><figcaption aria-hidden="true">图片</figcaption>
-</figure></li>
+<li><p>利用波束搜索来迭代生成候选查询图。假设第<span class="math inline">\(t\)</span>次迭代产生K个查询图的集合，在<span class="math inline">\(t+1\)</span>次迭代中，作者使用了extend、connect、aggregate三个行为之一来为当前的查询图添加一条边或一个节点。在每个时间步获得查询图之后，用评分函数来对所有查询图进行排序，并找出 top-k。如此持续迭代，<strong>直到某一迭代的评分不高于它前一迭代的评分。</strong></p>
+<p>如下图：<img src="http://p3.itc.cn/q_70/images03/20200715/7d053c5f849e45c0b9c06fc39fda1b8f.png" alt="img" /></p></li>
 </ul>
-<h3 id="嵌入辅助信息">3.4 嵌入辅助信息</h3>
+<h4 id="extend">2.3.1 extend</h4>
 <ul>
-<li><p>为了促进更有效的知识表示，多模态嵌入将诸如文本描述、类型约束、关系路径和视觉信息等外部信息与知识图谱本身结合起来。</p>
-<p><strong><em>TODO p8</em></strong></p></li>
+<li><strong>扩展</strong>动作将核心关系路径扩展了 R 中的一个关系。如果当前查询图仅包含主题实体 e，则扩展动作将在 KB 中找到链接到 e 的关系 r，并将路径增长到 r。<strong>它还使 r 的另一端成为 lambda 变量 x。</strong>如果当前查询图具有 lambda 变量 x，则扩展操作会将 x 更改为存在变量 y，通过对 KB 执行当前查询图来查找 KB 中 y 的所有绑定，找到链接到这些实体之一的关系 r ，最后将 r 附加到 y。r 的另一端成为新的 lambda 变量 x。</li>
 </ul>
-<h3 id="总结">3.5 总结</h3>
+<h4 id="connect">2.3.2 connect</h4>
 <ul>
-<li><p>知识表示学习是知识图谱研究领域的一个重要课题。本节回顾了KRL的四方面，其中最近的几种方法总结在表II中，更多的方法在附录c中。总的来说，开发一个新的KRL模型是为了回答以下四个问题:<strong>1)选择哪个表示空间; 2)如何测量特定空间中三元组的合理度; 3)采用何种编码模型对关系交互进行建模; 4)是否利用辅助信息。</strong></p></li>
-<li><p><strong>最常用的表示空间是基于欧几里德点的空间，它通过在向量空间中嵌入实体，并通过向量、矩阵或张量对相互作用进行建模。</strong>研究了复向量空间、高斯分布、流形空间和群等表示空间。流形空间相对于点向欧几里德空间的优点是松弛点向嵌入。高斯嵌入能够表达实体和关系的不确定性，以及多重关系语义。在复杂向量空间中嵌入可以有效地建模不同的关系连接模式，特别是对称/反对称模式。表示空间在实体语义信息的编码和关系属性的获取中起着重要的作用。在建立表示学习模型时，应仔细选择和设计合适的表示空间，以匹配编码方法的性质，平衡表达性和计算复杂度。<strong>基于距离度量的评分函数采用了翻译原则，而语义匹配评分函数采用了组合运算符。编码模型，尤其是神经网络，在实体和关系的交互建模中起着至关重要的作用。</strong>双线性模型也引起了广泛的关注，一些张量因子分解也可以看作是这一类。其他方法包括文本描述、关系/实体类型和实体图像的辅助信息。</p></li>
-<li><p><strong><em>图TODO p9</em></strong></p></li>
+<li>除了当前核心关系路径开始处的主题实体之外，问题中通常还会找到其他实体。 <strong>连接</strong>操作将这样的实体 e <strong>链接到 lambda 变量 x 或连接到 x 的存在变量</strong>（即 CVT 节点）。要确定使用哪个关系 r 链接 e 和 x，我们可以再次找到 x 的所有绑定，通过执行当前查询图，然后找到这些实体之一与 e 之间存在的关系。</li>
 </ul>
-<h2 id="知识获取">4. 知识获取</h2>
+<h4 id="aggregate">2.3.3 aggregate</h4>
 <ul>
-<li>知识获取的目的是从非结构化文本中构造知识图谱，补全已有的知识图，发现和识别实体和关系。</li>
-<li><strong>知识获取的主要任务包括关系提取、KGC和其他面向实体的获取任务，如实体识别和实体对齐。</strong>大多数方法分别制定KGC和关系提取。然而，这两个任务也可以集成到一个统一的框架中。</li>
-<li>Han等人[57]提出了一种知识图谱与文本数据融合的联合学习框架，实现了知识图谱与文本的数据融合，解决了文本的KGC和关系提取问题。与知识获取相关的任务还有<strong>三元组分类、关系分类</strong>等。</li>
-<li>在这一部分中，我们将对知识获取技术的三个方面进行全面的回顾，即知识图谱补全、实体发现技术和关系提取技术。</li>
+<li>作者使用一组预定义的关键字从问题中检测聚合函数。聚合操作会将检测到的聚合函数作为新节点附加到 lambda 变量 x 或连接到作为 CVT 节点的 x 的存在变量。</li>
 </ul>
-<h3 id="知识图谱补全">4.1 知识图谱补全</h3>
+<h4 id="总结">2.3.4 总结</h4>
 <ul>
-<li><p><strong>基于知识图谱不完备性的特点</strong>【即知识图谱中的关系缺失或者属性缺失，如人物的教育，工作，住址，关系等信息缺失，这可能是原始数据本身不完备，也可能是抽取算法无法识别等原因导致。】，提出了一种新的知识图谱三元组生成方法。典型的子任务包括链路预测、实体预测和关系预测。这里给出了一个面向任务的定义。给定一个不完全知识图谱<span class="math inline">\(G=(E,R,F)\)</span>，KGC的目的是推断缺失的三元组<span class="math inline">\(T=\{(h,r,t)|(h,r,t)\notin F\}\)</span>。</p></li>
-<li><p>对KGC的初步研究主要集中在学习低纬度嵌入进行三元组预测。在本次综述中，我们将这些方法成为<strong>基于嵌入的方法</strong>。然而，它们中的大多数都没有捕捉到多步关系。因此，最近的工作转向探索<strong>多步骤的关系路径和合并逻辑规则，分别称为关系路径推理和基于规则的推理</strong>。三元组分类是KGC的一个相关任务，它评估了一个事实三元组分类的正确性，本节还会对此进行讨论。</p>
-<p><strong>TODO p9</strong></p>
-<figure>
-<img src="https://mmbiz.qpic.cn/mmbiz_png/AefvpgiaIPw1cVpgRZMk258hyicM9JBoFc0IU8wcvCdhhQNoPQWXbDScRqV3ibJQInIuIv0iaWMAjLrkdIuaxq6nsw/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1&amp;wx_co=1" alt="图片" /><figcaption aria-hidden="true">图片</figcaption>
-</figure></li>
+<li>该方法的新颖之处在于，可以在连接和聚合操作之后应用扩展操作，而以前的方法是不允许的。扩展和连接操作可以理解为对多跳推理的实现，而聚合操作可理解为对问题约束的实现。</li>
 </ul>
-<h3 id="实体的发现">4.2 实体的发现</h3>
+<h3 id="query-graph-ranking">2.4. Query Graph Ranking</h3>
 <ul>
-<li><p><strong>本节将基于实体的知识获取分为几个细分的任务，即实体识别、实体消歧、实体类型和实体对齐。</strong>我们将它们称为实体发现，因为它们都在不同的设置下探索实体相关知识。</p>
-<p><strong>TODO p11</strong></p></li>
+<li>在第 t 次迭代的末尾，算法对候选查询图进行排序，每个图获得 7 维的特征向量，并将这些向量馈送到一个全连接层。</li>
+<li>向量的第一个维度来自基于 BERT 的语义匹配模型。具体来说，算法通过遵循构造查询图 g 所采取的动作序列并将每个步骤所涉及的实体和关系的文本描述顺序添加到序列中，将 g 转换为标记序列。存在变量和 lambda 变量将被忽略。</li>
+<li>向量的其他 6 个维度如下：第一个维度是查询图中所有已链接实体的累积实体链接得分。第二个是查询图中出现的链接实体的数量。第三到第五个分别是查询图中实体类型的数量，时间表达式和最高级的数量。最后一个特征是查询图的答案实体的数量。</li>
 </ul>
-<h3 id="关系提取">4.3 关系提取</h3>
-<ul>
-<li><p>关系提取是从纯文本中抽取未知关系事实加入到知识图谱中，是自动构建大规模知识图谱的关键。</p></li>
-<li><p>由于缺乏标记的关系数据，远距离监督[25](也称为弱监督或自我监督)使用启发式匹配来创建训练数据，假设包含相同实体提及的句子在关系数据库的监督下可以表达相同的关系</p></li>
-<li><p>Mintz等人[103]利用文本特征(包括词汇和句法特征、命名实体标记和连接特征)对关系分类进行远程监控。传统的方法高度依赖于特征工程[103]，最近的一种方法探索了特征之间的内在相关性[123]。深度神经网络正在改变知识图谱和文本的表示学习。本节回顾了<strong>神经关系提取(NRE)</strong>方法的最新进展，概述如图9所示。</p>
-<p><strong>TODO p12</strong></p>
-<figure>
-<img src="https://mmbiz.qpic.cn/mmbiz_png/AefvpgiaIPw1cVpgRZMk258hyicM9JBoFcxhvzGBxbNsobnSiaCRBlBdkhtWRiagZ1ib6P8AkYbiaTWPhwiaictnlyPQKA/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1&amp;wx_co=1" alt="图片" /><figcaption aria-hidden="true">图片</figcaption>
-</figure></li>
-</ul>
-<h3 id="总结-1">4.4 总结</h3>
-<ul>
-<li><p>这一部分回顾了不完全知识图谱的知识补全和纯文本的知识获取。知识图谱补全完成了现有实体之间缺失的连接，或者推断出给定实体和关系查询的实体。</p></li>
-<li><p>Embedding</p>
-<ul>
-<li>基于嵌入的KGC方法通常<strong>依赖于三元组</strong>表示学习来捕获语义，并对完成的候选排序。基于嵌入的推理仍然停留在个体关系层面，由于忽略了知识图谱的符号性，缺乏可解释性，使得复杂推理能力较差。</li>
-<li>符号学与嵌入相结合的混合方法结合了<strong>基于规则的推理</strong>，克服了知识图谱的稀疏性，提高了嵌入的质量，促使有效的规则注入，并引入了可解释的规则。从知识图谱的图形性质出发，研究了路径搜索和神经路径表示学习，但它们在大规模图上遍历时存在连通性不足的问题。</li>
-<li>元关系学习的新方向是学习在低资源环境下对未知关系提取的快速适应使用</li>
-</ul></li>
-<li><p>实体发现</p>
-<ul>
-<li>实体发现从文本中获取面向实体的知识，将知识融合到知识图谱中。<strong>以序列对序列的方式探讨实体识别，实体类标讨论有噪声的类型标签和零样本，实体消歧和对齐学习统一嵌入的迭代对齐模型，解决有限数量的对齐种子样本问题。</strong>但是，如果新对齐的实体性能较差，则可能会面临错误积累问题。近年来，针对语言的知识越来越多，<strong>跨语言知识对齐</strong>的研究应运而生。</li>
-</ul></li>
-<li><p>关系抽取</p>
-<ul>
-<li><p>关系抽取在距离监督的假设下存在噪声模式，尤其是在不同领域的文本语料库中。因此，<strong>弱监督关系提取对于减轻噪声标记的影响是很重要的</strong>，例如，以句子包为输入的多实例学习，软选择超过实例的注意机制[90]以减少噪声模式，以及基于rl的方法将实例选择描述为硬决策。另一个原则是学习尽可能丰富的表示。由于深度神经网络可以解决传统特征提取方法中的误差传播问题，因此该领域以基于DNN的模型为主，如表四所示</p>
-<figure>
-<img src="https://mmbiz.qpic.cn/mmbiz_png/AefvpgiaIPw1cVpgRZMk258hyicM9JBoFc38oXzOAmjibpoCL1DpZn1fT0X2bIv9pRQhO8G29CySqNPdrvVmYQibQA/640?wx_fmt=png&amp;tp=webp&amp;wxfrom=5&amp;wx_lazy=1&amp;wx_co=1" alt="图片" /><figcaption aria-hidden="true">图片</figcaption>
-</figure></li>
-</ul></li>
-</ul>
-<h2 id="时序知识图">5. 时序知识图</h2>
-<ul>
-<li><p>当前的知识图谱研究多集中在静态知识图上，事实不随时间变化，而对知识图谱的时间动态研究较少。然而，时间信息是非常重要的，因为结构化的知识只在一个特定的时期内存在，而事实的演变遵循一个时间序列。最近的研究开始将时间信息引入到KRL和KGC中，与之前的静态知识图相比，这被称为时序知识图。同时对时间嵌入和关系嵌入进行了研究。</p>
-<p><strong>TODO p14</strong></p></li>
-</ul>
-<h2 id="知识图谱嵌入应用">6. 知识图谱嵌入应用</h2>
-<h3 id="自然语言理解">6.1 自然语言理解</h3>
-<ul>
-<li>知识感知NLU将结构化的知识注入到统一的语义空间中，增强了语言表示。近年来，知识驱动的发展利用了显性事实知识和隐性语言表示，并探索了许多NLU任务。Chen等人[22]提出了两个知识图谱上的双图随机游动，即提出了一个基于槽的语义知识图谱和一个基于词的词汇知识图谱，以考虑口语理解中的槽间关系。Wang等[156]通过加权的词-概念嵌入，将基于知识概念化的短文本表示学习加以扩充。Peng等[118]整合外部知识库，构建用于社会短文本事件分类的异构信息图。</li>
-<li>语言建模是一项基本的NLP任务，它根据给定的顺序预测前面的单词。传统的语言建模方法没有利用文本语料库中经常出现的实体来挖掘事实知识。如何将知识整合到语言表达中，越来越受到人们的关注。<strong>知识图谱语言模型(Knowledge graph language model, KGLM)[96]学习通过选择和复制实体来呈现知识。ERNIE-Tsinghua[205]通过聚合的预训练和随机掩蔽来融合信息实体。BERT-MK[62]对图上下文知识进行编码，主要关注医学语料库。ERNIE- baidu[142]引入了命名实体掩蔽和短语掩蔽来将知识整合到语言模型中，ERNIE 2.0[143]通过持续的多任务学习对其进行了进一步的改进。Petroni等[119]对语言模型的大规模训练和知识图谱的查询进行了反思，对语言模型和知识库进行了分析，发现通过预训练语言模型可以获得一定的事实知识。</strong></li>
-</ul>
-<h3 id="问答">6.2 问答</h3>
-<ul>
-<li>基于知识图谱的问答(KG-QA)利用知识图谱中的事实回答自然语言问题。基于神经网络的方法在分布式语义空间中表示问题和答案，也有一些方法对常识推理进行符号知识注入。</li>
-</ul>
-<h3 id="推荐系统">6.3 推荐系统</h3>
-<ul>
-<li>基于用户历史信息的协同过滤是推荐系统研究的热点。然而，它往往不能解决稀疏性问题和冷启动问题。将知识图谱作为外部信息进行集成，使推荐系统具有常识性推理能力。</li>
-<li>通过注入基于知识图谱的边侧信息(如实体、关系和属性)，许多人致力于基于嵌入的正则化以改进推荐。协同CKE[195]通过翻译KGE模型和堆叠的自动编码器联合训练KGEs、物品的文本信息和视觉内容。DKN[154]注意到时间敏感和主题敏感的新闻文章是由压缩的实体和常识组成的，它通过一个知识感知CNN模型将知识图谱与多通道的单词实体对齐的文本输入合并在一起。然而，DKN不能以端到端方式进行训练，因为实体嵌入需要提前学习。为了实现端到端训练，MKR[155]通过共享潜在特征和建模高阶项-实体交互，将多任务知识图谱表示和推荐关联起来。其他文献考虑知识图谱的关系路径和结构，而KPRN[160]将用户与项目之间的交互视为知识图谱中的实体-关系路径，并利用LSTM对该路径进行偏好推理，获取顺序依赖关系。PGPR[170]在基于知识图谱的用户-物品交互的基础上，实现了增强策略引导的路径推理。KGAT[159]将图注意网络应用于实体-关系和用户-物品图的协作知识图谱上，通过嵌入传播和基于注意的聚合对高阶连通性进行编码。</li>
-</ul>
+<h2 id="引用">引用</h2>
+<ol type="1">
+<li><p><a target="_blank" rel="noopener" href="https://www.aclweb.org/anthology/P15-1128.pdf">Semantic parsing via staged query graph generation: Question answering with knowledge base, 2015</a></p></li>
+<li><p><a target="_blank" rel="noopener" href="https://www.aclweb.org/anthology/C16-1236.pdf">Constraint-based question an- swering with knowledge graph, 2016</a></p></li>
+<li><p><a target="_blank" rel="noopener" href="https://www.aclweb.org/anthology/D18-1242.pdf">Knowledge base question answering via encoding of complex query graphs, 2018</a></p></li>
+<li><p><span id="2019"><a target="_blank" rel="noopener" href="https://www.aclweb.org/anthology/N19-1031.pdf">Uhop: An unrestricted-hop relation extraction framework for knowledge-based question answering, 2019</a></span></p></li>
+<li><p><span id="2019b"><a target="_blank" rel="noopener" href="https://ink.library.smu.edu.sg/cgi/viewcontent.cgi?article=5939&amp;context=sis_research">Multi-hop knowledge base question answering with an iterative sequence matching model, 2019b</a></span></p></li>
+</ol>
 
       
     </div>
@@ -1927,7 +1807,7 @@ L=\sum_{t=1}^nCrossEntropy(y_t^*,y_t)
 
   
   <nav class="pagination">
-    <span class="page-number current">1</span><a class="page-number" href="/default-index/page/2/">2</a><a class="extend next" rel="next" href="/default-index/page/2/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+    <span class="page-number current">1</span><a class="page-number" href="/default-index/page/2/">2</a><a class="page-number" href="/default-index/page/3/">3</a><a class="extend next" rel="next" href="/default-index/page/2/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 
@@ -1995,14 +1875,14 @@ L=\sum_{t=1}^nCrossEntropy(y_t^*,y_t)
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">17</span>
+          <span class="site-state-item-count">30</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">8</span>
+        <span class="site-state-item-count">10</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
   </nav>
@@ -2058,13 +1938,13 @@ L=\sum_{t=1}^nCrossEntropy(y_t^*,y_t)
       <i class="fa fa-chart-area"></i>
     </span>
       <span class="post-meta-item-text">站点总字数：</span>
-    <span title="站点总字数">111k</span>
+    <span title="站点总字数">145k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">1:41</span>
+    <span title="站点阅读时长">2:12</span>
 </div>
 
         

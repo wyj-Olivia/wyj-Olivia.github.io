@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="1. Introduction  只能以最终答案为参考，而在中间步骤缺乏监督信号，学生网络的目标是找到问题的正确答案，教师网络则是试图学习中间监督信号以提高学生网络的推理能力，具体地说，教师模型推断中间步骤的哪些实体与问题更相关，并且这些实体被认为是中间监督信号。主要创新点是教师网络的设计，利用向前向后推理来增强中间实体分布的学习，教师网络可以产生更可靠的中间监督信号，解决虚假推理。 监督信">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Improving Multi-hop Knowledge Base Question Answering by Learning Intermediate Supervision Signals Bases">
+<meta property="og:url" content="http://example.com/2021/03/29/%E7%AC%AC08%E5%91%A8/Improving%20Multi-hop%20Knowledge%20Base%20Question%20Answering%20by%20Learning%20Intermediate%20Supervision%20Signals/index.html">
+<meta property="og:site_name" content="Olivia的博客">
+<meta property="og:description" content="1. Introduction  只能以最终答案为参考，而在中间步骤缺乏监督信号，学生网络的目标是找到问题的正确答案，教师网络则是试图学习中间监督信号以提高学生网络的推理能力，具体地说，教师模型推断中间步骤的哪些实体与问题更相关，并且这些实体被认为是中间监督信号。主要创新点是教师网络的设计，利用向前向后推理来增强中间实体分布的学习，教师网络可以产生更可靠的中间监督信号，解决虚假推理。 监督信">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://i.loli.net/2021/04/02/NWzRXDf4rwcGiAL.png">
+<meta property="og:image" content="https://i.loli.net/2021/04/02/jJDR7XM2aNGtF5e.png">
+<meta property="article:published_time" content="2021-03-28T16:00:00.000Z">
+<meta property="article:modified_time" content="2021-05-06T06:51:48.676Z">
+<meta property="article:author" content="Olivia">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.loli.net/2021/04/02/NWzRXDf4rwcGiAL.png">
+
+<link rel="canonical" href="http://example.com/2021/03/29/%E7%AC%AC08%E5%91%A8/Improving%20Multi-hop%20Knowledge%20Base%20Question%20Answering%20by%20Learning%20Intermediate%20Supervision%20Signals/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+<link rel="stylesheet" href="//cdn.jsdelivr.net/gh/theme-next/theme-next-needmoreshare2@1/needsharebutton.min.css"><style>
+#needsharebutton-postbottom {
+  cursor: pointer;
+  height: 26px;
+  margin-top: 10px;
+  position: relative;
+}
+#needsharebutton-postbottom .btn {
+  border: 1px solid $btn-default-border-color;
+  border-radius: 3px;
+  display: initial;
+  padding: 1px 4px;
+}
+</style><style>
+#needsharebutton-float {
+  bottom: 88px;
+  cursor: pointer;
+  left: -8px;
+  position: fixed;
+  z-index: 9999;
+}
+#needsharebutton-float .btn {
+  border: 1px solid $btn-default-border-color;
+  border-radius: 4px;
+  padding: 0 10px 0 14px;
+}
+</style>
+  <title>Improving Multi-hop Knowledge Base Question Answering by Learning Intermediate Supervision Signals Bases | Olivia的博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Olivia的博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/03/29/%E7%AC%AC08%E5%91%A8/Improving%20Multi-hop%20Knowledge%20Base%20Question%20Answering%20by%20Learning%20Intermediate%20Supervision%20Signals/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="Olivia">
+      <meta itemprop="description" content="May All Your Troubles Be little Ones">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Olivia的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Improving Multi-hop Knowledge Base Question Answering by Learning Intermediate Supervision Signals Bases
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-03-29 00:00:00" itemprop="dateCreated datePublished" datetime="2021-03-29T00:00:00+08:00">2021-03-29</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-05-06 14:51:48" itemprop="dateModified" datetime="2021-05-06T14:51:48+08:00">2021-05-06</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Knowledge-Base-Qestion-Answering/" itemprop="url" rel="index"><span itemprop="name">Knowledge Base Qestion Answering</span></a>
+                </span>
+                  >
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Knowledge-Base-Qestion-Answering/paper-comprehension/" itemprop="url" rel="index"><span itemprop="name">paper comprehension</span></a>
+                </span>
+                  >
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Knowledge-Base-Qestion-Answering/paper-comprehension/latest/" itemprop="url" rel="index"><span itemprop="name">latest</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>4.2k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>4 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="introduction">1. Introduction</h2>
+<ul>
+<li><p>只能以最终答案为参考，而在中间步骤缺乏监督信号，学生网络的目标是找到问题的正确答案，教师网络则是试图学习中间监督信号以提高学生网络的推理能力，具体地说，教师模型推断中间步骤的哪些实体与问题更相关，并且这些实体被认为是中间监督信号。主要创新点是教师网络的设计，利用向前向后推理来<strong>增强中间实体分布的学习</strong>，教师网络可以产生更可靠的中间监督信号，解决虚假推理。</p></li>
+<li><p>监督信号一般为&lt;question, answer&gt;而不是&lt;question, relation path&gt;。</p></li>
+<li><p>双向搜索算法，向前和向后搜索来更有效地识别。我们也有两种不同的观点来考虑任务设置：寻找从主题实体(即查询中的实体)到答案实体的路径的正向推理和从答案实体返回到主题实体的反向推理。</p></li>
+<li><p><strong>学生网络采用神经状态机(NSM)来实现</strong>，学生网络可以根据从教师网络学习到的中间实体分布来改进自己。</p></li>
+</ul>
+<h2 id="提出的方法">4. 提出的方法</h2>
+<h3 id="overview">4.1 Overview</h3>
+<ul>
+<li>学生网络基于NSM，通过将知识库看作一个图，使其适应于多跳KBQA任务，并在多跳推理过程中保持逐步学习的实体在实体上的分布。教师网络是对NSM的体系结构进行了改进，加入了一种新颖的双向推理机制，使其能够在中间推理步骤中学习到更可靠的实体分布，这些实体分布随后将被学生网络用作监督信号。</li>
+</ul>
+<h3 id="neural-state-machine-for-multi-hop-kbqa">4.2 Neural State Machine for Multi-hop KBQA</h3>
+<ul>
+<li>由指令部件和推理组件组成，指令组件向推理组件发送指令向量，<strong>而推理组件判断实体分布并学习实体表示</strong>。<img src="https://i.loli.net/2021/04/02/NWzRXDf4rwcGiAL.png" alt="image-20210402095741740.png" /></li>
+</ul>
+<h4 id="指令组件instruction-component">4.2.1 指令组件(Instruction Component)</h4>
+<ul>
+<li><p>先描述将给定的<strong>自然语言问题转换为</strong>一系列控制推理过程的<strong>指令向量</strong>。</p></li>
+<li><p>指令组件的输入由<strong>查询嵌入</strong>和来自前一个推理步骤的<strong>指令向量</strong>组成。</p></li>
+<li><p>初始向量为0向量。利用GloVe获得查询词的嵌入，然后利用LSTM网络获得一组隐藏层<span class="math inline">\(\{h_j\}^l_{j=1}\)</span>，其中<span class="math inline">\(h_j\in R^d,l\)</span>是查询的长度，最后一个隐藏层状态为问题表示即<span class="math inline">\(q=h_l\)</span>。令<span class="math inline">\(i^{(k)}\in R^d\)</span>为第<span class="math inline">\(k\)</span>步推理的指令向量，采用下列方法学习指令向量<span class="math inline">\(i^{(k)}\)</span>： <span class="math display">\[
+i^{(k)}=\sum_{j=1}^l\alpha_j^{(k)}h_j,\\
+\alpha_j^{(k)}=softmax_j(W_\alpha(q^{(k)}\odot h_j)+b_{\alpha}),\\
+q^{(k)}=W^{(k)}[i^{(k-1)}:q]+b^{(k)}.
+\]</span></p>
+<p>其中<span class="math inline">\(W^{(k)}\in R^{d×2d},W_{\alpha}\in R^{d×d},b^{k}、b_{\alpha}\in R^d\)</span>都是需要学习的参数。</p>
+<p>核心思想是学习不同时间步的指令向量时关注查询的特定部分。同时动态更新查询表示，以便包含先前指令向量的信息，通过重复以上步骤，可以在<span class="math inline">\(n\)</span>步推理后获得指令向量列表<span class="math inline">\(\{i^{(k)}\}^n_{k=1}\)</span>。</p></li>
+</ul>
+<h4 id="推理组件reasoning-component">4.2.2 推理组件(Reasoning Component)</h4>
+<ul>
+<li><p>获得指令组件<span class="math inline">\(i^{k}\)</span>后，我们可以将其用作推理信号的指导信号。</p></li>
+<li><p>推理组件的输入包括当前步骤的指令向量、以及上一步推理步骤中获得的实体分布(entity distribution)和实体嵌入(entity embeddings)。首先，考虑涉及<span class="math inline">\(e\)</span>的关系来设置初始实体嵌入： <span class="math display">\[
+e^{(0)}=\sigma(\sum_{(&lt;e&#39;,r,e&gt;\in N_e)}r\cdot W_T)
+\]</span> 其中<span class="math inline">\(W_T\in R^{d×d}\)</span>是需要学习的参数，没有用到<span class="math inline">\(e\)</span>的嵌入来初始化，因为重要的是关系不是实体。</p></li>
+<li><p>给定三元组<span class="math inline">\(&lt;e&#39;,r,e&gt;\)</span>，匹配向量<span class="math inline">\(m_{&lt;e&#39;,r,e&gt;}^{(k)}\)</span>通过匹配当前指令向量<span class="math inline">\(i^{(k)}\)</span>与关系向量<span class="math inline">\(r\)</span>来获得： <span class="math display">\[
+m_{&lt;e&#39;,r,e&gt;}=\sigma(i^{(k)}\odot W_Rr)
+\]</span> <span class="math inline">\(W_R\in R^{d×d}\)</span>是需要学习的参数。</p></li>
+<li><p>最后我们聚合来自相邻三元组的匹配信息，并根据它们在上一推理步骤中受到的关注程度来为其分配权重。 <span class="math display">\[
+\tilde e^{(k)}=\sum_{&lt;e&#39;,r,e&gt;\in N_e}p^{(k-1)}_{e&#39;}\cdot m^{(k)}_{&lt;e&#39;,r,e&gt;&#39;}
+\]</span> 其中<span class="math inline">\(p_{e&#39;}^{(k-1)}\)</span>是上一推理步骤中实体<span class="math inline">\(e&#39;\)</span>的分配概率。这样的表示能捕获与知识库中实体相关联的关系语义。</p></li>
+<li><p>然后更新实体嵌入如下： <span class="math display">\[
+e^{(k)}=FFN([e^{(k-1)};\tilde e^{(k)}])
+\]</span> 其中，FFN是以上一步嵌入<span class="math inline">\(e^{(k-1)}\)</span>及关系聚合embedding<span class="math inline">\(\tilde e^{(k)}\)</span>为输入的前反馈层。</p></li>
+<li><p>通过此过程，关系路径(从topic entities到answer entities)和它与问题的匹配程度都编码到节点嵌入中去。在步骤<span class="math inline">\(k\)</span>导出的中间实体上的概率分布可计算为： <span class="math display">\[
+p^{(k)}=softmax(E^{ {(k)}^T}w)
+\]</span> 其中<span class="math inline">\(E^{(k)}\)</span>是一个矩阵，每一列为第<span class="math inline">\(k\)</span>步的实体嵌入，<span class="math inline">\(w\)</span>为参数。</p></li>
+</ul>
+<h3 id="the-teacher-network">4.3 The Teacher Network</h3>
+<ul>
+<li>目标是在中间步骤中学习或推断可靠的实体分布。没有这样的标签实体分布来训练教师网络，故受双向搜索算法启发，结合了双向推理机制来增强教师网络中中间实体分布的学习。</li>
+</ul>
+<h4 id="多跳kbqa的双向推理">4.3.1 多跳KBQA的双向推理</h4>
+<ul>
+<li><p>考虑forward reasoning和backward reasoning，让这两个推理过程在中间步骤相互同步。这样派生的中间实体分布比从单一方向学习的分布更可靠。</p></li>
+<li><p>给定<span class="math inline">\(n\)</span>跳推理路径，让<span class="math inline">\(p_f^{(k)}\)</span>和<span class="math inline">\(p_b^{(n-k)}\)</span>分别表示前向推理第<span class="math inline">\(k\)</span>步和后向推理第<span class="math inline">\(n-k\)</span>步的实体分布。正常情况下<span class="math inline">\(p_f^{(k)}≈p_b^{(n-k)}\)</span>。</p></li>
+</ul>
+<h4 id="推理体系结构reasoning-architectures">4.3.2 推理体系结构(Reasoning Architectures)</h4>
+<ul>
+<li><p>有两种神经结构：并行推理和混合推理</p>
+<ul>
+<li><p>并行推理(parallel reasoning)：建立两个独立地NSM分别用于正向和反向推理，这两个网络相互独立，不共享参数，只考虑在中间实体分布上加上对应约束。</p></li>
+<li><p>混合推理(hybrid reasoning)：<strong>共享相同的指令组件</strong>，并将两个推理过程安排在一个循环流水线中。除了对应约束之外，<strong>这两个进程还接收相同的指令向量。此外，在正向推理的最后一步中导出的信息作为初始值被馈送到反向推理中。</strong>在形式上，以下公式在这种情况下成立： <span class="math display">\[
+p_b^{(0)}=p_f^{(n)},E_b^{(0)}=E_f^{(n)},\\
+i_b^{(k)}=i_f^{(n+1-k)}
+\]</span></p></li>
+</ul></li>
+<li><p>两种结构图如下：<img src="https://i.loli.net/2021/04/02/jJDR7XM2aNGtF5e.png" alt="image-20210402112347486.png" /></p></li>
+<li><p>并行推理具有更松散的集成，而混合推理则需要两个推理过程中的信息进行更深层次的融合。与双向BFS不同，在我们的任务中，<strong>反向推理可能无法准确模拟正向推理的反向过程，因为这两个过程对应于多跳KBQA中不同的语义</strong>。考虑到这一问题，我们共享指令向量，并循环正向推理的最终状态来初始化后向推理。通过这种方式，反向推理获得了更多关于正向推理的信息，从而可以更好地追溯正向推理的推理路径。</p></li>
+</ul>
+<h3 id="通过学生-教师框架学习">4.4 通过学生-教师框架学习</h3>
+<h4 id="optimizing-the-teacher-network">4.4.1 Optimizing the Teacher Network</h4>
+<ul>
+<li><p>教师网络主要考虑两个方面的损失，即推理损失和通信损失。</p></li>
+<li><p>推理损失反映了对准确实体的预测能力，分成两个方向 <span class="math display">\[
+\mathcal{L}_f=D_{KL}(p_f^{(n)},p^{*}_f),\ \mathcal{L}_b=D_{KL}(p_b^{(n)},p_b^{*})
+\]</span> 其中<span class="math inline">\(p_f^{(n)}\)</span>（<span class="math display">\[p_b^{(n)}\]</span>）表示前向(后向)推理过程中最后的实体分布。<span class="math inline">\(p_f^*\)</span>及<span class="math inline">\(p_b^*\)</span>表示真实的实体分布。<span class="math inline">\(D_{KL}(\cdot,\cdot)\)</span>表示Kullback-Leibler发散，以不对称的方式测量两个分布之间的差异。</p>
+<p>为了获得<span class="math inline">\(p_f^*\)</span>和<span class="math inline">\(p_b^*\)</span>我们将正确实体出现的次数转化为频率归一化分布。例如，如果图中<span class="math inline">\(k\)</span>个实体是正确实体，则最终分布中为他们分配<span class="math inline">\(\frac{1}{k}\)</span>的概率。</p></li>
+<li><p>通信损失反映了两个推理过程的中间实体分布之间的一致性。可以通过计算每个中间步骤的损失相加来计算： <span class="math display">\[
+\mathcal{L}_c=\sum_{k=1}^{n-1}D_{JS}(p_f^{(k)},p_b^{(n-k)})
+\]</span> 其中<span class="math inline">\(D_{JS}(\cdot,\cdot)\)</span>是Jensen-Shannon散度，以对称的方式测量两个分布之间的差异。</p></li>
+<li><p>最后教师网络整体的损失函数<span class="math inline">\(\mathcal{L}_t\)</span>为： <span class="math display">\[
+\mathcal{L}_t=\mathcal{L}_f+\lambda_b\mathcal{L}_b+\lambda_c\mathcal{L}_c
+\]</span></p></li>
+<li><p>其中<span class="math inline">\(\lambda_b\ and\ \lambda_c\in(0,1)\)</span>是控制因子权重的超参数。</p></li>
+</ul>
+<h4 id="optimizing-the-student-network">4.4.2 Optimizing the Student Network</h4>
+<ul>
+<li><p>对教师模型进行收敛训练后，可以得到教师网络两个推理过程中的中间实体分布。我们将两个分布的平均值最为监督信号： <span class="math display">\[
+p_t^{(k)}=\frac{1}{2}(p_f^{k}+p_b^{(n-k)}),\ k=1,...,n-1
+\]</span></p></li>
+<li><p>采用NSM模型作为学生网络进行正向推理。除了推理损失外，还考虑了学生网络的预测和教师网络的监督信号的损失： <span class="math display">\[
+\mathcal{L}_1=D_{KL}(p_s^{(n)},p_f^*)\\
+\mathcal{L}_2=\sum_{k=1}^{n-1}D_{KL}(p_s^{(k)},p_t^{(k)})\\
+\mathcal{L}_s=\mathcal{L}_1+\lambda\mathcal{L}_2
+\]</span> 其中<span class="math inline">\(p_t^{(k)}\)</span>与<span class="math inline">\(p_s^{(k)}\)</span>是分别表示教师网络和学生网络在第<span class="math inline">\(k\)</span>步的中间实体分布，<span class="math inline">\(\lambda\)</span>是需要调优的参数。</p></li>
+</ul>
+
+    </div>
+
+    
+	
+	
+
+	
+		<div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束 <i class="fa fa-heart"></i> 感谢阅读-------------</div>
+	<div class="post-widgets">
+      <div id="needsharebutton-postbottom">
+        <span class="btn">
+          <i class="fa fa-share-alt" aria-hidden="true"></i>
+        </span>
+      </div>
+    </div>
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/03/29/%E7%AC%AC08%E5%91%A8/Multi-hop%20knowledge%20base%20question%20answering%20with%20an%20iterative%20sequence%20matching%20model/" rel="prev" title="Multi-hop knowledge base question answering with an iterative sequence matching model">
+      <i class="fa fa-chevron-left"></i> Multi-hop knowledge base question answering with an iterative sequence matching model
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2021/04/15/%E7%AC%AC09%E5%91%A8/%E6%95%B0%E6%8D%AE%E9%9B%86/" rel="next" title="DataSet">
+      DataSet <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#introduction"><span class="nav-number">1.</span> <span class="nav-text">1. Introduction</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8F%90%E5%87%BA%E7%9A%84%E6%96%B9%E6%B3%95"><span class="nav-number">2.</span> <span class="nav-text">4. 提出的方法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#overview"><span class="nav-number">2.1.</span> <span class="nav-text">4.1 Overview</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#neural-state-machine-for-multi-hop-kbqa"><span class="nav-number">2.2.</span> <span class="nav-text">4.2 Neural State Machine for Multi-hop KBQA</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8C%87%E4%BB%A4%E7%BB%84%E4%BB%B6instruction-component"><span class="nav-number">2.2.1.</span> <span class="nav-text">4.2.1 指令组件(Instruction Component)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8E%A8%E7%90%86%E7%BB%84%E4%BB%B6reasoning-component"><span class="nav-number">2.2.2.</span> <span class="nav-text">4.2.2 推理组件(Reasoning Component)</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#the-teacher-network"><span class="nav-number">2.3.</span> <span class="nav-text">4.3 The Teacher Network</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%A4%9A%E8%B7%B3kbqa%E7%9A%84%E5%8F%8C%E5%90%91%E6%8E%A8%E7%90%86"><span class="nav-number">2.3.1.</span> <span class="nav-text">4.3.1 多跳KBQA的双向推理</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E6%8E%A8%E7%90%86%E4%BD%93%E7%B3%BB%E7%BB%93%E6%9E%84reasoning-architectures"><span class="nav-number">2.3.2.</span> <span class="nav-text">4.3.2 推理体系结构(Reasoning Architectures)</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%80%9A%E8%BF%87%E5%AD%A6%E7%94%9F-%E6%95%99%E5%B8%88%E6%A1%86%E6%9E%B6%E5%AD%A6%E4%B9%A0"><span class="nav-number">2.4.</span> <span class="nav-text">4.4 通过学生-教师框架学习</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#optimizing-the-teacher-network"><span class="nav-number">2.4.1.</span> <span class="nav-text">4.4.1 Optimizing the Teacher Network</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#optimizing-the-student-network"><span class="nav-number">2.4.2.</span> <span class="nav-text">4.4.2 Optimizing the Student Network</span></a></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Olivia"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Olivia</p>
+  <div class="site-description" itemprop="description">May All Your Troubles Be little Ones</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">30</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">10</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="/yajie.wang@mail.hfut.edu.cn" title="E-Mail → yajie.wang@mail.hfut.edu.cn"><i class="fa fa-envelope fa-fw"></i></a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-link fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="http://www.hfut.edu.cn/" title="http:&#x2F;&#x2F;www.hfut.edu.cn&#x2F;" rel="noopener" target="_blank">合肥工业大学</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2019 – 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">wyj-Olivia</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">145k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">2:12</span>
+</div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script color='0,0,255' opacity='0.5' zIndex='-1' count='99' src="/lib/canvas-nest/canvas-nest-nomobile.min.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+<div id="needsharebutton-float">
+      <span class="btn">
+        <i class="fa fa-share-alt" aria-hidden="true"></i>
+      </span>
+    </div>
+  <script src="//cdn.jsdelivr.net/gh/theme-next/theme-next-needmoreshare2@1/needsharebutton.min.js"></script>
+  <script>
+      pbOptions = {};
+        pbOptions.iconStyle = "box";
+        pbOptions.boxForm = "horizontal";
+        pbOptions.position = "bottomCenter";
+        pbOptions.networks = "Weibo,Wechat,Douban,QQZone,Twitter,Facebook";
+      new needShareButton('#needsharebutton-postbottom', pbOptions);
+      flOptions = {};
+        flOptions.iconStyle = "box";
+        flOptions.boxForm = "horizontal";
+        flOptions.position = "middleRight";
+        flOptions.networks = "Weibo,Wechat,Douban,QQZone,Twitter,Facebook";
+      new needShareButton('#needsharebutton-float', flOptions);
+  </script>
+</body>
+</html>

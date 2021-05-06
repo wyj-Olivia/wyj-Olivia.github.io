@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="句法分析：依存分析(Dependency Parsing) 1. 句法分析任务分类 根据句法结构的表现形式不同，最常见的句法分析任务可以分为以下三种：  句法结构分析(syntactic structure parsing)，又称短语结构分析（phrase structure parsing），也叫成分句法分析（constituent syntactic parsing）。作用是识别出句子">
+<meta property="og:type" content="article">
+<meta property="og:title" content="依存句法分析">
+<meta property="og:url" content="http://example.com/2021/04/15/%E7%AC%AC09%E5%91%A8/%E4%BE%9D%E5%AD%98%E5%8F%A5%E6%B3%95%E5%88%86%E6%9E%90/index.html">
+<meta property="og:site_name" content="Olivia的博客">
+<meta property="og:description" content="句法分析：依存分析(Dependency Parsing) 1. 句法分析任务分类 根据句法结构的表现形式不同，最常见的句法分析任务可以分为以下三种：  句法结构分析(syntactic structure parsing)，又称短语结构分析（phrase structure parsing），也叫成分句法分析（constituent syntactic parsing）。作用是识别出句子">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/img_convert/69120f8dc9aed900de650b9a592973e5.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/img_convert/bfb3e982b9771e1855c8140fa3b10a05.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/img_convert/f16fd3ae392da443a33e232dc0137a1c.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/img_convert/a5f82461c27efca70218c269ff3f6eb5.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/img_convert/adaa897b0aab1aeb7536f5e06c3b1863.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/img_convert/885541f1d219e457829d439cd3894122.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/img_convert/e34663dd816b1ca94471bdfd888f87b3.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/img_convert/c2beb7f2cf582a82b0850eba175b4b30.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/img_convert/f44b666f17bb65cdbaf7b58d737fad03.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/img_convert/d4215341ff4eccb3f643a6b595921b80.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/img_convert/05a8eb621856d2a90d2298ae0468dbba.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/img_convert/7747df36c58715bc888df2582b7a5678.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/img_convert/8ad7de60b3f63796fe7be7649b7a68bf.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/img_convert/c9b57159a161b3117f27e79730a244bc.png">
+<meta property="article:published_time" content="2021-04-14T16:00:00.000Z">
+<meta property="article:modified_time" content="2021-05-06T06:53:13.310Z">
+<meta property="article:author" content="Olivia">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img-blog.csdnimg.cn/img_convert/69120f8dc9aed900de650b9a592973e5.png">
+
+<link rel="canonical" href="http://example.com/2021/04/15/%E7%AC%AC09%E5%91%A8/%E4%BE%9D%E5%AD%98%E5%8F%A5%E6%B3%95%E5%88%86%E6%9E%90/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+<link rel="stylesheet" href="//cdn.jsdelivr.net/gh/theme-next/theme-next-needmoreshare2@1/needsharebutton.min.css"><style>
+#needsharebutton-postbottom {
+  cursor: pointer;
+  height: 26px;
+  margin-top: 10px;
+  position: relative;
+}
+#needsharebutton-postbottom .btn {
+  border: 1px solid $btn-default-border-color;
+  border-radius: 3px;
+  display: initial;
+  padding: 1px 4px;
+}
+</style><style>
+#needsharebutton-float {
+  bottom: 88px;
+  cursor: pointer;
+  left: -8px;
+  position: fixed;
+  z-index: 9999;
+}
+#needsharebutton-float .btn {
+  border: 1px solid $btn-default-border-color;
+  border-radius: 4px;
+  padding: 0 10px 0 14px;
+}
+</style>
+  <title>依存句法分析 | Olivia的博客</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Olivia的博客</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="reading-progress-bar"></div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/04/15/%E7%AC%AC09%E5%91%A8/%E4%BE%9D%E5%AD%98%E5%8F%A5%E6%B3%95%E5%88%86%E6%9E%90/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="Olivia">
+      <meta itemprop="description" content="May All Your Troubles Be little Ones">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Olivia的博客">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          依存句法分析
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-04-15 00:00:00" itemprop="dateCreated datePublished" datetime="2021-04-15T00:00:00+08:00">2021-04-15</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-05-06 14:53:13" itemprop="dateModified" datetime="2021-05-06T14:53:13+08:00">2021-05-06</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Knowledge-Base-Qestion-Answering/" itemprop="url" rel="index"><span itemprop="name">Knowledge Base Qestion Answering</span></a>
+                </span>
+                  >
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Knowledge-Base-Qestion-Answering/Others/" itemprop="url" rel="index"><span itemprop="name">Others</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>2.9k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>3 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="句法分析依存分析dependency-parsing">句法分析：依存分析(Dependency Parsing)</h1>
+<h2 id="句法分析任务分类">1. 句法分析任务分类</h2>
+<p>根据<strong>句法结构的表现形式</strong>不同，最常见的句法分析任务可以分为以下三种：</p>
+<ul>
+<li>句法结构分析(syntactic structure parsing)，又称短语结构分析（phrase structure parsing），也叫成分句法分析（constituent syntactic parsing）。作用是识别出句子中的短语结构以及短语之间的层次句法关系。</li>
+<li><strong>依存关系分析</strong>，又称依存句法分析（dependency syntactic parsing），简称依存分析，作用是识别句子中词汇与词汇之间的相互依存关系。依存句法分析属于<strong>浅层句法分析</strong>。</li>
+<li>深层文法句法分析，即利用深层文法，例如词汇化树邻接文法（Lexicalized Tree Adjoining Grammar， LTAG）、词汇功能文法（Lexical Functional Grammar， LFG）、组合范畴文法（Combinatory Categorial Grammar， CCG）等，对句子进行深层的句法以及语义分析。</li>
+</ul>
+<h2 id="依存分析方法">2. 依存分析方法</h2>
+<p>PCFG、Lexical PCFG详见：https://blog.csdn.net/qq_28031525/article/details/79187080</p>
+<p><a target="_blank" rel="noopener" href="https://wohugb.github.io/chatbot/12.semantic-dependency/">用语言云分析依存句法和语义依存</a>：语言云工具</p>
+<p><a target="_blank" rel="noopener" href="https://wohugb.github.io/chatbot/18.tree/">生成句法分析树</a>：基于概率上下文无关文法(PCFG)</p>
+<ul>
+<li><p>依存语句树：除了一个词，即根节点（这里为jumped）外，其他词都有词作为父亲节点，而该根节点（jumped）的父亲节点为root。</p></li>
+<li><p>但是注意，依存句法树是不允许弧之间有交叉或者回路！ <img src="https://img-blog.csdnimg.cn/img_convert/69120f8dc9aed900de650b9a592973e5.png" alt="69120f8dc9aed900de650b9a592973e5.png" /></p></li>
+<li><p>文本表示格式为conll格式： <img src="https://img-blog.csdnimg.cn/img_convert/bfb3e982b9771e1855c8140fa3b10a05.png" alt="bfb3e982b9771e1855c8140fa3b10a05.png" /></p></li>
+</ul>
+<h3 id="传统的基于转移的依存分析transition-based-parsing">传统的基于转移的依存分析（Transition-based Parsing）</h3>
+<ul>
+<li><p>框架由状态和动作两部分构成，其中状态用来记录不完整的预测结果，动作则用来控制状态之间的转移。</p></li>
+<li><p>构造一个三元组，分别是</p>
+<ul>
+<li>Stack：最开始只存放一个Root节点；</li>
+<li>Buffer：则装有我们需要解析的一个句子；</li>
+<li>Set：中则保存我们分析出来的依赖关系， 最开始是空的。</li>
+</ul></li>
+<li><p>用在生成依存句法树上，则具体表示为<strong>从空状态开始，通过动作转移到下一个状态，一步一步生成依存句法树，最后的状态保存了一个完整的依存树</strong>。依存分析就是用来预测词与词之间的关系，现在转为预测动作序列。在基于转移的框架中，我们定义了4种动作（栈顶的元素越小表示离栈顶越近）：</p>
+<ul>
+<li><p>移进（shift）：将buffer中的第一个词移出并放到stack上。</p></li>
+<li><p>左规约（arc_left_I）：栈顶两个元素规约，左边节点下沉成为孩子节点，为弧上关系</p></li>
+<li><p>右规约（arc_right_I）：栈顶两个元素规约，右边节点下沉成为孩子节点，为弧上关系</p></li>
+<li><p>根出栈（pop_root）：根节点出栈，分析完毕</p></li>
+<li><p>其中下沉的意思：</p>
+<figure>
+<img src="https://img-blog.csdnimg.cn/img_convert/f16fd3ae392da443a33e232dc0137a1c.png" alt="f16fd3ae392da443a33e232dc0137a1c.png" /><figcaption aria-hidden="true">f16fd3ae392da443a33e232dc0137a1c.png</figcaption>
+</figure>
+<p>0下沉，0是1的孩子</p></li>
+</ul></li>
+<li><p>具体例子理解：</p>
+<ul>
+<li><p>以上面依存树为例：</p>
+<figure>
+<img src="https://img-blog.csdnimg.cn/img_convert/a5f82461c27efca70218c269ff3f6eb5.png" alt="a5f82461c27efca70218c269ff3f6eb5.png" /><figcaption aria-hidden="true">a5f82461c27efca70218c269ff3f6eb5.png</figcaption>
+</figure></li>
+<li><p>一整套分析的动作序列为：</p>
+<figure>
+<img src="https://img-blog.csdnimg.cn/img_convert/adaa897b0aab1aeb7536f5e06c3b1863.png" alt="adaa897b0aab1aeb7536f5e06c3b1863.png" /><figcaption aria-hidden="true">adaa897b0aab1aeb7536f5e06c3b1863.png</figcaption>
+</figure></li>
+<li><p>初始状态 <img src="https://img-blog.csdnimg.cn/img_convert/885541f1d219e457829d439cd3894122.png" alt="885541f1d219e457829d439cd3894122.png" /></p>
+<p>栈为空，队列为整个文本的数字序列。这个时候只能进行移进shift操作：</p></li>
+<li><figure>
+<img src="https://img-blog.csdnimg.cn/img_convert/e34663dd816b1ca94471bdfd888f87b3.png" alt="e34663dd816b1ca94471bdfd888f87b3.png" /><figcaption aria-hidden="true">e34663dd816b1ca94471bdfd888f87b3.png</figcaption>
+</figure></li>
+</ul>
+<p>因为左边栈只有一个元素0，还是只能进行移进shift操作：</p>
+<ul>
+<li><img src="https://img-blog.csdnimg.cn/img_convert/c2beb7f2cf582a82b0850eba175b4b30.png" title="fig:" alt="c2beb7f2cf582a82b0850eba175b4b30.png" /></li>
+</ul>
+<p>这个时候栈中有2个元素，我们此时看依存树</p>
+<pre><code>![06c37ba91a01f9587a79587f0e6b48d6.png](https://img-blog.csdnimg.cn/img_convert/06c37ba91a01f9587a79587f0e6b48d6.png) </code></pre>
+<p>0、1之间并没有弧，不能进行规约，所以还是只能shift：</p>
+<ul>
+<li><img src="https://img-blog.csdnimg.cn/img_convert/f44b666f17bb65cdbaf7b58d737fad03.png" title="fig:" alt="f44b666f17bb65cdbaf7b58d737fad03.png" /></li>
+</ul>
+<p>此时看栈顶两元素，发现依存树中1、2之间有依存关系</p>
+<pre><code>![41fd404827975a6e7d7d6612912aafea.png](https://img-blog.csdnimg.cn/img_convert/41fd404827975a6e7d7d6612912aafea.png) </code></pre>
+<p>而且1为2的孩子，所以此时的动作为左规约arc_left，1下沉，为2的孩子（此时实际操作为1被踢出栈，栈里剩为0、2，踢出是因为最后能根据动作序列还原整个依存树，当然也为了接下来的操作方便），此时标签为amod：</p>
+<ul>
+<li><img src="https://img-blog.csdnimg.cn/img_convert/d4215341ff4eccb3f643a6b595921b80.png" title="fig:" alt="d4215341ff4eccb3f643a6b595921b80.png" /></li>
+</ul>
+<p>此时栈里为0、2，再次查看依存树</p>
+<pre><code>![9186bf73f9d75305eb42097fefa09f9d.png](https://img-blog.csdnimg.cn/img_convert/9186bf73f9d75305eb42097fefa09f9d.png) </code></pre>
+<p>发现0、2之间有依存关系，其中0为2的孩子，所以此时操作为左规约，此时标签为det</p>
+<p>...</p>
+<ul>
+<li><p>中间略过一些步骤，因为都是同理，这次说下第9步： <img src="https://img-blog.csdnimg.cn/img_convert/05a8eb621856d2a90d2298ae0468dbba.png" alt="05a8eb621856d2a90d2298ae0468dbba.png" /></p>
+<p>此时栈中为3、4，查看依存树</p>
+<figure>
+<img src="https://img-blog.csdnimg.cn/img_convert/7747df36c58715bc888df2582b7a5678.png" alt="7747df36c58715bc888df2582b7a5678.png" /><figcaption aria-hidden="true">7747df36c58715bc888df2582b7a5678.png</figcaption>
+</figure>
+<p>按照正常操作，此时应该arc_right右规约，但是如果真的4就下沉，就没了。而一会5要入栈，再查看依存树发现4是自己的父节点，天呐，5的父节点没了，其他词都有父节点，就5没有，还有比这个更惨的吗？这就没发再进行操作了！所以，还有一个潜规则<strong>如果操作为栈顶元素要进行arc_right时，不执行该操作，而选择shift。</strong></p>
+<p>而你可能会问arc_left会有这样的问题吗？不会啦，比如3、4进行arc_left操作，3下沉，如果右边的队列中有父亲节点是3，那么就表示该依存树有交叉或者回路！这种是不可能发生的，因为依存树不允许有交叉或者回路！</p>
+<p>最后说下，pop_root根弹出操作，只能发生在最后 <img src="https://img-blog.csdnimg.cn/img_convert/8ad7de60b3f63796fe7be7649b7a68bf.png" alt="8ad7de60b3f63796fe7be7649b7a68bf.png" /></p>
+<p>右下角的数据为词与词之间的关系，这个就是根据动作序列生成的依存关系（父亲，孩子，关系），根据该关系，就能还原成原来的依存树。</p></li>
+</ul></li>
+</ul>
+<h3 id="神经网络模型">神经网络模型</h3>
+<ul>
+<li>利用神经网络进行特征提取，分为两部分：
+<ul>
+<li>编码器：用来负责计算词的隐层表示</li>
+<li>解码器：用来解码计算当前状态的所有动作得分</li>
+</ul></li>
+</ul>
+<h4 id="编码器">编码器</h4>
+<ul>
+<li><p>用Bi-LSTM来编码一个句子<span class="math inline">\((e_1,e_2,...,e_n)\)</span>计算对应的隐层表示。公式为： <span class="math display">\[
+\{h_1,...,h_n\}=Bi-LSTM(\{e_1\oplus p_1,...,e_n\oplus p_n\})
+\]</span></p>
+<p>其中：<span class="math inline">\(e\)</span>为词向量，<span class="math inline">\(p\)</span>为词性向量，<span class="math inline">\(\oplus\)</span>是向量拼接</p></li>
+</ul>
+<h4 id="解码器">解码器</h4>
+<ul>
+<li><p>解码端就需要<strong>对每一个状态打出所有动作的得分</strong>。根据经验，认为<strong>栈顶三元素和队列首元素为动作预测关键特征</strong>，于是将栈顶三元素（下标越小离栈顶越近）和队列首元素进行拼接。然后用线性变换计算每一个动作的分数： <span class="math display">\[
+o=Linear(h_{s0}\oplus h_{s1}\oplus h_{s2}\oplus h_{q0})
+\]</span></p></li>
+<li><p>对每一个动作的分数进行Softmax概率化，然后输入到交叉熵中，作为目标函数。然后再用Adam来进行更新模型参数，最小化目标函数 <img src="https://img-blog.csdnimg.cn/img_convert/c9b57159a161b3117f27e79730a244bc.png" alt="c9b57159a161b3117f27e79730a244bc.png" /></p>
+<p>其中<span class="math inline">\(p_{a_g}\)</span>为动作序列概率，<span class="math inline">\(\Theta\)</span>为模型参数</p></li>
+</ul>
+
+    </div>
+
+    
+	
+	
+
+	
+		<div style="text-align:center;color: #ccc;font-size:14px;">-------------本文结束 <i class="fa fa-heart"></i> 感谢阅读-------------</div>
+	<div class="post-widgets">
+      <div id="needsharebutton-postbottom">
+        <span class="btn">
+          <i class="fa fa-share-alt" aria-hidden="true"></i>
+        </span>
+      </div>
+    </div>
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/04/15/%E7%AC%AC09%E5%91%A8/%E6%95%B0%E6%8D%AE%E9%9B%86/" rel="prev" title="DataSet">
+      <i class="fa fa-chevron-left"></i> DataSet
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2021/04/15/%E7%AC%AC09%E5%91%A8/KERMIT%20Complementing%20Transformer%20Architectures%20with%20Encoders%20of%20Explicit%20Syntactic%20Interpretations/" rel="next" title="KERMIT Complementing Transformer Architectures with Encoders of Explicit Syntactic Interpretations">
+      KERMIT Complementing Transformer Architectures with Encoders of Explicit Syntactic Interpretations <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8F%A5%E6%B3%95%E5%88%86%E6%9E%90%E4%BE%9D%E5%AD%98%E5%88%86%E6%9E%90dependency-parsing"><span class="nav-number">1.</span> <span class="nav-text">句法分析：依存分析(Dependency Parsing)</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%A5%E6%B3%95%E5%88%86%E6%9E%90%E4%BB%BB%E5%8A%A1%E5%88%86%E7%B1%BB"><span class="nav-number">1.1.</span> <span class="nav-text">1. 句法分析任务分类</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BE%9D%E5%AD%98%E5%88%86%E6%9E%90%E6%96%B9%E6%B3%95"><span class="nav-number">1.2.</span> <span class="nav-text">2. 依存分析方法</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BC%A0%E7%BB%9F%E7%9A%84%E5%9F%BA%E4%BA%8E%E8%BD%AC%E7%A7%BB%E7%9A%84%E4%BE%9D%E5%AD%98%E5%88%86%E6%9E%90transition-based-parsing"><span class="nav-number">1.2.1.</span> <span class="nav-text">传统的基于转移的依存分析（Transition-based Parsing）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E6%A8%A1%E5%9E%8B"><span class="nav-number">1.2.2.</span> <span class="nav-text">神经网络模型</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%BC%96%E7%A0%81%E5%99%A8"><span class="nav-number">1.2.2.1.</span> <span class="nav-text">编码器</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%A7%A3%E7%A0%81%E5%99%A8"><span class="nav-number">1.2.2.2.</span> <span class="nav-text">解码器</span></a></li></ol></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Olivia"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Olivia</p>
+  <div class="site-description" itemprop="description">May All Your Troubles Be little Ones</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">30</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">10</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="/yajie.wang@mail.hfut.edu.cn" title="E-Mail → yajie.wang@mail.hfut.edu.cn"><i class="fa fa-envelope fa-fw"></i></a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-link fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="http://www.hfut.edu.cn/" title="http:&#x2F;&#x2F;www.hfut.edu.cn&#x2F;" rel="noopener" target="_blank">合肥工业大学</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2019 – 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">wyj-Olivia</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-area"></i>
+    </span>
+      <span class="post-meta-item-text">站点总字数：</span>
+    <span title="站点总字数">145k</span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+      <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
+    <span title="站点阅读时长">2:12</span>
+</div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script color='0,0,255' opacity='0.5' zIndex='-1' count='99' src="/lib/canvas-nest/canvas-nest-nomobile.min.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+<div id="needsharebutton-float">
+      <span class="btn">
+        <i class="fa fa-share-alt" aria-hidden="true"></i>
+      </span>
+    </div>
+  <script src="//cdn.jsdelivr.net/gh/theme-next/theme-next-needmoreshare2@1/needsharebutton.min.js"></script>
+  <script>
+      pbOptions = {};
+        pbOptions.iconStyle = "box";
+        pbOptions.boxForm = "horizontal";
+        pbOptions.position = "bottomCenter";
+        pbOptions.networks = "Weibo,Wechat,Douban,QQZone,Twitter,Facebook";
+      new needShareButton('#needsharebutton-postbottom', pbOptions);
+      flOptions = {};
+        flOptions.iconStyle = "box";
+        flOptions.boxForm = "horizontal";
+        flOptions.position = "middleRight";
+        flOptions.networks = "Weibo,Wechat,Douban,QQZone,Twitter,Facebook";
+      new needShareButton('#needsharebutton-float', flOptions);
+  </script>
+</body>
+</html>
