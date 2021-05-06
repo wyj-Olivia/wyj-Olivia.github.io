@@ -1625,7 +1625,7 @@ V(G_i^{(k)})=\max_{i\leq t \leq n-1}F_1(D_{t+1}^{k})
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/03/15/%E7%AC%AC07%E5%91%A8/UHop%20An%20Unrestricted-Hop%20Relation%20Extraction%20Framework%20for%20Knowledge-Based%20Question%20Answering/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/03/15/%E7%AC%AC07%E5%91%A8/Query%20Graph%20Generation%20for%20Answering%20Multi-hop%20Complex%20Questions%20from%20Knowledge%20Bases/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.jpg">
@@ -1639,7 +1639,7 @@ V(G_i^{(k)})=\max_{i\leq t \leq n-1}F_1(D_{t+1}^{k})
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2021/03/15/%E7%AC%AC07%E5%91%A8/UHop%20An%20Unrestricted-Hop%20Relation%20Extraction%20Framework%20for%20Knowledge-Based%20Question%20Answering/" class="post-title-link" itemprop="url">UHop An Unrestricted-Hop Relation Extraction Framework for Knowledge-Based Question Answering</a>
+            <a href="/2021/03/15/%E7%AC%AC07%E5%91%A8/Query%20Graph%20Generation%20for%20Answering%20Multi-hop%20Complex%20Questions%20from%20Knowledge%20Bases/" class="post-title-link" itemprop="url">Query Graph Generation for Answering Multi-hop Complex Questions from Knowledge Bases</a>
         </h2>
 
         <div class="post-meta">
@@ -1656,7 +1656,7 @@ V(G_i^{(k)})=\max_{i\leq t \leq n-1}F_1(D_{t+1}^{k})
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-05-06 11:56:30" itemprop="dateModified" datetime="2021-05-06T11:56:30+08:00">2021-05-06</time>
+                <time title="修改时间：2021-05-06 11:56:45" itemprop="dateModified" datetime="2021-05-06T11:56:45+08:00">2021-05-06</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1682,7 +1682,7 @@ V(G_i^{(k)})=\max_{i\leq t \leq n-1}F_1(D_{t+1}^{k})
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>2.9k</span>
+              <span>3.4k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -1702,76 +1702,91 @@ V(G_i^{(k)})=\max_{i\leq t \leq n-1}F_1(D_{t+1}^{k})
 
       
           <ul>
-<li>论文：https://arxiv.org/pdf/1904.01246.pdf</li>
-</ul>
-<h2 id="abstract">Abstract</h2>
-<ul>
-<li>之前跳数固定为2或者3。UHop(unrestricted-hop framework)代替了基于关系链的搜索框架(relation-chain-based)，放松了对于跳数的限制。</li>
+<li>论文原文：https://www.aclweb.org/anthology/2020.acl-main.91.pdf</li>
 </ul>
 <h2 id="introduction">1. Introduction</h2>
 <ul>
-<li>之前(relation-chain-based)：KBQA is decomposed into <em>topic entity linking</em>, which determines the starting entity corresponding to the question, and <em>relation extraction</em>, which finds the path to the answer node(s).In previous work, models consider all relation paths starting from the topic entity.</li>
-<li>Uhop: We decompose the task of relation extraction in the knowledge graph into two subtasks: knowing where to go, and knowing when to stop (or to halt). That is, <strong>single-hop relation extraction</strong> and <strong>termination decision.</strong></li>
-</ul>
-<h2 id="uhop-relation-extraction">2. UHop Relation Extraction</h2>
+<li>目前主要在研究两种复杂性问题：
 <ul>
-<li><p>使用的数据集是already annotated with relations and paths。[原文：As some datasets are already annotated with relations and paths, direct learning using an intermediate reward is more reasonable.]</p></li>
-<li><p>两大主要子任务：单跳关系提取(single-hop relation extraction)和比较终止决定(comparative termination decision)，两个任务进行过程如下图：<img src="https://i.loli.net/2021/03/24/gpU86iFtbNPT2X9.png" alt="image-20210324110754035.png" /></p>
-<p>需要注意的是，从第二次迭代开始，候选关系与先前选择的关系concatenate在一起，以记住历史并将其作为一个整体来考虑。</p></li>
-<li><p>继续的话：the model prefers the correct <span class="math inline">\(\hat r\)</span> over the other relations <span class="math inline">\(R−\hat r\)</span> of <span class="math inline">\(e\)</span></p>
-<p>停止的话：the model favors the correct relation <span class="math inline">\(\hat r\)</span> linked to the current entity <span class="math inline">\(e\)</span> over the outbound <span class="math inline">\(R\)</span> relations from <span class="math inline">\(e\)</span>.</p>
-<p>与之前方法的区别如下：<img src="https://i.loli.net/2021/03/24/oHXwapF7WjIvrR9.png" alt="image-20210324112238110.png" /></p></li>
-</ul>
-<h3 id="单跳关系提取single-hop-relation-extraction">3.1 单跳关系提取(Single Hop Relation Extraction)</h3>
+<li>带约束的单一关系问题(Single-relation questions with constraints)</li>
+<li>具有多跳关系的问题(Questions with <em>multiple hops</em> of relations)
 <ul>
-<li><p>给定问题<span class="math inline">\(Q\)</span>，候选关系集<span class="math inline">\(R\)</span>，一种成对分类模型(pairwise classification model)<span class="math inline">\(F\)</span>，单跳关系提取表示为： <span class="math display">\[
-r=\mathop{\arg\max}_{r\in R}\ F(Q,r)
-\]</span></p>
-<p>Hinge loss定义为： <span class="math display">\[
-\mathcal{L}_{RE}=\frac {\sum\limits_{r \in R-\hat r}max(0,-(s^{\hat r}-s^r)+M)}{|R-\hat r|}
-\]</span> <span class="math inline">\(s^{\hat r}\)</span>和<span class="math inline">\(s^r\)</span>分别是真实关系和候选关系的得分。</p>
-<p>边际M(margin)是范围(0, 1]中的任意值，损失函数的目标是最大化正确预测和错误预测之间的M</p></li>
-</ul>
-<h3 id="比较终止决定comparative-termination-decision">3.2 比较终止决定(Comparative Termination Decision)</h3>
+<li>减少需考虑的多跳关系路径的数量，本文采用beam search，即consider only the best matching relation instead of all relations when extending a relation path.</li>
+</ul></li>
+</ul></li>
+<li>本文同时处理复杂KBQA的约束和多跳关系。
 <ul>
-<li><p>与单跳关系提取使用的模型相同。当模型不能提取出比前一跳更好的关系时，模型停止。</p></li>
-<li><p>不同的是与之前已经提取出的关系<span class="math inline">\(\hat r\)</span>比较的候选关系集合<span class="math inline">\(R\)</span><strong>是之前提取到的所有关系和从新的当前实体<span class="math inline">\(e\)</span>出发的关系的concatenation</strong>。在进入终止决策前已经更新了<span class="math inline">\(e \leftarrow e&#39;\)</span>，故如果分数<span class="math inline">\(s^{\hat r}\)</span>高于所有比较的关系，则搜索停止；否则搜索继续。</p></li>
-<li><p>给定问题<span class="math inline">\(Q\)</span>，从之前实体提取出的关系<span class="math inline">\(\hat r\)</span>，从新的当前实体<span class="math inline">\(e\)</span>出发的候选关系集<span class="math inline">\(R\)</span>，和与单跳关系提取相同的模型<span class="math inline">\(F\)</span>，程序可制定为： <span class="math display">\[
-f(x)=
-\begin{cases}
-True,&amp; F(Q, \hat r)&gt;F(Q,r)\ \forall x\in R\\
-False,&amp; F(Q, \hat r)&lt;F(Q,r)\ \exist x\in R
-\end{cases}
-\]</span></p></li>
-<li><p>损失(Loss)取决于标志<em>stop</em>。如果程序应该继续，即<em>stop</em>为false，loss被定义为： <span class="math display">\[
-\mathcal{L}_{TD}=max(0,-(s^{r&#39;}-s^{\hat r})+margin)
-\]</span> 其中<span class="math inline">\(s^{r&#39;}\)</span>是下一跳中与gold relation<span class="math inline">\(r&#39;\)</span>配对的问题的分数；<span class="math inline">\(s^{\hat t}\)</span>是与已提取的关系<span class="math inline">\(\hat r\)</span>配对的问题的分数。</p>
-<p>如果该过程应该终止，则： <span class="math display">\[
-\mathcal{L}_{TD}=\frac {\sum\limits_{r \in R}max(0,-(s^{\hat r}-s^r)+M)}{|R|}
-\]</span> 模型会学习使<span class="math inline">\(s^{\hat r}\)</span>大于<span class="math inline">\(s^r\)</span>，从而导致关系提取终止。</p></li>
-</ul>
-<h3 id="动态问题表示dynamic-question-representation">3.3 动态问题表示(Dynamic Question Representation)</h3>
-<ul>
-<li><p>定义一个动态问题表示生成函数<span class="math inline">\(G\)</span>来更新每一跳的问题表示。给定先前选择的关系路径<span class="math inline">\(P\)</span>和原始问题<span class="math inline">\(Q\)</span>，<span class="math inline">\(G\)</span>通过<span class="math inline">\(Q&#39;=G(Q,P)\)</span>来生成新的问题表示。假设当提取下一个关系时，由于当前关系已被选择，则它在问题中的相关信息就失去了重要性。</p></li>
-<li><p>考虑到模型体系中注意力层的存在，提出了两种更新问题表示的方法。</p>
-<ul>
-<li>对于注意力模型，我们通过以下方式直接利用注意力权重作为动态问题表示生成函数的一部分：</li>
-</ul>
-<p><span class="math display">\[
-G(Q,P)=W(Q-attention(Q,P))+B
-\]</span></p>
-<ul>
-<li>对于无注意力模型，我们使用线性变换函数作为<span class="math inline">\(G\)</span>应用于先前选择的关系和问题表示的concatenation上，以产生新的表示： <span class="math display">\[
-G(Q,P)=W[Q:P]+B
-\]</span> 其中<span class="math inline">\(W\)</span>和<span class="math inline">\(B\)</span>都是训练要优化的权重矩阵。</li>
+<li>在查询图的生成过程中，允许更长的关系路径。</li>
+<li>不再是关系路径构建完成之后再添加约束，而是同时合并约束和扩展关系路径，可以减少搜索空间。</li>
 </ul></li>
 </ul>
-<h3 id="联合训练子任务jointly-trained-subtasks">3.4 联合训练子任务(Jointly Trained Subtasks)</h3>
+<h2 id="method">2. Method</h2>
+<h3 id="preliminaries">2.1 Preliminaries</h3>
 <ul>
-<li>在训练中，我们联合优化了UHop的两个子任务。对于每个问题及其候选，损失函数定义为： <span class="math display">\[
-\mathcal{L}=\sum_i^H(L_{RE}^{(i)}+L_{TD}^{(i)})
-\]</span> 其中，<span class="math inline">\(H\)</span>是在gold 关系路径中的跳数；<span class="math inline">\(\mathcal{L}_{RE}^{(i)}\)</span>和<span class="math inline">\(\mathcal{L}_{TD}^{(i)}\)</span>是两个子任务在第<span class="math inline">\(i\)</span>跳的损失函数。</li>
+<li><p>现有的查询图生成方法【本文largely inspired by】</p>
+<p>【<span id="2015"><a target="_blank" rel="noopener" href="https://www.aclweb.org/anthology/P15-1128.pdf">Semantic parsing via staged query graph generation: Question answering with knowledge base, 2015</a></span></p>
+<p><span id="2016"><a target="_blank" rel="noopener" href="https://www.aclweb.org/anthology/C16-1236.pdf">Constraint-based question an- swering with knowledge graph, 2016</a></span></p>
+<p><span id="2018"><a target="_blank" rel="noopener" href="https://www.aclweb.org/anthology/D18-1242.pdf">Knowledge base question answering via en- coding of complex query graphs, 2018</a></span>】</p></li>
+<li><p>一个查询图(query graph)有四种结点：</p>
+<ul>
+<li>grounded entity(带阴影的矩形)：知识库中已经存在的实体</li>
+<li>existential variable(无阴影的矩形)：不是一个grounded entity</li>
+<li>lambda variable(圆形)：不是一个grounded entity，但是代表了答案</li>
+<li>aggregation function(菱形)：聚合函数</li>
+</ul></li>
+<li><p>查询图的边来自知识图中的关系，一个查询图应该只有一个lambda变量表示答案，不止一个grounded entity、没有或者多个existential变量和聚合函数。</p></li>
+<li><p>查询图生成过程(<a href="#2015">Yih et al., 2015</a>; <a href="#2016">Bao et al., 2016</a>)：</p>
+<ol type="1">
+<li><p>Starting from a grounded entity found in the question (referred to as a <em>topic entity</em>), identify a core relation path linking the topic entity to a lambda variable. Existing work considers core relation paths containing a single relation(<a href="#2015">Yih et al., 2015</a>; <a href="#2016">Bao et al., 2016</a>; <a href="#2018">Luo et al., 2018</a>).</p></li>
+<li><p>From a core relation path identified in Step 1, attach one or more constraints found in the question. A constraint consists of either a grounded entity or an aggregation function together with a relation.</p></li>
+<li><p>With all the candidate query graphs generated from Step 1 and Step 2, rank them by measuring their similarities with the question. This is typically done through a neural network model such as a CNN . (<a href="#2015">Yih et al., 2015</a>; <a href="#2016">Bao et al., 2016</a>).</p></li>
+<li><p>Execute the top-ranked query graph against the KB to obtain the answer entities.</p></li>
+</ol>
+<figure>
+<img src="https://i.loli.net/2021/03/22/XeE7IC63fdyuUp5.png" alt="image-20210322215711338.png" /><figcaption aria-hidden="true">image-20210322215711338.png</figcaption>
+</figure></li>
 </ul>
+<h3 id="motivation">2.2 Motivation</h3>
+<ul>
+<li>看起来更像是两个模型的组合：上述模型不利于解决多跳问题；最新研究出的多跳模型(beam search，在生成t+1跳关系路径之前只保留前K个t跳关系路径【(<a href="#2019">Chen et al., 2019</a>; <a href="#2019b">Lan et al., 2019b</a>)】)但忽略了在生成过程中的约束。</li>
+<li>不再是关系路径构建完成之后再添加约束，而是同时合并约束和扩展关系路径。</li>
+<li>This more flexible way of generating query graphs, coupled with <strong>a beam search mechanism</strong> and <strong>a semantic matching model</strong> to guide pruning, explores a much smaller search space while still maintaining a high chance of finding the correct query graph.</li>
+</ul>
+<h3 id="query-graph-generation">2.3 Query Graph Generation</h3>
+<ul>
+<li><p>利用波束搜索来迭代生成候选查询图。假设第<span class="math inline">\(t\)</span>次迭代产生K个查询图的集合，在<span class="math inline">\(t+1\)</span>次迭代中，作者使用了extend、connect、aggregate三个行为之一来为当前的查询图添加一条边或一个节点。在每个时间步获得查询图之后，用评分函数来对所有查询图进行排序，并找出 top-k。如此持续迭代，<strong>直到某一迭代的评分不高于它前一迭代的评分。</strong></p>
+<p>如下图：<img src="http://p3.itc.cn/q_70/images03/20200715/7d053c5f849e45c0b9c06fc39fda1b8f.png" alt="img" /></p></li>
+</ul>
+<h4 id="extend">2.3.1 extend</h4>
+<ul>
+<li><strong>扩展</strong>动作将核心关系路径扩展了 R 中的一个关系。如果当前查询图仅包含主题实体 e，则扩展动作将在 KB 中找到链接到 e 的关系 r，并将路径增长到 r。<strong>它还使 r 的另一端成为 lambda 变量 x。</strong>如果当前查询图具有 lambda 变量 x，则扩展操作会将 x 更改为存在变量 y，通过对 KB 执行当前查询图来查找 KB 中 y 的所有绑定，找到链接到这些实体之一的关系 r ，最后将 r 附加到 y。r 的另一端成为新的 lambda 变量 x。</li>
+</ul>
+<h4 id="connect">2.3.2 connect</h4>
+<ul>
+<li>除了当前核心关系路径开始处的主题实体之外，问题中通常还会找到其他实体。 <strong>连接</strong>操作将这样的实体 e <strong>链接到 lambda 变量 x 或连接到 x 的存在变量</strong>（即 CVT 节点）。要确定使用哪个关系 r 链接 e 和 x，我们可以再次找到 x 的所有绑定，通过执行当前查询图，然后找到这些实体之一与 e 之间存在的关系。</li>
+</ul>
+<h4 id="aggregate">2.3.3 aggregate</h4>
+<ul>
+<li>作者使用一组预定义的关键字从问题中检测聚合函数。聚合操作会将检测到的聚合函数作为新节点附加到 lambda 变量 x 或连接到作为 CVT 节点的 x 的存在变量。</li>
+</ul>
+<h4 id="总结">2.3.4 总结</h4>
+<ul>
+<li>该方法的新颖之处在于，可以在连接和聚合操作之后应用扩展操作，而以前的方法是不允许的。扩展和连接操作可以理解为对多跳推理的实现，而聚合操作可理解为对问题约束的实现。</li>
+</ul>
+<h3 id="query-graph-ranking">2.4. Query Graph Ranking</h3>
+<ul>
+<li>在第 t 次迭代的末尾，算法对候选查询图进行排序，每个图获得 7 维的特征向量，并将这些向量馈送到一个全连接层。</li>
+<li>向量的第一个维度来自基于 BERT 的语义匹配模型。具体来说，算法通过遵循构造查询图 g 所采取的动作序列并将每个步骤所涉及的实体和关系的文本描述顺序添加到序列中，将 g 转换为标记序列。存在变量和 lambda 变量将被忽略。</li>
+<li>向量的其他 6 个维度如下：第一个维度是查询图中所有已链接实体的累积实体链接得分。第二个是查询图中出现的链接实体的数量。第三到第五个分别是查询图中实体类型的数量，时间表达式和最高级的数量。最后一个特征是查询图的答案实体的数量。</li>
+</ul>
+<h2 id="引用">引用</h2>
+<ol type="1">
+<li><p><a target="_blank" rel="noopener" href="https://www.aclweb.org/anthology/P15-1128.pdf">Semantic parsing via staged query graph generation: Question answering with knowledge base, 2015</a></p></li>
+<li><p><a target="_blank" rel="noopener" href="https://www.aclweb.org/anthology/C16-1236.pdf">Constraint-based question an- swering with knowledge graph, 2016</a></p></li>
+<li><p><a target="_blank" rel="noopener" href="https://www.aclweb.org/anthology/D18-1242.pdf">Knowledge base question answering via encoding of complex query graphs, 2018</a></p></li>
+<li><p><span id="2019"><a target="_blank" rel="noopener" href="https://www.aclweb.org/anthology/N19-1031.pdf">Uhop: An unrestricted-hop relation extraction framework for knowledge-based question answering, 2019</a></span></p></li>
+<li><p><span id="2019b"><a target="_blank" rel="noopener" href="https://ink.library.smu.edu.sg/cgi/viewcontent.cgi?article=5939&amp;context=sis_research">Multi-hop knowledge base question answering with an iterative sequence matching model, 2019b</a></span></p></li>
+</ol>
 
       
     </div>

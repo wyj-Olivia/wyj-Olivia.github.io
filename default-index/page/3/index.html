@@ -1007,223 +1007,6 @@ PE_{(pos,2i+1)}=cos(pos/10000^{2i/d_{model}})
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/01/30/%E7%AC%AC02%E5%91%A8/%E8%8E%AB%E7%83%A6/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpg">
-      <meta itemprop="name" content="Olivia">
-      <meta itemprop="description" content="May All Your Troubles Be little Ones">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Olivia的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/01/30/%E7%AC%AC02%E5%91%A8/%E8%8E%AB%E7%83%A6/" class="post-title-link" itemprop="url">NLP快速入门-莫烦</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-01-30 00:00:00" itemprop="dateCreated datePublished" datetime="2021-01-30T00:00:00+08:00">2021-01-30</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-05-04 15:01:29" itemprop="dateModified" datetime="2021-05-04T15:01:29+08:00">2021-05-04</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/NLP/" itemprop="url" rel="index"><span itemprop="name">NLP</span></a>
-                </span>
-                  >
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/NLP/notes/" itemprop="url" rel="index"><span itemprop="name">notes</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>3.6k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>3 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="莫烦-nlp快速入门">莫烦-NLP快速入门</h1>
-<h2 id="搜索">1. 搜索</h2>
-<h3 id="tf-idf算法">1.1 TF-IDF算法</h3>
-<ul>
-<li><p>正排/倒排索引</p>
-<p>正排索引是在每次搜索时都对所有材料进行阅读，然后找出关键词，效率差</p>
-<p><strong>倒排索引</strong>是第一次拿到材料时即构造索引，后续搜索中复用，即一种词语匹配加返回索引材料的过程。</p></li>
-<li><p><strong>TF-IDF算法</strong>（处理匹配排序）</p>
-<p>位于提高精确度，对筛选出来的内容做一个【问题与内容】的相似度排序。</p>
-<p><strong>TF(Term Frequency)</strong>：词频 <strong>IDF(Inverse Document Frequency)</strong>：逆文本频率指数</p>
-<figure>
-<img src="https://i.loli.net/2021/05/04/DXqbSofJiyAG38m.png" alt="image-20210120212238121.png" /><figcaption aria-hidden="true">image-20210120212238121.png</figcaption>
-</figure>
-<p><strong>TF</strong>是以文章为中心的局部词信息；<strong>IDF</strong>是全局的词信息的区分力大小，越大则区分力越高；结合即可通过<strong>TF-IDF</strong>信息来表达文章了</p>
-<figure>
-<img src="https://i.loli.net/2021/05/04/9MVxzRr8fDNOFJZ.png" alt="image-20210120212514907.png" /><figcaption aria-hidden="true">image-20210120212514907.png</figcaption>
-</figure>
-<p>搜索时会计算搜索问句的<strong>TF-IDF</strong>的值，将问句和文章转变成<strong>向量</strong>（上例中为四维）投射到空间中，然后计算问句和每篇文章的cosine距离（角度距离）。</p>
-<figure>
-<img src="https://i.loli.net/2021/05/04/vDd4wYzgKWLu3Sx.png" alt="image-20210120213430571.png" /><figcaption aria-hidden="true">image-20210120213430571.png</figcaption>
-</figure>
-<p>可作为取关键词的依据，但某个领域的<strong>IDF表</strong>可能相似度很高，所以可以用一个带有金融属性的<strong>IDF</strong>表来优化对金融子领域的搜索。<strong>IDF</strong>虽然带有全局信息，但只是一个领域，一个子集。</p>
-<p>集群版搜索引擎 <strong>ElasticSearch</strong>：框架，可处理海量数据，用到<strong>BM25算法</strong></p>
-<p><em>有Python+Numpy和sklearn两种实现代码</em></p></li>
-</ul>
-<hr />
-<h2 id="理解词语">2. 理解词语</h2>
-<h3 id="词向量">2.1 词向量</h3>
-<ul>
-<li><p>相似度可凭角度信息及距离信息判断</p></li>
-<li><p><strong>CBOW(Continuous Bag of Words)</strong></p>
-<p>挑一个要预测的词，来学习这个词前后文中词语和预测词的关系。</p></li>
-</ul>
-<h2 id="seq2seq">3. Seq2Seq</h2>
-<p>TF-IDF等是表达文章采用的是词频的信息，但忽略了顺序。</p>
-<p>RNN可获取到顺序的信息</p>
-<h3 id="encode">3.2.1Encode</h3>
-<p>变成计算机理解的向量表达形式，可使用RNN等，压缩器</p>
-<h3 id="decoder">3.2.2 Decoder</h3>
-<p>翻译成各种不同的表示形式，解压器</p>
-<p>训练(training)中，不管有没有预测错，下一步在decoder的输入都是正确的</p>
-<p>预测(inference)中，decoder下一步的预测基于decoder上一步预测，而不是true label</p>
-<h2 id="attention机制">3.3 Attention机制</h2>
-<p>模型注意局部的文字信息</p>
-<figure>
-<img src="https://mofanpy.com/static/results-small/nlp/luong_attention.png" alt="translation attention illustration" /><figcaption aria-hidden="true">translation attention illustration</figcaption>
-</figure>
-<p>生成 爱 时，将前面整体的信息进行softmax，也就是打权重，即了解应加强注意到哪些encoder的step上面，再生成一个加了注意力后的全局信息，在结合上decoder现在的信息一起生成字。即$ LuongAttention <span class="math inline">\(方法。\)</span> [Effective Approaches to Attention-based Neural Machine Translation] $</p>
-<p>论文中提出了三种计算attention score的方式</p>
-<figure>
-<img src="https://mofanpy.com/static/results/nlp/luong_attention_score_func.png" alt="luong_score_func" /><figcaption aria-hidden="true">luong_score_func</figcaption>
-</figure>
-<p>$ h_t <span class="math inline">\(是decoder见到输入生成的hidden state，\)</span> h_s $是encoder见到的输入时生成的hidden state。<strong>意思是将decoder每预测一个词，都拿这个decoder现在的信息去和encoder所有信息做注意力的计算，即可得到如何将注意力放到encode当中。</strong>三个公式的不同点就是是否要引入更多的学习参数和变量</p>
-<p>以此为Seq2Seq（RNN+Attention）模型，采用RNN进行encoder，decoder</p>
-<p><strong>模型经过多次注意，不同层级的注意力带来的是不同层级上的理解。越是后面的注意，就是越深度的思考。也就是Transformer模型。</strong></p>
-<h2 id="transformer模型">4. Transformer模型</h2>
-<p>一个个注意力矩阵来表示在不同位置的注意力强度。通过控制强度来控制信息通道的阀门大小。也可多个人同时观察一句话，然后汇总每个人通过自己的注意力得到的结论，再进入下一轮注意力</p>
-<p>RNN中采用时序模型的encoder，把整句话encoder进来，再通过一个一个词去看根据局部信息判断一个个词需要施加多少注意力。</p>
-<p>Transformer可以直接一层层叠加注意力，RNN也可以又叠加模式，但是太慢了，Transformer可以采用CNN的那种模式进行加速，而RNN必须先看第一步再第二步，必须时序进行，太慢了。Transformer基于每一层的理解，计算机视觉也是通过不断卷积，得到每一层的理解，卷积也可以当成过滤器。采用transformer或attention进行encode</p>
-<figure>
-<img src="https://mofanpy.com/static/results-small/nlp/transformer_stack_attention_layer.png" alt="attention layer" /><figcaption aria-hidden="true">attention layer</figcaption>
-</figure>
-<ul>
-<li><p>encode</p>
-<figure>
-<img src="https://mofanpy.com/static/results-small/nlp/transformer_qkv_explain.png" alt="transformer qkv" /><figcaption aria-hidden="true">transformer qkv</figcaption>
-</figure>
-<p>上图：Query和所有候选人Key做对比，得到一个要注意的程度Attention，根据这个程度判断需要花多久时间仔细阅读候选人材料Value</p>
-<p>同时施加多个Attention hat，好几个人帮我一轮轮注意+理解后，我再汇总所有人的理解，统一判断</p>
-<figure>
-<img src="https://mofanpy.com/static/results-small/nlp/transformer_multihead_explain.png" alt="transformer multihead" /><figcaption aria-hidden="true">transformer multihead</figcaption>
-</figure></li>
-<li><p>decode</p>
-<p>Encoder里的注意力叫做自注意力(self-attention)</p>
-<figure>
-<img src="https://mofanpy.com/static/results-small/nlp/transformer_decoder_atten_with_encoder.png" alt="transformer decoder" /><figcaption aria-hidden="true">transformer decoder</figcaption>
-</figure>
-<p>在Decoding时，decoder会向encoder借一下Key和Value，Decoder自己可以提供Query（已经预测出来的token）。使用我们刚刚提到的K，Q，V结合方式计算。 不过这张图里面还有些细节没有提到，<strong>比如 Decoder 先要经过Masked attention再和encoder的K，V结合，然后还有有一个feed forward计算，还要计算残差。</strong></p>
-<ul>
-<li>Masked attention: 不让decoder在训练的时候用后文的信息生成前文的信息；</li>
-<li>Feed forward: 这个encoder，decoder都有，做一下非线性处理；</li>
-<li>残差计算：这个也是encoder和decoder都有，为了更有效的backpropagation。</li>
-</ul></li>
-</ul>
-<h2 id="预训练模型">5. 预训练模型</h2>
-<p>我们需要进行一次知识的通用编码，将它转化成文字，动画，声音等等，下一代人还能通过学习获取统一解码能力，将编码的文字，动画，声音解码转移至自己的大脑中，完成知识的迁移。机器可以复制，即可以完成<strong>“学习型遗传信息”</strong>的传递。</p>
-<p>大规模深度学习模型就像一个知识体，可以用多种不同的模型框架来存储知识，比如双向LSTM模型、Transformer模型等，特点是大、参数多。我们再次利用这些存储知识时，需要将固化下来的神经连接稍作修改，来适应变化，这种超大规模的模型柔韧性好，相比小模型又大量的神经连接相互牵连，不会很容易随着一点变化而完全跑偏，这也是大模型比小模型更好做知识迁移的原因之一。</p>
-<p>如果模型变大变深，效果提升会更显著。每训练一个大模型，都要消耗很长时间，我们并不希望浪费太多时间在训练上，所以拿到一个预训练模型是十分重要的。基于预训练模型，我们能够用较少的模型较快的得到一个适合我们自己数据的新模型，而且效果也不会差。预训练的核心价值是：</p>
-<ul>
-<li>手头只有小数据集，也能得到一个好模型</li>
-<li>训练速度大大提升，不用从零开始</li>
-</ul>
-<h3 id="elmoembeddings-from-language-model模型">5.1 ELMo(Embeddings from Language Model)模型</h3>
-<ul>
-<li><strong>主要目标：找出词语放在句子中的意思</strong>。CBOW或者skip gram没有办法表示词在句子中的不同含义，故ELMo可<strong>一词多义</strong></li>
-<li>通过双向RNN（LSTM）架构来使词向量拥有上下文信息，每个词的向量表达，可看做下面信息的累积：
-<ul>
-<li>从前往后的前文信息</li>
-<li>从后往前的后文信息</li>
-<li>当前词语的词向量信息</li>
-</ul></li>
-<li>ELMo是预训练模型的先驱，也认真对待了一词多义的情况。但是预训练模型并不仅仅局限于ELMo这种RNN模式的框架，Transformer同样可以做预训练，并且效果更好，<strong>比如GPT, Bert</strong></li>
-</ul>
-<h2 id="gptgenerative-pre-training单向语言模型">5.2 GPT(Generative Pre-Training)单向语言模型</h2>
-<ul>
-<li>预训练需要很多算力资源，单向的代表只能从前往后，但是拟合能力依旧很好</li>
-<li>用着Decoder的Future Mask（Look Ahead Mask），但结构更像Encoder<strong>搞一个双向链接</strong>
-<ul>
-<li>用前文的信息预测后文的信息，所以用上了Future Mask，不然要做大量预料的非监督学习，会让模型在预测A时看到A的信息，从而有一种信息穿越的问题。<strong>因为Transformer这种MultiHead Attention模式，每一个Head都会看到所有的文字内容，如果用前文的信息预测后文内容又不用Future Mask时，模型是可以看到要预测信息的，这种训练是无效的</strong></li>
-<li>Decoder少了一些连接Encoder的层</li>
-<li>只使用了Future Mask做注意力</li>
-</ul></li>
-</ul>
-<h2 id="bert双向语言模型">5.3 BERT双向语言模型</h2>
-<ul>
-<li>在句子里遮住X，不让模型看到X，然后用前后文信息预测X</li>
-<li>把词替换成mask，但是机器不能识别意思，mask会被当成一个词去理解，会以为我要用“mask”这个词向量预测什么，所以具体替换方式为：随机选取15%的词做如下改变
-<ul>
-<li>80%的时间，将它替换成[MASK]</li>
-<li>10%的时间，将它替换成其他任意词（错别字）</li>
-<li>10%的时间，不变</li>
-</ul></li>
-<li>除了预测，也可以判断两句话是不是上下文关系</li>
-</ul>
-
-      
-    </div>
-
-    
-	
-	
-
-	
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://example.com/2021/01/30/%E7%AC%AC02%E5%91%A8/%E8%BF%9B%E9%98%B6NLP%E6%A8%A1%E5%9E%8B%E6%95%B4%E7%90%86(Seq2Seq+Attention+pre_transformer+pre_BERT)/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1573,6 +1356,223 @@ c_0
 <li><p>两个任务，对应不同的loss function</p>
 <p>Objective function is the sum of these loss functions</p>
 <p>Update model parameters by performing one gradient descent</p></li>
+</ul>
+
+      
+    </div>
+
+    
+	
+	
+
+	
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/01/30/%E7%AC%AC02%E5%91%A8/%E8%8E%AB%E7%83%A6/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="Olivia">
+      <meta itemprop="description" content="May All Your Troubles Be little Ones">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Olivia的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/01/30/%E7%AC%AC02%E5%91%A8/%E8%8E%AB%E7%83%A6/" class="post-title-link" itemprop="url">NLP快速入门-莫烦</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-01-30 00:00:00" itemprop="dateCreated datePublished" datetime="2021-01-30T00:00:00+08:00">2021-01-30</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-05-04 15:01:29" itemprop="dateModified" datetime="2021-05-04T15:01:29+08:00">2021-05-04</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/NLP/" itemprop="url" rel="index"><span itemprop="name">NLP</span></a>
+                </span>
+                  >
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/NLP/notes/" itemprop="url" rel="index"><span itemprop="name">notes</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>3.6k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>3 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h1 id="莫烦-nlp快速入门">莫烦-NLP快速入门</h1>
+<h2 id="搜索">1. 搜索</h2>
+<h3 id="tf-idf算法">1.1 TF-IDF算法</h3>
+<ul>
+<li><p>正排/倒排索引</p>
+<p>正排索引是在每次搜索时都对所有材料进行阅读，然后找出关键词，效率差</p>
+<p><strong>倒排索引</strong>是第一次拿到材料时即构造索引，后续搜索中复用，即一种词语匹配加返回索引材料的过程。</p></li>
+<li><p><strong>TF-IDF算法</strong>（处理匹配排序）</p>
+<p>位于提高精确度，对筛选出来的内容做一个【问题与内容】的相似度排序。</p>
+<p><strong>TF(Term Frequency)</strong>：词频 <strong>IDF(Inverse Document Frequency)</strong>：逆文本频率指数</p>
+<figure>
+<img src="https://i.loli.net/2021/05/04/DXqbSofJiyAG38m.png" alt="image-20210120212238121.png" /><figcaption aria-hidden="true">image-20210120212238121.png</figcaption>
+</figure>
+<p><strong>TF</strong>是以文章为中心的局部词信息；<strong>IDF</strong>是全局的词信息的区分力大小，越大则区分力越高；结合即可通过<strong>TF-IDF</strong>信息来表达文章了</p>
+<figure>
+<img src="https://i.loli.net/2021/05/04/9MVxzRr8fDNOFJZ.png" alt="image-20210120212514907.png" /><figcaption aria-hidden="true">image-20210120212514907.png</figcaption>
+</figure>
+<p>搜索时会计算搜索问句的<strong>TF-IDF</strong>的值，将问句和文章转变成<strong>向量</strong>（上例中为四维）投射到空间中，然后计算问句和每篇文章的cosine距离（角度距离）。</p>
+<figure>
+<img src="https://i.loli.net/2021/05/04/vDd4wYzgKWLu3Sx.png" alt="image-20210120213430571.png" /><figcaption aria-hidden="true">image-20210120213430571.png</figcaption>
+</figure>
+<p>可作为取关键词的依据，但某个领域的<strong>IDF表</strong>可能相似度很高，所以可以用一个带有金融属性的<strong>IDF</strong>表来优化对金融子领域的搜索。<strong>IDF</strong>虽然带有全局信息，但只是一个领域，一个子集。</p>
+<p>集群版搜索引擎 <strong>ElasticSearch</strong>：框架，可处理海量数据，用到<strong>BM25算法</strong></p>
+<p><em>有Python+Numpy和sklearn两种实现代码</em></p></li>
+</ul>
+<hr />
+<h2 id="理解词语">2. 理解词语</h2>
+<h3 id="词向量">2.1 词向量</h3>
+<ul>
+<li><p>相似度可凭角度信息及距离信息判断</p></li>
+<li><p><strong>CBOW(Continuous Bag of Words)</strong></p>
+<p>挑一个要预测的词，来学习这个词前后文中词语和预测词的关系。</p></li>
+</ul>
+<h2 id="seq2seq">3. Seq2Seq</h2>
+<p>TF-IDF等是表达文章采用的是词频的信息，但忽略了顺序。</p>
+<p>RNN可获取到顺序的信息</p>
+<h3 id="encode">3.2.1Encode</h3>
+<p>变成计算机理解的向量表达形式，可使用RNN等，压缩器</p>
+<h3 id="decoder">3.2.2 Decoder</h3>
+<p>翻译成各种不同的表示形式，解压器</p>
+<p>训练(training)中，不管有没有预测错，下一步在decoder的输入都是正确的</p>
+<p>预测(inference)中，decoder下一步的预测基于decoder上一步预测，而不是true label</p>
+<h2 id="attention机制">3.3 Attention机制</h2>
+<p>模型注意局部的文字信息</p>
+<figure>
+<img src="https://mofanpy.com/static/results-small/nlp/luong_attention.png" alt="translation attention illustration" /><figcaption aria-hidden="true">translation attention illustration</figcaption>
+</figure>
+<p>生成 爱 时，将前面整体的信息进行softmax，也就是打权重，即了解应加强注意到哪些encoder的step上面，再生成一个加了注意力后的全局信息，在结合上decoder现在的信息一起生成字。即$ LuongAttention <span class="math inline">\(方法。\)</span> [Effective Approaches to Attention-based Neural Machine Translation] $</p>
+<p>论文中提出了三种计算attention score的方式</p>
+<figure>
+<img src="https://mofanpy.com/static/results/nlp/luong_attention_score_func.png" alt="luong_score_func" /><figcaption aria-hidden="true">luong_score_func</figcaption>
+</figure>
+<p>$ h_t <span class="math inline">\(是decoder见到输入生成的hidden state，\)</span> h_s $是encoder见到的输入时生成的hidden state。<strong>意思是将decoder每预测一个词，都拿这个decoder现在的信息去和encoder所有信息做注意力的计算，即可得到如何将注意力放到encode当中。</strong>三个公式的不同点就是是否要引入更多的学习参数和变量</p>
+<p>以此为Seq2Seq（RNN+Attention）模型，采用RNN进行encoder，decoder</p>
+<p><strong>模型经过多次注意，不同层级的注意力带来的是不同层级上的理解。越是后面的注意，就是越深度的思考。也就是Transformer模型。</strong></p>
+<h2 id="transformer模型">4. Transformer模型</h2>
+<p>一个个注意力矩阵来表示在不同位置的注意力强度。通过控制强度来控制信息通道的阀门大小。也可多个人同时观察一句话，然后汇总每个人通过自己的注意力得到的结论，再进入下一轮注意力</p>
+<p>RNN中采用时序模型的encoder，把整句话encoder进来，再通过一个一个词去看根据局部信息判断一个个词需要施加多少注意力。</p>
+<p>Transformer可以直接一层层叠加注意力，RNN也可以又叠加模式，但是太慢了，Transformer可以采用CNN的那种模式进行加速，而RNN必须先看第一步再第二步，必须时序进行，太慢了。Transformer基于每一层的理解，计算机视觉也是通过不断卷积，得到每一层的理解，卷积也可以当成过滤器。采用transformer或attention进行encode</p>
+<figure>
+<img src="https://mofanpy.com/static/results-small/nlp/transformer_stack_attention_layer.png" alt="attention layer" /><figcaption aria-hidden="true">attention layer</figcaption>
+</figure>
+<ul>
+<li><p>encode</p>
+<figure>
+<img src="https://mofanpy.com/static/results-small/nlp/transformer_qkv_explain.png" alt="transformer qkv" /><figcaption aria-hidden="true">transformer qkv</figcaption>
+</figure>
+<p>上图：Query和所有候选人Key做对比，得到一个要注意的程度Attention，根据这个程度判断需要花多久时间仔细阅读候选人材料Value</p>
+<p>同时施加多个Attention hat，好几个人帮我一轮轮注意+理解后，我再汇总所有人的理解，统一判断</p>
+<figure>
+<img src="https://mofanpy.com/static/results-small/nlp/transformer_multihead_explain.png" alt="transformer multihead" /><figcaption aria-hidden="true">transformer multihead</figcaption>
+</figure></li>
+<li><p>decode</p>
+<p>Encoder里的注意力叫做自注意力(self-attention)</p>
+<figure>
+<img src="https://mofanpy.com/static/results-small/nlp/transformer_decoder_atten_with_encoder.png" alt="transformer decoder" /><figcaption aria-hidden="true">transformer decoder</figcaption>
+</figure>
+<p>在Decoding时，decoder会向encoder借一下Key和Value，Decoder自己可以提供Query（已经预测出来的token）。使用我们刚刚提到的K，Q，V结合方式计算。 不过这张图里面还有些细节没有提到，<strong>比如 Decoder 先要经过Masked attention再和encoder的K，V结合，然后还有有一个feed forward计算，还要计算残差。</strong></p>
+<ul>
+<li>Masked attention: 不让decoder在训练的时候用后文的信息生成前文的信息；</li>
+<li>Feed forward: 这个encoder，decoder都有，做一下非线性处理；</li>
+<li>残差计算：这个也是encoder和decoder都有，为了更有效的backpropagation。</li>
+</ul></li>
+</ul>
+<h2 id="预训练模型">5. 预训练模型</h2>
+<p>我们需要进行一次知识的通用编码，将它转化成文字，动画，声音等等，下一代人还能通过学习获取统一解码能力，将编码的文字，动画，声音解码转移至自己的大脑中，完成知识的迁移。机器可以复制，即可以完成<strong>“学习型遗传信息”</strong>的传递。</p>
+<p>大规模深度学习模型就像一个知识体，可以用多种不同的模型框架来存储知识，比如双向LSTM模型、Transformer模型等，特点是大、参数多。我们再次利用这些存储知识时，需要将固化下来的神经连接稍作修改，来适应变化，这种超大规模的模型柔韧性好，相比小模型又大量的神经连接相互牵连，不会很容易随着一点变化而完全跑偏，这也是大模型比小模型更好做知识迁移的原因之一。</p>
+<p>如果模型变大变深，效果提升会更显著。每训练一个大模型，都要消耗很长时间，我们并不希望浪费太多时间在训练上，所以拿到一个预训练模型是十分重要的。基于预训练模型，我们能够用较少的模型较快的得到一个适合我们自己数据的新模型，而且效果也不会差。预训练的核心价值是：</p>
+<ul>
+<li>手头只有小数据集，也能得到一个好模型</li>
+<li>训练速度大大提升，不用从零开始</li>
+</ul>
+<h3 id="elmoembeddings-from-language-model模型">5.1 ELMo(Embeddings from Language Model)模型</h3>
+<ul>
+<li><strong>主要目标：找出词语放在句子中的意思</strong>。CBOW或者skip gram没有办法表示词在句子中的不同含义，故ELMo可<strong>一词多义</strong></li>
+<li>通过双向RNN（LSTM）架构来使词向量拥有上下文信息，每个词的向量表达，可看做下面信息的累积：
+<ul>
+<li>从前往后的前文信息</li>
+<li>从后往前的后文信息</li>
+<li>当前词语的词向量信息</li>
+</ul></li>
+<li>ELMo是预训练模型的先驱，也认真对待了一词多义的情况。但是预训练模型并不仅仅局限于ELMo这种RNN模式的框架，Transformer同样可以做预训练，并且效果更好，<strong>比如GPT, Bert</strong></li>
+</ul>
+<h2 id="gptgenerative-pre-training单向语言模型">5.2 GPT(Generative Pre-Training)单向语言模型</h2>
+<ul>
+<li>预训练需要很多算力资源，单向的代表只能从前往后，但是拟合能力依旧很好</li>
+<li>用着Decoder的Future Mask（Look Ahead Mask），但结构更像Encoder<strong>搞一个双向链接</strong>
+<ul>
+<li>用前文的信息预测后文的信息，所以用上了Future Mask，不然要做大量预料的非监督学习，会让模型在预测A时看到A的信息，从而有一种信息穿越的问题。<strong>因为Transformer这种MultiHead Attention模式，每一个Head都会看到所有的文字内容，如果用前文的信息预测后文内容又不用Future Mask时，模型是可以看到要预测信息的，这种训练是无效的</strong></li>
+<li>Decoder少了一些连接Encoder的层</li>
+<li>只使用了Future Mask做注意力</li>
+</ul></li>
+</ul>
+<h2 id="bert双向语言模型">5.3 BERT双向语言模型</h2>
+<ul>
+<li>在句子里遮住X，不让模型看到X，然后用前后文信息预测X</li>
+<li>把词替换成mask，但是机器不能识别意思，mask会被当成一个词去理解，会以为我要用“mask”这个词向量预测什么，所以具体替换方式为：随机选取15%的词做如下改变
+<ul>
+<li>80%的时间，将它替换成[MASK]</li>
+<li>10%的时间，将它替换成其他任意词（错别字）</li>
+<li>10%的时间，不变</li>
+</ul></li>
+<li>除了预测，也可以判断两句话是不是上下文关系</li>
 </ul>
 
       

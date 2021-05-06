@@ -176,7 +176,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/03/15/%E7%AC%AC07%E5%91%A8/Query%20Graph%20Generation%20for%20Answering%20Multi-hop%20Complex%20Questions%20from%20Knowledge%20Bases/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/03/15/%E7%AC%AC07%E5%91%A8/UHop%20An%20Unrestricted-Hop%20Relation%20Extraction%20Framework%20for%20Knowledge-Based%20Question%20Answering/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.jpg">
@@ -190,7 +190,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2021/03/15/%E7%AC%AC07%E5%91%A8/Query%20Graph%20Generation%20for%20Answering%20Multi-hop%20Complex%20Questions%20from%20Knowledge%20Bases/" class="post-title-link" itemprop="url">Query Graph Generation for Answering Multi-hop Complex Questions from Knowledge Bases</a>
+            <a href="/2021/03/15/%E7%AC%AC07%E5%91%A8/UHop%20An%20Unrestricted-Hop%20Relation%20Extraction%20Framework%20for%20Knowledge-Based%20Question%20Answering/" class="post-title-link" itemprop="url">UHop An Unrestricted-Hop Relation Extraction Framework for Knowledge-Based Question Answering</a>
         </h2>
 
         <div class="post-meta">
@@ -207,7 +207,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-05-06 11:56:45" itemprop="dateModified" datetime="2021-05-06T11:56:45+08:00">2021-05-06</time>
+                <time title="修改时间：2021-05-06 11:56:30" itemprop="dateModified" datetime="2021-05-06T11:56:30+08:00">2021-05-06</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -233,7 +233,7 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>3.4k</span>
+              <span>2.9k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -253,91 +253,76 @@
 
       
           <ul>
-<li>论文原文：https://www.aclweb.org/anthology/2020.acl-main.91.pdf</li>
+<li>论文：https://arxiv.org/pdf/1904.01246.pdf</li>
+</ul>
+<h2 id="abstract">Abstract</h2>
+<ul>
+<li>之前跳数固定为2或者3。UHop(unrestricted-hop framework)代替了基于关系链的搜索框架(relation-chain-based)，放松了对于跳数的限制。</li>
 </ul>
 <h2 id="introduction">1. Introduction</h2>
 <ul>
-<li>目前主要在研究两种复杂性问题：
+<li>之前(relation-chain-based)：KBQA is decomposed into <em>topic entity linking</em>, which determines the starting entity corresponding to the question, and <em>relation extraction</em>, which finds the path to the answer node(s).In previous work, models consider all relation paths starting from the topic entity.</li>
+<li>Uhop: We decompose the task of relation extraction in the knowledge graph into two subtasks: knowing where to go, and knowing when to stop (or to halt). That is, <strong>single-hop relation extraction</strong> and <strong>termination decision.</strong></li>
+</ul>
+<h2 id="uhop-relation-extraction">2. UHop Relation Extraction</h2>
 <ul>
-<li>带约束的单一关系问题(Single-relation questions with constraints)</li>
-<li>具有多跳关系的问题(Questions with <em>multiple hops</em> of relations)
+<li><p>使用的数据集是already annotated with relations and paths。[原文：As some datasets are already annotated with relations and paths, direct learning using an intermediate reward is more reasonable.]</p></li>
+<li><p>两大主要子任务：单跳关系提取(single-hop relation extraction)和比较终止决定(comparative termination decision)，两个任务进行过程如下图：<img src="https://i.loli.net/2021/03/24/gpU86iFtbNPT2X9.png" alt="image-20210324110754035.png" /></p>
+<p>需要注意的是，从第二次迭代开始，候选关系与先前选择的关系concatenate在一起，以记住历史并将其作为一个整体来考虑。</p></li>
+<li><p>继续的话：the model prefers the correct <span class="math inline">\(\hat r\)</span> over the other relations <span class="math inline">\(R−\hat r\)</span> of <span class="math inline">\(e\)</span></p>
+<p>停止的话：the model favors the correct relation <span class="math inline">\(\hat r\)</span> linked to the current entity <span class="math inline">\(e\)</span> over the outbound <span class="math inline">\(R\)</span> relations from <span class="math inline">\(e\)</span>.</p>
+<p>与之前方法的区别如下：<img src="https://i.loli.net/2021/03/24/oHXwapF7WjIvrR9.png" alt="image-20210324112238110.png" /></p></li>
+</ul>
+<h3 id="单跳关系提取single-hop-relation-extraction">3.1 单跳关系提取(Single Hop Relation Extraction)</h3>
 <ul>
-<li>减少需考虑的多跳关系路径的数量，本文采用beam search，即consider only the best matching relation instead of all relations when extending a relation path.</li>
+<li><p>给定问题<span class="math inline">\(Q\)</span>，候选关系集<span class="math inline">\(R\)</span>，一种成对分类模型(pairwise classification model)<span class="math inline">\(F\)</span>，单跳关系提取表示为： <span class="math display">\[
+r=\mathop{\arg\max}_{r\in R}\ F(Q,r)
+\]</span></p>
+<p>Hinge loss定义为： <span class="math display">\[
+\mathcal{L}_{RE}=\frac {\sum\limits_{r \in R-\hat r}max(0,-(s^{\hat r}-s^r)+M)}{|R-\hat r|}
+\]</span> <span class="math inline">\(s^{\hat r}\)</span>和<span class="math inline">\(s^r\)</span>分别是真实关系和候选关系的得分。</p>
+<p>边际M(margin)是范围(0, 1]中的任意值，损失函数的目标是最大化正确预测和错误预测之间的M</p></li>
+</ul>
+<h3 id="比较终止决定comparative-termination-decision">3.2 比较终止决定(Comparative Termination Decision)</h3>
+<ul>
+<li><p>与单跳关系提取使用的模型相同。当模型不能提取出比前一跳更好的关系时，模型停止。</p></li>
+<li><p>不同的是与之前已经提取出的关系<span class="math inline">\(\hat r\)</span>比较的候选关系集合<span class="math inline">\(R\)</span><strong>是之前提取到的所有关系和从新的当前实体<span class="math inline">\(e\)</span>出发的关系的concatenation</strong>。在进入终止决策前已经更新了<span class="math inline">\(e \leftarrow e&#39;\)</span>，故如果分数<span class="math inline">\(s^{\hat r}\)</span>高于所有比较的关系，则搜索停止；否则搜索继续。</p></li>
+<li><p>给定问题<span class="math inline">\(Q\)</span>，从之前实体提取出的关系<span class="math inline">\(\hat r\)</span>，从新的当前实体<span class="math inline">\(e\)</span>出发的候选关系集<span class="math inline">\(R\)</span>，和与单跳关系提取相同的模型<span class="math inline">\(F\)</span>，程序可制定为： <span class="math display">\[
+f(x)=
+\begin{cases}
+True,&amp; F(Q, \hat r)&gt;F(Q,r)\ \forall x\in R\\
+False,&amp; F(Q, \hat r)&lt;F(Q,r)\ \exist x\in R
+\end{cases}
+\]</span></p></li>
+<li><p>损失(Loss)取决于标志<em>stop</em>。如果程序应该继续，即<em>stop</em>为false，loss被定义为： <span class="math display">\[
+\mathcal{L}_{TD}=max(0,-(s^{r&#39;}-s^{\hat r})+margin)
+\]</span> 其中<span class="math inline">\(s^{r&#39;}\)</span>是下一跳中与gold relation<span class="math inline">\(r&#39;\)</span>配对的问题的分数；<span class="math inline">\(s^{\hat t}\)</span>是与已提取的关系<span class="math inline">\(\hat r\)</span>配对的问题的分数。</p>
+<p>如果该过程应该终止，则： <span class="math display">\[
+\mathcal{L}_{TD}=\frac {\sum\limits_{r \in R}max(0,-(s^{\hat r}-s^r)+M)}{|R|}
+\]</span> 模型会学习使<span class="math inline">\(s^{\hat r}\)</span>大于<span class="math inline">\(s^r\)</span>，从而导致关系提取终止。</p></li>
+</ul>
+<h3 id="动态问题表示dynamic-question-representation">3.3 动态问题表示(Dynamic Question Representation)</h3>
+<ul>
+<li><p>定义一个动态问题表示生成函数<span class="math inline">\(G\)</span>来更新每一跳的问题表示。给定先前选择的关系路径<span class="math inline">\(P\)</span>和原始问题<span class="math inline">\(Q\)</span>，<span class="math inline">\(G\)</span>通过<span class="math inline">\(Q&#39;=G(Q,P)\)</span>来生成新的问题表示。假设当提取下一个关系时，由于当前关系已被选择，则它在问题中的相关信息就失去了重要性。</p></li>
+<li><p>考虑到模型体系中注意力层的存在，提出了两种更新问题表示的方法。</p>
+<ul>
+<li>对于注意力模型，我们通过以下方式直接利用注意力权重作为动态问题表示生成函数的一部分：</li>
+</ul>
+<p><span class="math display">\[
+G(Q,P)=W(Q-attention(Q,P))+B
+\]</span></p>
+<ul>
+<li>对于无注意力模型，我们使用线性变换函数作为<span class="math inline">\(G\)</span>应用于先前选择的关系和问题表示的concatenation上，以产生新的表示： <span class="math display">\[
+G(Q,P)=W[Q:P]+B
+\]</span> 其中<span class="math inline">\(W\)</span>和<span class="math inline">\(B\)</span>都是训练要优化的权重矩阵。</li>
 </ul></li>
-</ul></li>
-<li>本文同时处理复杂KBQA的约束和多跳关系。
-<ul>
-<li>在查询图的生成过程中，允许更长的关系路径。</li>
-<li>不再是关系路径构建完成之后再添加约束，而是同时合并约束和扩展关系路径，可以减少搜索空间。</li>
-</ul></li>
 </ul>
-<h2 id="method">2. Method</h2>
-<h3 id="preliminaries">2.1 Preliminaries</h3>
+<h3 id="联合训练子任务jointly-trained-subtasks">3.4 联合训练子任务(Jointly Trained Subtasks)</h3>
 <ul>
-<li><p>现有的查询图生成方法【本文largely inspired by】</p>
-<p>【<span id="2015"><a target="_blank" rel="noopener" href="https://www.aclweb.org/anthology/P15-1128.pdf">Semantic parsing via staged query graph generation: Question answering with knowledge base, 2015</a></span></p>
-<p><span id="2016"><a target="_blank" rel="noopener" href="https://www.aclweb.org/anthology/C16-1236.pdf">Constraint-based question an- swering with knowledge graph, 2016</a></span></p>
-<p><span id="2018"><a target="_blank" rel="noopener" href="https://www.aclweb.org/anthology/D18-1242.pdf">Knowledge base question answering via en- coding of complex query graphs, 2018</a></span>】</p></li>
-<li><p>一个查询图(query graph)有四种结点：</p>
-<ul>
-<li>grounded entity(带阴影的矩形)：知识库中已经存在的实体</li>
-<li>existential variable(无阴影的矩形)：不是一个grounded entity</li>
-<li>lambda variable(圆形)：不是一个grounded entity，但是代表了答案</li>
-<li>aggregation function(菱形)：聚合函数</li>
-</ul></li>
-<li><p>查询图的边来自知识图中的关系，一个查询图应该只有一个lambda变量表示答案，不止一个grounded entity、没有或者多个existential变量和聚合函数。</p></li>
-<li><p>查询图生成过程(<a href="#2015">Yih et al., 2015</a>; <a href="#2016">Bao et al., 2016</a>)：</p>
-<ol type="1">
-<li><p>Starting from a grounded entity found in the question (referred to as a <em>topic entity</em>), identify a core relation path linking the topic entity to a lambda variable. Existing work considers core relation paths containing a single relation(<a href="#2015">Yih et al., 2015</a>; <a href="#2016">Bao et al., 2016</a>; <a href="#2018">Luo et al., 2018</a>).</p></li>
-<li><p>From a core relation path identified in Step 1, attach one or more constraints found in the question. A constraint consists of either a grounded entity or an aggregation function together with a relation.</p></li>
-<li><p>With all the candidate query graphs generated from Step 1 and Step 2, rank them by measuring their similarities with the question. This is typically done through a neural network model such as a CNN . (<a href="#2015">Yih et al., 2015</a>; <a href="#2016">Bao et al., 2016</a>).</p></li>
-<li><p>Execute the top-ranked query graph against the KB to obtain the answer entities.</p></li>
-</ol>
-<figure>
-<img src="https://i.loli.net/2021/03/22/XeE7IC63fdyuUp5.png" alt="image-20210322215711338.png" /><figcaption aria-hidden="true">image-20210322215711338.png</figcaption>
-</figure></li>
+<li>在训练中，我们联合优化了UHop的两个子任务。对于每个问题及其候选，损失函数定义为： <span class="math display">\[
+\mathcal{L}=\sum_i^H(L_{RE}^{(i)}+L_{TD}^{(i)})
+\]</span> 其中，<span class="math inline">\(H\)</span>是在gold 关系路径中的跳数；<span class="math inline">\(\mathcal{L}_{RE}^{(i)}\)</span>和<span class="math inline">\(\mathcal{L}_{TD}^{(i)}\)</span>是两个子任务在第<span class="math inline">\(i\)</span>跳的损失函数。</li>
 </ul>
-<h3 id="motivation">2.2 Motivation</h3>
-<ul>
-<li>看起来更像是两个模型的组合：上述模型不利于解决多跳问题；最新研究出的多跳模型(beam search，在生成t+1跳关系路径之前只保留前K个t跳关系路径【(<a href="#2019">Chen et al., 2019</a>; <a href="#2019b">Lan et al., 2019b</a>)】)但忽略了在生成过程中的约束。</li>
-<li>不再是关系路径构建完成之后再添加约束，而是同时合并约束和扩展关系路径。</li>
-<li>This more flexible way of generating query graphs, coupled with <strong>a beam search mechanism</strong> and <strong>a semantic matching model</strong> to guide pruning, explores a much smaller search space while still maintaining a high chance of finding the correct query graph.</li>
-</ul>
-<h3 id="query-graph-generation">2.3 Query Graph Generation</h3>
-<ul>
-<li><p>利用波束搜索来迭代生成候选查询图。假设第<span class="math inline">\(t\)</span>次迭代产生K个查询图的集合，在<span class="math inline">\(t+1\)</span>次迭代中，作者使用了extend、connect、aggregate三个行为之一来为当前的查询图添加一条边或一个节点。在每个时间步获得查询图之后，用评分函数来对所有查询图进行排序，并找出 top-k。如此持续迭代，<strong>直到某一迭代的评分不高于它前一迭代的评分。</strong></p>
-<p>如下图：<img src="http://p3.itc.cn/q_70/images03/20200715/7d053c5f849e45c0b9c06fc39fda1b8f.png" alt="img" /></p></li>
-</ul>
-<h4 id="extend">2.3.1 extend</h4>
-<ul>
-<li><strong>扩展</strong>动作将核心关系路径扩展了 R 中的一个关系。如果当前查询图仅包含主题实体 e，则扩展动作将在 KB 中找到链接到 e 的关系 r，并将路径增长到 r。<strong>它还使 r 的另一端成为 lambda 变量 x。</strong>如果当前查询图具有 lambda 变量 x，则扩展操作会将 x 更改为存在变量 y，通过对 KB 执行当前查询图来查找 KB 中 y 的所有绑定，找到链接到这些实体之一的关系 r ，最后将 r 附加到 y。r 的另一端成为新的 lambda 变量 x。</li>
-</ul>
-<h4 id="connect">2.3.2 connect</h4>
-<ul>
-<li>除了当前核心关系路径开始处的主题实体之外，问题中通常还会找到其他实体。 <strong>连接</strong>操作将这样的实体 e <strong>链接到 lambda 变量 x 或连接到 x 的存在变量</strong>（即 CVT 节点）。要确定使用哪个关系 r 链接 e 和 x，我们可以再次找到 x 的所有绑定，通过执行当前查询图，然后找到这些实体之一与 e 之间存在的关系。</li>
-</ul>
-<h4 id="aggregate">2.3.3 aggregate</h4>
-<ul>
-<li>作者使用一组预定义的关键字从问题中检测聚合函数。聚合操作会将检测到的聚合函数作为新节点附加到 lambda 变量 x 或连接到作为 CVT 节点的 x 的存在变量。</li>
-</ul>
-<h4 id="总结">2.3.4 总结</h4>
-<ul>
-<li>该方法的新颖之处在于，可以在连接和聚合操作之后应用扩展操作，而以前的方法是不允许的。扩展和连接操作可以理解为对多跳推理的实现，而聚合操作可理解为对问题约束的实现。</li>
-</ul>
-<h3 id="query-graph-ranking">2.4. Query Graph Ranking</h3>
-<ul>
-<li>在第 t 次迭代的末尾，算法对候选查询图进行排序，每个图获得 7 维的特征向量，并将这些向量馈送到一个全连接层。</li>
-<li>向量的第一个维度来自基于 BERT 的语义匹配模型。具体来说，算法通过遵循构造查询图 g 所采取的动作序列并将每个步骤所涉及的实体和关系的文本描述顺序添加到序列中，将 g 转换为标记序列。存在变量和 lambda 变量将被忽略。</li>
-<li>向量的其他 6 个维度如下：第一个维度是查询图中所有已链接实体的累积实体链接得分。第二个是查询图中出现的链接实体的数量。第三到第五个分别是查询图中实体类型的数量，时间表达式和最高级的数量。最后一个特征是查询图的答案实体的数量。</li>
-</ul>
-<h2 id="引用">引用</h2>
-<ol type="1">
-<li><p><a target="_blank" rel="noopener" href="https://www.aclweb.org/anthology/P15-1128.pdf">Semantic parsing via staged query graph generation: Question answering with knowledge base, 2015</a></p></li>
-<li><p><a target="_blank" rel="noopener" href="https://www.aclweb.org/anthology/C16-1236.pdf">Constraint-based question an- swering with knowledge graph, 2016</a></p></li>
-<li><p><a target="_blank" rel="noopener" href="https://www.aclweb.org/anthology/D18-1242.pdf">Knowledge base question answering via encoding of complex query graphs, 2018</a></p></li>
-<li><p><span id="2019"><a target="_blank" rel="noopener" href="https://www.aclweb.org/anthology/N19-1031.pdf">Uhop: An unrestricted-hop relation extraction framework for knowledge-based question answering, 2019</a></span></p></li>
-<li><p><span id="2019b"><a target="_blank" rel="noopener" href="https://ink.library.smu.edu.sg/cgi/viewcontent.cgi?article=5939&amp;context=sis_research">Multi-hop knowledge base question answering with an iterative sequence matching model, 2019b</a></span></p></li>
-</ol>
 
       
     </div>
@@ -887,6 +872,148 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/03/01/%E7%AC%AC05%E5%91%A8/3.%20%E5%90%91%E9%87%8F%E5%BB%BA%E6%A8%A1-Question%20Answering%20with%20Subgraph%20Embeddings/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="Olivia">
+      <meta itemprop="description" content="May All Your Troubles Be little Ones">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Olivia的博客">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2021/03/01/%E7%AC%AC05%E5%91%A8/3.%20%E5%90%91%E9%87%8F%E5%BB%BA%E6%A8%A1-Question%20Answering%20with%20Subgraph%20Embeddings/" class="post-title-link" itemprop="url">3. 向量建模-Question Answering with Subgraph Embeddings</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2021-03-01 00:00:00" itemprop="dateCreated datePublished" datetime="2021-03-01T00:00:00+08:00">2021-03-01</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-05-04 15:15:49" itemprop="dateModified" datetime="2021-05-04T15:15:49+08:00">2021-05-04</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Knowledge-Base-Qestion-Answering/" itemprop="url" rel="index"><span itemprop="name">Knowledge Base Qestion Answering</span></a>
+                </span>
+                  >
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Knowledge-Base-Qestion-Answering/paper-comprehension/" itemprop="url" rel="index"><span itemprop="name">paper comprehension</span></a>
+                </span>
+                  >
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Knowledge-Base-Qestion-Answering/paper-comprehension/basis/" itemprop="url" rel="index"><span itemprop="name">basis</span></a>
+                </span>
+            </span>
+
+          <br>
+            <span class="post-meta-item" title="本文字数">
+              <span class="post-meta-item-icon">
+                <i class="far fa-file-word"></i>
+              </span>
+                <span class="post-meta-item-text">本文字数：</span>
+              <span>2.2k</span>
+            </span>
+            <span class="post-meta-item" title="阅读时长">
+              <span class="post-meta-item-icon">
+                <i class="far fa-clock"></i>
+              </span>
+                <span class="post-meta-item-text">阅读时长 &asymp;</span>
+              <span>2 分钟</span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <ul>
+<li>论文原文：https://arxiv.org/abs/1406.3676</li>
+</ul>
+<h2 id="向量建模核心思想">1. 向量建模核心思想</h2>
+<ul>
+<li>首先根据问题中的主题词在知识库中确定候选答案。把问题和候选答案都映射到一个低维空间，得到它们的<strong>分布式表达</strong>(Distributed Embedding)，通过训练数据对该分布式表达进行训练，使得问题向量和它对应的正确答案在低维空间的关联得分(通常以点乘为形式)尽量高。当模型训练完成后，则可根据候选答案的向量表达和问题表达的得分进行筛选，找出得分最高的作为最终答案。</li>
+<li>需解决两个问题：
+<ul>
+<li>如何将问题和答案映射到低维空间。不能仅仅将自然语言的问题和答案进行映射，还要将知识库里的知识也映射到这个低维空间</li>
+<li>这种方法需要<strong>大量数据</strong>去训练，而 KB-QA中的benchmark数据集WebQuestion只含有5800多个问题答案对，这样的数据是难以训练好这种表达的。</li>
+</ul></li>
+</ul>
+<h2 id="如何用分布式表达表示答案和问题">2. 如何用分布式表达表示答案和问题</h2>
+<ul>
+<li><strong>问题的分布式表达</strong>：
+<ul>
+<li>首先把自然语言问题进行向量化，作者将输入空间的<strong>维度N设置为字典大小+知识库实体数目+知识库实体关系数目</strong>，<strong>对于输入向量每一维的值设置为该维所代表的单词</strong>(当然这一维也可能代表的是某个实体数目或实体关系，对于问题的向量化，这些维数都设置为 0)<strong>在问题中的出现次数</strong>(一般为 0 或 1 次)，可以看出这是一种multi-hot的稀疏表达，是一种简化版的词袋模型(Bag-of-words model)</li>
+<li>我们用q代表问题，用<span class="math inline">\(\phi (q)\)</span>代表N维的问题向量，用矩阵<span class="math inline">\(W\)</span>将N维的问题向量映射到<span class="math inline">\(k\)</span>维的低维空间，那么问题的分布式表达即<span class="math inline">\(f(q)=W\phi (q)\)</span></li>
+</ul></li>
+<li><strong>答案的分布式表达</strong>
+<ul>
+<li>最简单的方式就是像对问题一样的向量化方式，使用一个简化版的词袋模型。由于答案都是一个知识库实体，那么这种表达就是一个 one-hot 的表达，显然，并没有把知识库的知识引入到我们的输入空间中。</li>
+<li>第二种方式，我们把知识库想象成一个图，图的节点代表实体，边代表实体关系。通过问题中的主题词可以定位到图中的一个节点，该节点到答案节点有一条路径，我们把该路径上的所有边（实体关系）和点（实体）都以multi-hot的形式存下来作为答案的输入向量。我们这里只考虑一跳（hop）或者两跳的路径，如路径(barack obama, place of birth, honolulu)是一跳，路径(barack obama, people.person.place of birth, location.location.containedby, hawaii) 是两跳。因此这种表示是一种3-hot或4-hot的表示。</li>
+<li>第三种方式
+<ul>
+<li>在信息抽取篇介绍的信息抽取办法中，对于每一个候选答案，该答案所对应的属性（type/gender等）和关系都是能够帮助我们判断它是否是正确答案的重要信息，因此我们可以把每个候选答案对应的知识库子图（1跳或2跳范围）也加入到输入向量中，假设该子图包含C个实体和D个关系，那么我们最终的表达是一种3+C+D-hot或者4+C+D-hot的表达。和信息抽取方法一样，我们也对关系的方向进行区分，因此我们**输入向量的大小变为字典的大小+2*(知识库实体数目+知识库实体关系数目)。**</li>
+<li>同样的，我们用<span class="math inline">\(a\)</span>表示答案，用<span class="math inline">\(\psi (a)\)</span>表示答案的输入向量，用矩阵<span class="math inline">\(W\)</span>将答案向量映射到<span class="math inline">\(k\)</span>维的低维空间，答案的分布式表达即<span class="math inline">\(g(a)=W\psi (a)\)</span>。</li>
+</ul></li>
+</ul></li>
+</ul>
+<h2 id="向量得分">3. 向量得分</h2>
+<ul>
+<li>最后我们用一个函数表征答案和问题的得分，我们希望问题和它对应的正确答案得尽量高分，通过比较每个候选答案的得分，选出最高的作为正确答案。得分函数定义为二者分布式表达的点乘，即<span class="math inline">\(s(q, a)=f(q)^T\cdot g(a)\)</span>。</li>
+<li>上述整个流程如下图所示 <img src="https://ftp.bmp.ovh/imgs/2021/03/363065f4b4f71aeb.png" /></li>
+</ul>
+<h2 id="如何训练分布式表达">4. 如何训练分布式表达</h2>
+<ul>
+<li>对于训练数据集<span class="math inline">\(D=\lbrace (q_i,a_i),\ ....\rbrace\)</span>，我们定义 margin-based ranking 损失函数，公示如下 <img src="https://ftp.bmp.ovh/imgs/2021/03/2321063525beadd5.png" /> 其中<span class="math inline">\(\bar a\)</span>表示负样本集<span class="math inline">\(\bar A\)</span>中的一个负样本(错误答案)，m 是一个值为 0.1 的 margin。最小化这个损失函数，意味着我们希望正确答案和问题的得分要比任意错误答案的得分高出一个 margin</li>
+</ul>
+<h2 id="总结">5. 总结</h2>
+<ul>
+<li>可以看出，相比信息抽取和语义解析的方法，该方法几乎不需要任何手工定义的特征（hand- crafted features），也不需要借助额外的系统（词汇映射表，词性标注，依存树等）。相对来说，比较简单，也较容易实现，能取得39.2的F1-scor e得分（斯坦福13年的语义解析方法只有35.7）也说明了该方法的强大性。通过自动化的方式扩展数据集和多任务训练也部分解决了实验数据不足的缺点。</li>
+<li>然而，向量建模方法，是一种趋于黑盒的方法，缺少了解释性（语义解析可以将问题转化成一种逻辑形式的表达，而信息抽取构造的每一维特征的含义也是离散可见的），更重要的是，它也缺少了我们的<strong>先验知识</strong>和<strong>推理</strong>（可以看出其F1-score略低于14年使用了大量先验知识的信息抽取方法，该方法F1-score为42.0），事实上，这也是现在深度学习一个比较有争议的诟病。</li>
+<li>就篇论文的向量建模方法来说，也存在一些问题，比如对问题的向量表示采用了类似词袋模型的方法，这样相当于并未考虑问题的语言顺序（比如 “谢霆锋的爸爸是谁？” 谢霆锋是谁的爸爸？ 这两个问题用该方法得到的表达是一样的，然而这两个问题的意思显然是不同的），且训练分布式表达的模型很简单，相当于一个两层的感知机。</li>
+</ul>
+
+      
+    </div>
+
+    
+	
+	
+
+	
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://example.com/2021/03/01/%E7%AC%AC05%E5%91%A8/2.%20%E4%BF%A1%E6%81%AF%E6%8A%BD%E5%8F%96-Information%20Extraction%20over%20Structured%20Data_Question%20Answering%20with%20Freebase/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1039,7 +1166,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/03/01/%E7%AC%AC05%E5%91%A8/3.%20%E5%90%91%E9%87%8F%E5%BB%BA%E6%A8%A1-Question%20Answering%20with%20Subgraph%20Embeddings/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/03/01/%E7%AC%AC05%E5%91%A8/6.%20%E5%9F%BA%E4%BA%8E%E8%AE%B0%E5%BF%86%E7%BD%91%E7%BB%9C-Large-scale%20Simple%20Question%20Answering%20with%20Memory%20Networks/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.jpg">
@@ -1053,7 +1180,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2021/03/01/%E7%AC%AC05%E5%91%A8/3.%20%E5%90%91%E9%87%8F%E5%BB%BA%E6%A8%A1-Question%20Answering%20with%20Subgraph%20Embeddings/" class="post-title-link" itemprop="url">3. 向量建模-Question Answering with Subgraph Embeddings</a>
+            <a href="/2021/03/01/%E7%AC%AC05%E5%91%A8/6.%20%E5%9F%BA%E4%BA%8E%E8%AE%B0%E5%BF%86%E7%BD%91%E7%BB%9C-Large-scale%20Simple%20Question%20Answering%20with%20Memory%20Networks/" class="post-title-link" itemprop="url">6. 基于记忆网络-Large-scale Simple Question Answering with Memory Networks</a>
         </h2>
 
         <div class="post-meta">
@@ -1070,7 +1197,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-05-04 15:15:49" itemprop="dateModified" datetime="2021-05-04T15:15:49+08:00">2021-05-04</time>
+                <time title="修改时间：2021-05-04 15:16:04" itemprop="dateModified" datetime="2021-05-04T15:16:04+08:00">2021-05-04</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -1096,7 +1223,7 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>2.2k</span>
+              <span>2.3k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -1116,49 +1243,36 @@
 
       
           <ul>
-<li>论文原文：https://arxiv.org/abs/1406.3676</li>
+<li>论文：https://arxiv.org/abs/1506.02075</li>
 </ul>
-<h2 id="向量建模核心思想">1. 向量建模核心思想</h2>
+<h2 id="简介">1. 简介</h2>
 <ul>
-<li>首先根据问题中的主题词在知识库中确定候选答案。把问题和候选答案都映射到一个低维空间，得到它们的<strong>分布式表达</strong>(Distributed Embedding)，通过训练数据对该分布式表达进行训练，使得问题向量和它对应的正确答案在低维空间的关联得分(通常以点乘为形式)尽量高。当模型训练完成后，则可根据候选答案的向量表达和问题表达的得分进行筛选，找出得分最高的作为最终答案。</li>
-<li>需解决两个问题：
+<li><p>当时的KB-QA对于解决<strong>只依赖一个知识三元组</strong>的简单问题（称为Simple Question Answering）仍有些困难，为此作者构建了一个更大的简单问题数据集，称作<strong>SimpleQuestions</strong>。该数据集的每个问题都依据一个知识三元组知识，进行人工构建问题，数据集最终一共包含了108,442个问题-答案对，相比之前只含8000多个问题-答案对的benchmark数据集WebQuestion，其数据量大了很多。该数据集的部分数据如下图所示<em>（下划线表示答案）</em>：<img src="https://pic1.zhimg.com/80/v2-97d2063bf381150a3e97860e6d53d760_720w.png" alt="img" /></p></li>
+<li><p>整体思想是<strong>将知识库里的知识存储到记忆模块M中，问题经过输入模块I转化为分布式表达，输出模块O选择与问题最相关的支撑记忆（由于SimpleQuestions的问题只依赖一个知识，所以只需要选择一条记忆），回答模块R将该记忆对应三元组的宾语作为最终答案输出。</strong></p></li>
+<li><p>在模型训练完毕后，我们将Reverb中提取的三元组（Reverb的知识三元组是自然语言形式，如<em>(“Obama”, “was also born in”, “<strong>August 1961</strong>”)</em>，知识三元组抽取自ClueWeb）作为新的知识，用<strong>泛化模块G</strong>将新知识存储到记忆模块中，在不经过re-training的情况下使用该记忆回答问题，测试模型的泛化性能。</p></li>
+</ul>
+<h2 id="整体流程">2. 整体流程</h2>
+<h3 id="存储知识">2.1 存储知识</h3>
 <ul>
-<li>如何将问题和答案映射到低维空间。不能仅仅将自然语言的问题和答案进行映射，还要将知识库里的知识也映射到这个低维空间</li>
-<li>这种方法需要<strong>大量数据</strong>去训练，而 KB-QA中的benchmark数据集WebQuestion只含有5800多个问题答案对，这样的数据是难以训练好这种表达的。</li>
+<li>首先将知识库中的知识存储到记忆网络中。作者使用Freebase的两个子集FB2M（含2M实体和5K实体关系）和FB5M（含5M实体和7K实体关系）分别作为知识库。使用<strong>输入模块I</strong>来处理数据。</li>
+<li>由于一个问句可能有多个答案，并且对于一个<strong>问题输出模块O</strong>只能选择一个支撑记忆，我们先对知识做两种预处理：
+<ul>
+<li>将具有相同主语和实体关系的三元组进行<strong>合并</strong>（Group），这样每一条知识将包含k个不同的宾语，即<span class="math inline">\(y=(s,r,\{o_1,...,o_k\})\)</span>。合并的原因在于我们想用一条记忆回答具有多个答案的问题（我们将合并前的知识三元体成为Atomic Facts，合并后的三元组成为Facts），合并后和合并前的知识库大小如下：<img src="https://pic3.zhimg.com/80/v2-4ed153a77495a8cde90f7ed1d81180a6_720w.png" alt="img" /></li>
+<li><strong>去除中间节点。</strong>有些知识中日期会链接两个实体以区分某一事实的时间范围，我们可以将中间节点（mediator node）去除转化成一个二阶关系，这样我们就把长度为2的路径压缩成了长度为1的路径，即压缩为一个三元组。这个操作使得WebQuestion里的能被单一关系回答的问题数量从65%上升到86%。</li>
 </ul></li>
+<li>预处理完知识后，我们的<strong>输入模块I</strong>对知识进行预处理并存储到记忆中。这里使用词袋模型bag-of-symbol的方法，用一个<span class="math inline">\(N_S\)</span>维的multi-hot向量<span class="math inline">\(f(y)\)</span>来表示每一条知识并作为记忆。<span class="math inline">\(N_S\)</span>的大小为知识库实体和实体关系的大小之和，主语实体<span class="math inline">\(s\)</span>和实体关系<span class="math inline">\(r\)</span>对应向量维的值为1，宾语实体<span class="math inline">\(o_i\)</span>对应维的值设为<span class="math inline">\(1/k\)</span>。</li>
 </ul>
-<h2 id="如何用分布式表达表示答案和问题">2. 如何用分布式表达表示答案和问题</h2>
+<h3 id="训练记忆网络">2.2 训练记忆网络</h3>
 <ul>
-<li><strong>问题的分布式表达</strong>：
-<ul>
-<li>首先把自然语言问题进行向量化，作者将输入空间的<strong>维度N设置为字典大小+知识库实体数目+知识库实体关系数目</strong>，<strong>对于输入向量每一维的值设置为该维所代表的单词</strong>(当然这一维也可能代表的是某个实体数目或实体关系，对于问题的向量化，这些维数都设置为 0)<strong>在问题中的出现次数</strong>(一般为 0 或 1 次)，可以看出这是一种multi-hot的稀疏表达，是一种简化版的词袋模型(Bag-of-words model)</li>
-<li>我们用q代表问题，用<span class="math inline">\(\phi (q)\)</span>代表N维的问题向量，用矩阵<span class="math inline">\(W\)</span>将N维的问题向量映射到<span class="math inline">\(k\)</span>维的低维空间，那么问题的分布式表达即<span class="math inline">\(f(q)=W\phi (q)\)</span></li>
-</ul></li>
-<li><strong>答案的分布式表达</strong>
-<ul>
-<li>最简单的方式就是像对问题一样的向量化方式，使用一个简化版的词袋模型。由于答案都是一个知识库实体，那么这种表达就是一个 one-hot 的表达，显然，并没有把知识库的知识引入到我们的输入空间中。</li>
-<li>第二种方式，我们把知识库想象成一个图，图的节点代表实体，边代表实体关系。通过问题中的主题词可以定位到图中的一个节点，该节点到答案节点有一条路径，我们把该路径上的所有边（实体关系）和点（实体）都以multi-hot的形式存下来作为答案的输入向量。我们这里只考虑一跳（hop）或者两跳的路径，如路径(barack obama, place of birth, honolulu)是一跳，路径(barack obama, people.person.place of birth, location.location.containedby, hawaii) 是两跳。因此这种表示是一种3-hot或4-hot的表示。</li>
-<li>第三种方式
-<ul>
-<li>在信息抽取篇介绍的信息抽取办法中，对于每一个候选答案，该答案所对应的属性（type/gender等）和关系都是能够帮助我们判断它是否是正确答案的重要信息，因此我们可以把每个候选答案对应的知识库子图（1跳或2跳范围）也加入到输入向量中，假设该子图包含C个实体和D个关系，那么我们最终的表达是一种3+C+D-hot或者4+C+D-hot的表达。和信息抽取方法一样，我们也对关系的方向进行区分，因此我们**输入向量的大小变为字典的大小+2*(知识库实体数目+知识库实体关系数目)。**</li>
-<li>同样的，我们用<span class="math inline">\(a\)</span>表示答案，用<span class="math inline">\(\psi (a)\)</span>表示答案的输入向量，用矩阵<span class="math inline">\(W\)</span>将答案向量映射到<span class="math inline">\(k\)</span>维的低维空间，答案的分布式表达即<span class="math inline">\(g(a)=W\psi (a)\)</span>。</li>
-</ul></li>
-</ul></li>
+<li>使用问题-答案对来训练记忆网络。</li>
+<li>首先用<strong>输入模块I</strong>来处理输入的自然语言问句<span class="math inline">\(q\)</span>，我们使用n-gram词袋模型（bag-of-ngrams）方法，用一个<span class="math inline">\(N_V\)</span>维的multi-hot向量<span class="math inline">\(g(q)\)</span>来表示每一个问句。<span class="math inline">\(N_V\)</span>的大小是字典大小，字典包含所有问题中出现的单词和所有知识库实体的自然语言别称（这个别称可能由多个单词构成，我们用1个n-gram来表示）。</li>
+<li>对于输入<span class="math inline">\(g(q)\)</span>，我们的<strong>输出模块O</strong>要在记忆中寻找一个与之最相关的支撑记忆。为了避免遍历整个记忆模块里的每一条知识，我们先确定一个候选范围。确定方式如下，将问句中的所有n-gram与知识库实体别称进行匹配，以确定候选实体，将含有候选实体作为主语的知识作为我们的候选支撑记忆。我们将记忆和问题投影到一个低维分布式空间，通过consine相似度作为得分函数，来寻找最相关的支撑记忆，即：<span class="math inline">\(S_{QA}(q,y)=cos(W_Vg(q),W_Sf(y))\)</span>。这里我们需要学习的参数就是两个权值矩阵<span class="math inline">\(W_V,W_S\)</span>。</li>
+<li>这里与[[4. Multi-Column向量建模-Question Answering over Freebase with Multi-Column Convolutional Neural Networks]]提到的训练方法一样，我们构建margin-based ranking损失函数，也进行多任务的训练，通过多任务训练让语义相同的问题的分布式表达<span class="math inline">\(W_V(q)\)</span>相似。</li>
+<li>需要注意的是，我们知道构建margin-based ranking损失函数需要提供支撑记忆的正样本和负样本，由于SimpleQuestion数据集的每个问题都有对应的知识标签，因此我们已经有支撑记忆的正确标签。但是对于WebQuestion数据集，我们没有正确的支撑记忆标签，作者通过类似之前寻找候选支撑记忆的方式去得到标签。</li>
 </ul>
-<h2 id="向量得分">3. 向量得分</h2>
+<h3 id="测试网络泛化能力">2.3 测试网络泛化能力</h3>
 <ul>
-<li>最后我们用一个函数表征答案和问题的得分，我们希望问题和它对应的正确答案得尽量高分，通过比较每个候选答案的得分，选出最高的作为正确答案。得分函数定义为二者分布式表达的点乘，即<span class="math inline">\(s(q, a)=f(q)^T\cdot g(a)\)</span>。</li>
-<li>上述整个流程如下图所示 <img src="https://ftp.bmp.ovh/imgs/2021/03/363065f4b4f71aeb.png" /></li>
-</ul>
-<h2 id="如何训练分布式表达">4. 如何训练分布式表达</h2>
-<ul>
-<li>对于训练数据集<span class="math inline">\(D=\lbrace (q_i,a_i),\ ....\rbrace\)</span>，我们定义 margin-based ranking 损失函数，公示如下 <img src="https://ftp.bmp.ovh/imgs/2021/03/2321063525beadd5.png" /> 其中<span class="math inline">\(\bar a\)</span>表示负样本集<span class="math inline">\(\bar A\)</span>中的一个负样本(错误答案)，m 是一个值为 0.1 的 margin。最小化这个损失函数，意味着我们希望正确答案和问题的得分要比任意错误答案的得分高出一个 margin</li>
-</ul>
-<h2 id="总结">5. 总结</h2>
-<ul>
-<li>可以看出，相比信息抽取和语义解析的方法，该方法几乎不需要任何手工定义的特征（hand- crafted features），也不需要借助额外的系统（词汇映射表，词性标注，依存树等）。相对来说，比较简单，也较容易实现，能取得39.2的F1-scor e得分（斯坦福13年的语义解析方法只有35.7）也说明了该方法的强大性。通过自动化的方式扩展数据集和多任务训练也部分解决了实验数据不足的缺点。</li>
-<li>然而，向量建模方法，是一种趋于黑盒的方法，缺少了解释性（语义解析可以将问题转化成一种逻辑形式的表达，而信息抽取构造的每一维特征的含义也是离散可见的），更重要的是，它也缺少了我们的<strong>先验知识</strong>和<strong>推理</strong>（可以看出其F1-score略低于14年使用了大量先验知识的信息抽取方法，该方法F1-score为42.0），事实上，这也是现在深度学习一个比较有争议的诟病。</li>
-<li>就篇论文的向量建模方法来说，也存在一些问题，比如对问题的向量表示采用了类似词袋模型的方法，这样相当于并未考虑问题的语言顺序（比如 “谢霆锋的爸爸是谁？” 谢霆锋是谁的爸爸？ 这两个问题用该方法得到的表达是一样的，然而这两个问题的意思显然是不同的），且训练分布式表达的模型很简单，相当于一个两层的感知机。</li>
+<li>使用<strong>泛化模块G</strong>来连接新的知识库Reverb到我们的记忆中，通过实体链接和实体别名匹配等方式，来匹配已有记忆中的实体和新知识库里的实体（这种方式只能匹配到新知识库中17%的实体）。新知识库中剩下的实体和所有的关系都用词袋模型表示，因此我们可以用一个<span class="math inline">\(N_V+N_S\)</span>维的向量来<span class="math inline">\(h(y)\)</span>表示新知识并将其存储到记忆中。同样的，输出模块在寻找支撑记忆时的相似度得分函数为<span class="math inline">\(S_{RVB}(q,y)=cos(W_Vg(q),W_{VS}h(y))\)</span>，其中矩阵<span class="math inline">\(W_{VS}\)</span>直接由之前训练好的<span class="math inline">\(W_V,W_s\)</span>拼接（concatenate）而成。</li>
 </ul>
 
       
@@ -1523,135 +1637,6 @@
 <li>根据查询图对应的实体和真实答案的F1-score进行排名。</li>
 <li>基于<a target="_blank" rel="noopener" href="https://pdfs.semanticscholar.org/0df9/c70875783a73ce1e933079f328e8cf5e9ea2.pdf">lambda-rank</a>算法对一个一层的神经网络进行训练。</li>
 <li>好处：有些查询图虽然查询得到的答案和真实答案不完全相同，但根据它的相同程度（F1-score）也可以说它比完全错误的查询图要好。</li>
-</ul>
-
-      
-    </div>
-
-    
-	
-	
-
-	
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/03/01/%E7%AC%AC05%E5%91%A8/6.%20%E5%9F%BA%E4%BA%8E%E8%AE%B0%E5%BF%86%E7%BD%91%E7%BB%9C-Large-scale%20Simple%20Question%20Answering%20with%20Memory%20Networks/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.jpg">
-      <meta itemprop="name" content="Olivia">
-      <meta itemprop="description" content="May All Your Troubles Be little Ones">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Olivia的博客">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2021/03/01/%E7%AC%AC05%E5%91%A8/6.%20%E5%9F%BA%E4%BA%8E%E8%AE%B0%E5%BF%86%E7%BD%91%E7%BB%9C-Large-scale%20Simple%20Question%20Answering%20with%20Memory%20Networks/" class="post-title-link" itemprop="url">6. 基于记忆网络-Large-scale Simple Question Answering with Memory Networks</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2021-03-01 00:00:00" itemprop="dateCreated datePublished" datetime="2021-03-01T00:00:00+08:00">2021-03-01</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-05-04 15:16:04" itemprop="dateModified" datetime="2021-05-04T15:16:04+08:00">2021-05-04</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Knowledge-Base-Qestion-Answering/" itemprop="url" rel="index"><span itemprop="name">Knowledge Base Qestion Answering</span></a>
-                </span>
-                  >
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Knowledge-Base-Qestion-Answering/paper-comprehension/" itemprop="url" rel="index"><span itemprop="name">paper comprehension</span></a>
-                </span>
-                  >
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Knowledge-Base-Qestion-Answering/paper-comprehension/basis/" itemprop="url" rel="index"><span itemprop="name">basis</span></a>
-                </span>
-            </span>
-
-          <br>
-            <span class="post-meta-item" title="本文字数">
-              <span class="post-meta-item-icon">
-                <i class="far fa-file-word"></i>
-              </span>
-                <span class="post-meta-item-text">本文字数：</span>
-              <span>2.3k</span>
-            </span>
-            <span class="post-meta-item" title="阅读时长">
-              <span class="post-meta-item-icon">
-                <i class="far fa-clock"></i>
-              </span>
-                <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>2 分钟</span>
-            </span>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <ul>
-<li>论文：https://arxiv.org/abs/1506.02075</li>
-</ul>
-<h2 id="简介">1. 简介</h2>
-<ul>
-<li><p>当时的KB-QA对于解决<strong>只依赖一个知识三元组</strong>的简单问题（称为Simple Question Answering）仍有些困难，为此作者构建了一个更大的简单问题数据集，称作<strong>SimpleQuestions</strong>。该数据集的每个问题都依据一个知识三元组知识，进行人工构建问题，数据集最终一共包含了108,442个问题-答案对，相比之前只含8000多个问题-答案对的benchmark数据集WebQuestion，其数据量大了很多。该数据集的部分数据如下图所示<em>（下划线表示答案）</em>：<img src="https://pic1.zhimg.com/80/v2-97d2063bf381150a3e97860e6d53d760_720w.png" alt="img" /></p></li>
-<li><p>整体思想是<strong>将知识库里的知识存储到记忆模块M中，问题经过输入模块I转化为分布式表达，输出模块O选择与问题最相关的支撑记忆（由于SimpleQuestions的问题只依赖一个知识，所以只需要选择一条记忆），回答模块R将该记忆对应三元组的宾语作为最终答案输出。</strong></p></li>
-<li><p>在模型训练完毕后，我们将Reverb中提取的三元组（Reverb的知识三元组是自然语言形式，如<em>(“Obama”, “was also born in”, “<strong>August 1961</strong>”)</em>，知识三元组抽取自ClueWeb）作为新的知识，用<strong>泛化模块G</strong>将新知识存储到记忆模块中，在不经过re-training的情况下使用该记忆回答问题，测试模型的泛化性能。</p></li>
-</ul>
-<h2 id="整体流程">2. 整体流程</h2>
-<h3 id="存储知识">2.1 存储知识</h3>
-<ul>
-<li>首先将知识库中的知识存储到记忆网络中。作者使用Freebase的两个子集FB2M（含2M实体和5K实体关系）和FB5M（含5M实体和7K实体关系）分别作为知识库。使用<strong>输入模块I</strong>来处理数据。</li>
-<li>由于一个问句可能有多个答案，并且对于一个<strong>问题输出模块O</strong>只能选择一个支撑记忆，我们先对知识做两种预处理：
-<ul>
-<li>将具有相同主语和实体关系的三元组进行<strong>合并</strong>（Group），这样每一条知识将包含k个不同的宾语，即<span class="math inline">\(y=(s,r,\{o_1,...,o_k\})\)</span>。合并的原因在于我们想用一条记忆回答具有多个答案的问题（我们将合并前的知识三元体成为Atomic Facts，合并后的三元组成为Facts），合并后和合并前的知识库大小如下：<img src="https://pic3.zhimg.com/80/v2-4ed153a77495a8cde90f7ed1d81180a6_720w.png" alt="img" /></li>
-<li><strong>去除中间节点。</strong>有些知识中日期会链接两个实体以区分某一事实的时间范围，我们可以将中间节点（mediator node）去除转化成一个二阶关系，这样我们就把长度为2的路径压缩成了长度为1的路径，即压缩为一个三元组。这个操作使得WebQuestion里的能被单一关系回答的问题数量从65%上升到86%。</li>
-</ul></li>
-<li>预处理完知识后，我们的<strong>输入模块I</strong>对知识进行预处理并存储到记忆中。这里使用词袋模型bag-of-symbol的方法，用一个<span class="math inline">\(N_S\)</span>维的multi-hot向量<span class="math inline">\(f(y)\)</span>来表示每一条知识并作为记忆。<span class="math inline">\(N_S\)</span>的大小为知识库实体和实体关系的大小之和，主语实体<span class="math inline">\(s\)</span>和实体关系<span class="math inline">\(r\)</span>对应向量维的值为1，宾语实体<span class="math inline">\(o_i\)</span>对应维的值设为<span class="math inline">\(1/k\)</span>。</li>
-</ul>
-<h3 id="训练记忆网络">2.2 训练记忆网络</h3>
-<ul>
-<li>使用问题-答案对来训练记忆网络。</li>
-<li>首先用<strong>输入模块I</strong>来处理输入的自然语言问句<span class="math inline">\(q\)</span>，我们使用n-gram词袋模型（bag-of-ngrams）方法，用一个<span class="math inline">\(N_V\)</span>维的multi-hot向量<span class="math inline">\(g(q)\)</span>来表示每一个问句。<span class="math inline">\(N_V\)</span>的大小是字典大小，字典包含所有问题中出现的单词和所有知识库实体的自然语言别称（这个别称可能由多个单词构成，我们用1个n-gram来表示）。</li>
-<li>对于输入<span class="math inline">\(g(q)\)</span>，我们的<strong>输出模块O</strong>要在记忆中寻找一个与之最相关的支撑记忆。为了避免遍历整个记忆模块里的每一条知识，我们先确定一个候选范围。确定方式如下，将问句中的所有n-gram与知识库实体别称进行匹配，以确定候选实体，将含有候选实体作为主语的知识作为我们的候选支撑记忆。我们将记忆和问题投影到一个低维分布式空间，通过consine相似度作为得分函数，来寻找最相关的支撑记忆，即：<span class="math inline">\(S_{QA}(q,y)=cos(W_Vg(q),W_Sf(y))\)</span>。这里我们需要学习的参数就是两个权值矩阵<span class="math inline">\(W_V,W_S\)</span>。</li>
-<li>这里与[[4. Multi-Column向量建模-Question Answering over Freebase with Multi-Column Convolutional Neural Networks]]提到的训练方法一样，我们构建margin-based ranking损失函数，也进行多任务的训练，通过多任务训练让语义相同的问题的分布式表达<span class="math inline">\(W_V(q)\)</span>相似。</li>
-<li>需要注意的是，我们知道构建margin-based ranking损失函数需要提供支撑记忆的正样本和负样本，由于SimpleQuestion数据集的每个问题都有对应的知识标签，因此我们已经有支撑记忆的正确标签。但是对于WebQuestion数据集，我们没有正确的支撑记忆标签，作者通过类似之前寻找候选支撑记忆的方式去得到标签。</li>
-</ul>
-<h3 id="测试网络泛化能力">2.3 测试网络泛化能力</h3>
-<ul>
-<li>使用<strong>泛化模块G</strong>来连接新的知识库Reverb到我们的记忆中，通过实体链接和实体别名匹配等方式，来匹配已有记忆中的实体和新知识库里的实体（这种方式只能匹配到新知识库中17%的实体）。新知识库中剩下的实体和所有的关系都用词袋模型表示，因此我们可以用一个<span class="math inline">\(N_V+N_S\)</span>维的向量来<span class="math inline">\(h(y)\)</span>表示新知识并将其存储到记忆中。同样的，输出模块在寻找支撑记忆时的相似度得分函数为<span class="math inline">\(S_{RVB}(q,y)=cos(W_Vg(q),W_{VS}h(y))\)</span>，其中矩阵<span class="math inline">\(W_{VS}\)</span>直接由之前训练好的<span class="math inline">\(W_V,W_s\)</span>拼接（concatenate）而成。</li>
 </ul>
 
       
